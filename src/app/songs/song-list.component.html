@@ -1,0 +1,71 @@
+<div class='panel-heading'>
+	<h2>{{pageTitle}}</h2>
+</div>
+<div class="col-xs-12 col-sm-12 col-md-4 col-lg-4">
+	<div class="panel panel-info">
+		<div class="panel-heading">Music Styles</div>
+		<div class="panel-body">
+			<div class="row">
+				<ul class="list-group musiclistbox">
+					<li class="list-group-item" [class.active]="selectedStyleId===''">
+						<a (click)="selectStyle('')">All</a>
+					</li>
+					<li class="list-group-item" [class.active]="style._id===selectedStyleId" *ngFor='let style of styles'>
+						<a (click)='selectStyle(style._id)'>{{style.name}}</a>
+					</li>
+				</ul>
+			</div>
+		</div>
+	</div>
+</div>
+<div class="col-xs-12 col-sm-12 col-md-4 col-lg-4">
+	<div class="panel panel-info">
+		<div class="panel-heading">Bands</div>
+		<div class="panel-body">
+			<div class="row">
+				<ul class="list-group musiclistbox">
+					<li class="list-group-item" [class.active]="selectedBandId===''">
+						<a (click)="selectBand('')">All</a>
+					</li>
+					<li class="list-group-item" [class.active]="band._id===selectedBandId" *ngFor='let band of bands'>
+						<a (click)='selectBand(band._id)'>{{band.name}}</a>
+					</li>
+				</ul>
+			</div>
+		</div>
+	</div>
+</div>
+<div class="col-xs-12 col-sm-12 col-md-4 col-lg-4">
+	<div class="panel panel-info">
+		<div class="panel-heading">Songs</div>
+		<div class="panel-body">
+			<div class="row">
+				<ul class="list-group musiclistbox">
+					<li class="list-group-item"  *ngFor='let song of songs | songFilter:listFilter'>
+						<a (click)='selectSong(song._id)'>{{song.name}}</a>
+					</li>
+				</ul>
+			</div>
+		</div>
+	</div>
+</div>
+<div class="row">
+	<div class="col-xs-12 col-sm-12 col-md-8 col-lg-8">
+		<form id="formSongUpload" action="http:localhost:3000/songsLibrary" enctype="multipart/form-data" method="post" class="form-horizontal">
+			<div class="form-group">
+				<label for="songName" class="col-sm-3 control-label">Upload file</label>
+				<label class="btn btn-default btn-file">Browse          
+					<input  type="file" style="display: none;" name="musicFile"
+						(change)="fileChange(input)" #input />
+					</label>
+				<label id="fileSelected">{{selectedFileName}}{{uploadResult}}</label>
+				<button *ngIf='selectedFileName!==""'
+				  class="btn btn-default btn-file" (click)='UploadHandler()' >Upload
+				</button>				
+			</div>
+		</form>
+	</div>
+</div>
+<div class="row">
+	<song-details [selectedSongId]="selectedSongId"></song-details>
+</div>

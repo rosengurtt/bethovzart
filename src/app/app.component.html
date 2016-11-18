@@ -1,3 +1,36 @@
-<h1>
-  {{title}}
-</h1>
+<div class="container">
+    <nav class="navbar navbar-default navbar-fixed-top">
+        <div class="container">
+            <div class="navbar-header">
+                <button type="button" data-toggle="collapse" data-target="#the-menu" class="navbar-toggle collapsed"><span class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span></button>
+                <a [routerLink]="['/welcome']" class="navbar-brand brand">Bethovzart</a>
+            </div>
+            <div id="the-menu" class="collapse navbar-collapse">
+                <ul class="nav navbar-nav">
+                    <li><a [routerLink]="['/welcome']"><span class="glyphicon glyphicon-home"></span> Home</a></li>
+                    <li><a [routerLink]="['/songs']"><span class="glyphicon glyphicon-music"></span> Songs</a></li>
+                    <li><a href="/analyze.html"><span class="glyphicon glyphicon-pencil"></span> Analyze Song</a></li>
+                    <li><a [routerLink]="['/products']">Product List</a></li>
+                    <li><a href="/contact.html"><span class="glyphicon glyphicon-earphone"></span> Contact Us</a></li>
+                </ul>
+                <ul class="nav navbar-nav navbar-right">
+                    <li class="dropdown"><a data-toggle="dropdown" href="#"><span class="glyphicon glyphicon-user"></span>Welcome Back <span class="caret"></span></a>
+                    </li>
+                    <li><a id="logonLink" href="#"><span class="glyphicon glyphicon-log-in"></span> Sign In</a></li>
+                </ul>
+                <div class="navbar-form navbar-right visible-md-inline visible-lg-inline">
+                    <div style="margin-top: 4px" class="form-group">
+                        <label for="keyword" class="sr-only">Keyword</label>
+                        <input type="text" placeholder="Enter Search keyword" #input [formControl]="term" class="form-control input-sm" />
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+    <div class="page-header">
+        <h2></h2>
+    </div>
+    <div class='container'>
+        <router-outlet></router-outlet>
+    </div>
+</div>
