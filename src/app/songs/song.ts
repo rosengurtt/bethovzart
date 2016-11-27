@@ -4,5 +4,6 @@ export class Song {
     _id: string;
     name: string;
     band: Band;
-    midiFile: Blob;
+    midiFile: ArrayBuffer;
+    jsonFile:any;
 } 

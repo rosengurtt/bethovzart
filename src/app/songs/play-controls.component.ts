@@ -11,24 +11,26 @@ import { SongDisplayService } from '../graphics/song-display.service';
 declare var MIDIjs: any;
 
 @Component({
-    selector: "song-details",
+    selector: "play-controls",
     template: `
-        <div *ngIf='song'>
-        <span>{{song.name}} - {{song._id}}</span>
-        <play-controls [selectedSongId]="selectedSongId"></play-controls>
+        <div >       
+        <button type="button" class="btn btn-primary" (click)="playSong()">Play</button>
+        <button type="button" class="btn btn-primary" (click)="stopSong()">Stop</button>
         </div>
         <div>
-            <svg id="svgBox" width="100%" height="100%" style="border: 1px solid black; background-color:white" xmlns="http://www.w3.org/2000/svg">
+            <svg id="svgPlayControlsBox" width="100%" height="20" 
+                style="background-color:#272b30" 
+                xmlns="http://www.w3.org/2000/svg">
+                <rect x="0" y="10" width="100%" height="4" style="fill:rgb(200,240,220)" />
                 <defs>
-                    <circle id="note" fill="black" r="1" />
-                    <line id="separator" x1="0"  style="stroke:rgb(200,180,170);stroke-width:1" />
-                    <line id="progressBar" width="2" style="stroke:rgb(200,0,0);" />
+                    <rect id="progressControl" fill="black" height="16" width="5" y="3" 
+                    style="fill:rgb(250,200,210)"/>
                 </defs>
             </svg>
         </div>
     `
 })
-export class SongDetailsComponent implements OnChanges  {
+export class PlayControlsComponent implements OnChanges {
     song: Song;
     @Input() selectedSongId: string;
 
@@ -36,7 +38,6 @@ export class SongDetailsComponent implements OnChanges  {
         private _midi2JsonService: Midi2JsonService,
         private _songDisplayService: SongDisplayService) {
     }
-
 
 
     async ngOnChanges(changes: { [propKey: string]: SimpleChange }) {
@@ -59,18 +60,18 @@ export class SongDetailsComponent implements OnChanges  {
             this.song.band._id = songData.band;
             this.song.band.name = songData.band.name;
             this.song.midiFile = await (this._songService.getSongMidiById(this.selectedSongId));
-          //  this.song.jsonFile = await this._midi2JsonService.getMidiObject(this.song.midiFile);
-         //   console.log(this.song.jsonFile);
-          //  this._songDisplayService.songDisplay(this.song.jsonFile);
+            this.song.jsonFile = await this._midi2JsonService.getMidiObject(this.song.midiFile);
+            console.log(this.song.jsonFile);
+            this._songDisplayService.songDisplay(this.song.jsonFile);
         };
     }
-    // playSong() {
-    //     this._songDisplayService.songStarted();
-    //     MIDIjs.play(this.song.midiFile);
-    // }
-    // stopSong() {
-    //     this._songDisplayService.songStopped();
-    //     MIDIjs.stop();
-    // }
+    playSong() {
+        this._songDisplayService.songStarted();
+        MIDIjs.play(this.song.midiFile);
+    }
+    stopSong() {
+        this._songDisplayService.songStopped();
+        MIDIjs.stop();
+    }
 }
 
