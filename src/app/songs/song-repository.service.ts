@@ -9,7 +9,7 @@ import 'rxjs/add/operator/map';
 
 
 @Injectable()
-export class SongService {
+export class SongRepositoryService {
     private _songLibraryUrl = 'http://localhost:3000/api/';
 
     constructor(private _http: Http) { }
@@ -17,14 +17,12 @@ export class SongService {
     async getStyles(): Promise<any> {
         return this.getMusicItem('styles');
     }
-
     async getBands(styleId?: string): Promise<any> {
         if (styleId) {
             return this.getMusicItem('bands/style/' + styleId);
         }
         return this.getMusicItem('bands/all');
     }
-
     async getSongsForBand(bandId: string): Promise<any> {
         return this.getMusicItem('songs/band/' + bandId);
     }
@@ -50,8 +48,6 @@ export class SongService {
             xhr.send();
         });
     }
-
-
     async getSongById(id: string): Promise<any> {
         return this.getMusicItem('songs/' + id);
     }
@@ -63,7 +59,6 @@ export class SongService {
             }).toPromise();
 
     }
-
     private handleError(error: Response) {
         // in a real world app, we may send the server to some remote logging infrastructure
         // instead of just logging it to the console

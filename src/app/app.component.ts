@@ -24,8 +24,8 @@ export class AppComponent implements OnInit, OnDestroy {
             .distinctUntilChanged()
             .subscribe(
             value => {
-                 this.songSearchService.announceSearchTerm(value);
-                 },
+                this.songSearchService.announceSearchTerm(value);
+            },
             error => console.log(error)
             );
     }

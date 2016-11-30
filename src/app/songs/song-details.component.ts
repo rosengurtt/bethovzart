@@ -1,7 +1,7 @@
 import { Component, Input, OnDestroy, OnChanges, SimpleChange } from '@angular/core';
 
 import { Song } from './song';
-import { SongService } from './song.service';
+import { SongRepositoryService } from './song-repository.service';
 import { Midi2JsonService } from '../midi/midi2json.service';
 import { IMusicStyle } from './music-style';
 import { Band } from './band';
@@ -28,11 +28,11 @@ declare var MIDIjs: any;
         </div>
     `
 })
-export class SongDetailsComponent implements OnChanges  {
+export class SongDetailsComponent implements OnChanges {
     song: Song;
     @Input() selectedSongId: string;
 
-    constructor(private _songService: SongService,
+    constructor(private _songService: SongRepositoryService,
         private _midi2JsonService: Midi2JsonService,
         private _songDisplayService: SongDisplayService) {
     }
@@ -59,18 +59,7 @@ export class SongDetailsComponent implements OnChanges  {
             this.song.band._id = songData.band;
             this.song.band.name = songData.band.name;
             this.song.midiFile = await (this._songService.getSongMidiById(this.selectedSongId));
-          //  this.song.jsonFile = await this._midi2JsonService.getMidiObject(this.song.midiFile);
-         //   console.log(this.song.jsonFile);
-          //  this._songDisplayService.songDisplay(this.song.jsonFile);
         };
     }
-    // playSong() {
-    //     this._songDisplayService.songStarted();
-    //     MIDIjs.play(this.song.midiFile);
-    // }
-    // stopSong() {
-    //     this._songDisplayService.songStopped();
-    //     MIDIjs.stop();
-    // }
 }
 

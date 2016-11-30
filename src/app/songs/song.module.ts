@@ -5,9 +5,10 @@ import { SongListComponent } from './song-list.component';
 import { SongDetailsComponent } from './song-details.component';
 import { PlayControlsComponent } from './play-controls.component';
 
-import { SongService } from './song.service';
+import { SongRepositoryService } from './song-repository.service';
 import { Midi2JsonService } from '../midi/midi2json.service';
 import { SongDisplayService } from '../graphics/song-display.service';
+import { AudioControlsService } from '../graphics/audio-controls.service'
 
 import { SongFilterPipe } from './song-filter.pipe';
 
@@ -28,10 +29,11 @@ import { FileUploadService } from '../shared/file-upload.service';
     PlayControlsComponent
   ],
   providers: [
-    SongService,
+    SongRepositoryService,
     FileUploadService,
     Midi2JsonService,
-    SongDisplayService
+    SongDisplayService,
+    AudioControlsService
   ]
 })
 export class SongModule { }

@@ -3,6 +3,7 @@ import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { HttpModule } from '@angular/http';
 import { RouterModule } from '@angular/router';
+import { APP_BASE_HREF } from '@angular/common';
 
 import { AppComponent } from './app.component';
 import { WelcomeComponent } from './home/welcome.component';
@@ -23,7 +24,7 @@ import { ReactiveFormsModule } from '@angular/forms';
     BrowserModule,
     FormsModule,
     HttpModule,
-        RouterModule.forRoot([
+    RouterModule.forRoot([
       { path: 'welcome', component: WelcomeComponent },
       { path: '', redirectTo: 'welcome', pathMatch: 'full' },
       { path: '**', redirectTo: 'welcome', pathMatch: 'full' }
@@ -32,7 +33,8 @@ import { ReactiveFormsModule } from '@angular/forms';
     SongModule,
     ReactiveFormsModule
   ],
-  providers: [FileUploadService, SongSearchService],
+  providers: [FileUploadService, SongSearchService, 
+        { provide: APP_BASE_HREF, useValue: "/" }],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

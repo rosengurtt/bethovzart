@@ -10,7 +10,7 @@ var MIDIFile: any = require('midifile');
 export class Midi2JsonService {
 
     //converts from binary midi to json version
-    async getMidiObject(readBuffer: ArrayBuffer): Promise<songJson> {
+    public async getMidiObject(readBuffer: ArrayBuffer): Promise<songJson> {
         return new Promise((resolve: (songJson) => void, reject) => {
             // Creating the MIDIFile instance
             let midiFile = new MIDIFile(readBuffer);
@@ -29,7 +29,7 @@ export class Midi2JsonService {
         });
     };
 
-    addTimeSinceBeginningField(track: midiEvent[]): midiEvent[] {
+    private addTimeSinceBeginningField(track: midiEvent[]): midiEvent[] {
         let timeSinceBeginning: number = 0;
         for (let i = 0; i < track.length; i++) {
             timeSinceBeginning += track[i].delta;
@@ -39,10 +39,10 @@ export class Midi2JsonService {
     }
 
     //converts from json version to binary midi
-    getMidiBytes(midiObject) {
-        let buffer = this.getMidiHeader(midiObject.track.length, midiObject.ticksPerBeat);
-        for (let k = 0; k < midiObject.track.length; k++) {
-            var bufferTrack = this.getMidiTrackBytes(midiObject.track[k]);
+    public getMidiBytes(midiObject:songJson) {
+        let buffer = this.getMidiHeader(midiObject.tracks.length, midiObject.ticksPerBeat);
+        for (let k = 0; k < midiObject.tracks.length; k++) {
+            var bufferTrack = this.getMidiTrackBytes(midiObject.tracks[k]);
             buffer = this.concatenateUint8Array(buffer, bufferTrack);
         };
         return buffer;
@@ -71,6 +71,7 @@ export class Midi2JsonService {
         var trackHeaderLength = 8;
         var maxLength = track.length * 6 + 30;
         var buffer = new Uint8Array(maxLength);
+        // Magic word of Midi File
         buffer[0] = 0x4D;
         buffer[1] = 0x54;
         buffer[2] = 0x72;

@@ -1,7 +1,7 @@
 import { Component, OnInit, Input, OnDestroy } from '@angular/core';
 
 import { Song } from './song';
-import { SongService } from './song.service';
+import { SongRepositoryService } from './song-repository.service';
 import { IMusicStyle } from './music-style';
 import { Band } from './band';
 import { FileUploadService } from '../shared/file-upload.service';
@@ -28,7 +28,7 @@ export class SongListComponent implements OnInit, OnDestroy {
     listFilter: string;
     subscription: Subscription;
 
-    constructor(private _songService: SongService,
+    constructor(private _songService: SongRepositoryService,
         private _fileUploadService: FileUploadService,
         private songSearchService: SongSearchService) {
         this.subscription = songSearchService.saerchTermAnnounce$.subscribe(
