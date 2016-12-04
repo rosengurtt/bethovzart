@@ -8,6 +8,7 @@ import { Band } from './band';
 import { SongSearchService } from './song-search.service';
 import { SongDisplayService } from '../graphics/song-display.service';
 import { AudioControlsService } from '../graphics/audio-controls.service'
+import { Binary2base64 } from '../shared/binary2base64';
 
 declare var MIDIjs: any;
 
@@ -15,9 +16,21 @@ declare var MIDIjs: any;
     selector: "play-controls",
     template: `
         <div >       
-        <button type="button" class="btn btn-primary" (click)="playSong()">Play</button>
-        <button type="button" class="btn btn-primary" (click)="stopSong()">Stop</button>
-        </div>
+        <button type="button" class="btn btn-danger">
+            <span class="glyphicon glyphicon-backward"></span>&nbsp;
+        </button>
+        <button type="button" class="btn btn-danger" (click)="playSong()">
+            <span class="glyphicon glyphicon-play"></span>&nbsp;
+        </button>
+        <button type="button" class="btn btn-danger" >
+            <span class="glyphicon glyphicon-pause"></span>&nbsp;
+        </button>
+        <button type="button" class="btn btn-danger" (click)="stopSong()">
+            <span class="glyphicon glyphicon-stop"></span>&nbsp;
+        </button>
+        <button type="button" class="btn btn-danger">
+            <span class="glyphicon glyphicon-forward"></span>&nbsp;
+        </button>
         <div id="midiPlayControls" (PlayStarted) = MidiSoundStarted()>
             <svg id="svgPlayControlsBox" width="100%" height="30" 
                 style="background-color:#272b30" (mouseout)='MouseUp()'
@@ -46,8 +59,8 @@ declare var MIDIjs: any;
 export class PlayControlsComponent implements OnChanges {
     song: Song;
     @Input() selectedSongId: string;
-    progressControl: any;
     mouseDown: boolean = false;
+    isPlaying: boolean = false;
 
     constructor(private _songService: SongRepositoryService,
         private _midi2JsonService: Midi2JsonService,
@@ -84,17 +97,36 @@ export class PlayControlsComponent implements OnChanges {
     }
     playSong() {
         let songPartToPlay: ArrayBuffer = this._audioControlsService.GetSongBytesFromStartingPosition();
+        // this.download("midifile.txt", songPartToPlay);
         MIDIjs.play(songPartToPlay);
+        this.isPlaying = true;
     }
+
+    //used for debugging. Allows to save buffer to disk
+    private download(filename, buffer) {
+        let base64encoded = Binary2base64.convert(buffer);
+        var element = document.createElement('a');
+        element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(base64encoded));
+        element.setAttribute('download', filename);
+
+        element.style.display = 'none';
+        document.body.appendChild(element);
+
+        element.click();
+
+        document.body.removeChild(element);
+    }
+
     stopSong() {
-        console.log("entre a song stop de play component")
-        this._songDisplayService.songStopped();
-        this._audioControlsService.songStopped()
-        MIDIjs.stop();
+        if (this.isPlaying) {
+            this._songDisplayService.songStopped();
+            this._audioControlsService.songStopped()
+            MIDIjs.stop();
+        }
     }
-    @HostListener('mousedown', ['$event'])
+ 
     public ProgressControlClicked(evt: MouseEvent) {
-        this.progressControl = document.getElementById("progressControl");
+            console.log("entre a mousedown")
         this.mouseDown = true;
     }
     @HostListener('mousemove', ['$event'])

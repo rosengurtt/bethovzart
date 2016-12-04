@@ -1,14 +1,55 @@
 import { midiEvent } from './midi-event';
 import { notesTrack } from './notes-track';
 import { trackRange } from './track-range';
-import { trackNote} from './track-note';
+import { trackNote } from './track-note';
 
 
 export class songJson {
     format: number;
-    tracksCount: number;
     ticksPerBeat: number;
     tracks: midiEvent[][];
+    private _durationInTicks: number = -1;
+    private _notesTracks: notesTrack[];
+    private _durationInSeconds: number = -1;
+    private _tempoEvents: midiEvent[];
+
+
+    constructor(format?: number, ticksPerBeat?: number, tracks?: midiEvent[][]) {
+        this.format = format;
+        this.ticksPerBeat = ticksPerBeat;
+        this.tracks = tracks;
+    }
+
+    get tracksCount(): number {
+        return this.tracks.length;
+    }
+    get durationInTicks(): number {
+        if (this._durationInTicks === -1) {
+            this._durationInTicks = this.getSongDurationInTicks();
+        }
+        return this._durationInTicks;
+    }
+
+    get notesTracks(): notesTrack[] {
+        if (!this._notesTracks) {
+            this._notesTracks = this.getNotesSequences();
+        }
+        return this._notesTracks;
+    }
+
+    get durationInSeconds(): number {
+        if (this._durationInSeconds === -1) {
+            this._durationInSeconds = this.getSongDurationInSeconds();
+        }
+        return this._durationInSeconds;
+    }
+
+    get tempoEvents(): midiEvent[] {
+        if (!this._tempoEvents) {
+            this._tempoEvents = this.getTempoEvents();
+        }
+        return this._tempoEvents;
+    }
 
     //Returns the lowest and highest pitches in a track
     private getTrackRange(t: trackNote[]): trackRange {
@@ -22,12 +63,12 @@ export class songJson {
     }
 
     //Returns the number of ticks in the whole song
-    public getSongDurationInTicks(tracks: notesTrack[]): number {
+    private getSongDurationInTicks(): number {
         let duration: number = 0;
-        for (let i = 0; i < tracks.length; i++) {
-            if (tracks[i].notesSequence.length > 0) {
-                let trackLength: number = tracks[i].notesSequence.length;
-                let lastNote: trackNote = tracks[i].notesSequence[trackLength - 1]
+        for (let i = 0; i < this._notesTracks.length; i++) {
+            if (this._notesTracks[i].notesSequence.length > 0) {
+                let trackLength: number = this._notesTracks[i].notesSequence.length;
+                let lastNote: trackNote = this._notesTracks[i].notesSequence[trackLength - 1]
                 let timeStartsLastNote: number = lastNote.ticksFromStart;
                 let durationLastNote = lastNote.duration;
                 let endTrack: number = timeStartsLastNote + durationLastNote;
@@ -38,7 +79,7 @@ export class songJson {
         }
         return duration;
     }
-    public getSongDurationInSeconds(): number {
+    private getSongDurationInSeconds(): number {
         let duration: number = 0;
         let tempoEvents = this.getTempoEvents();
         for (let i = 0; i < tempoEvents.length; i++) {
@@ -48,12 +89,12 @@ export class songJson {
             if (i < tempoEvents.length - 1)
                 end = tempoEvents[i + 1].ticksSinceStart;
             else
-                end = this.getSongDurationInTicks(this.getNotesSequences());
+                end = this.getSongDurationInTicks();
             duration += ((end - start) / this.ticksPerBeat) / (tempo / 60);
         }
         return duration;
     }
-    public getTempoEvents(): midiEvent[] {
+    private getTempoEvents(): midiEvent[] {
         let returnValue: midiEvent[] = [];
         for (let i = 0; i < this.tracks.length; i++) {
             let track = this.tracks[i];
@@ -67,7 +108,7 @@ export class songJson {
     }
     // Convert the midi tracks that have all sort of events, to tracks that have only notes on and notes off
     // In addition, a 'range' property provides the max and minimum pitch for each track
-    public getNotesSequences(): notesTrack[] {
+    private getNotesSequences(): notesTrack[] {
         let musicTracks: notesTrack[] = [];
         for (let k = 0; k < this.tracks.length; k++) {
             let trackNotes = this.getNotes(this.tracks[k]);
@@ -80,7 +121,7 @@ export class songJson {
     }
 
     // Used to get the events in a midi track that correspond to notes on and notes off
-    public getNotes(midiTrack: midiEvent[]): trackNote[] {
+    private getNotes(midiTrack: midiEvent[]): trackNote[] {
         let noteOn: number = 9;
         let noteOff: number = 8;
         let returnArray: trackNote[] = [];
@@ -107,5 +148,74 @@ export class songJson {
             }
         }
         return returnArray;
+    }
+
+    // Returns a new song that is a slice of the current song, starting from a specific tick
+    public getSliceStartingFromTick(tick: number): songJson {
+        if (tick===0){
+            return this;
+        }
+        let slice: songJson = new songJson(this.format, this.ticksPerBeat, null);
+        slice.tracks = [];
+        for (let i: number = 0; i < this.tracks.length; i++) {
+            let track: midiEvent[] = this.tracks[i];
+            let sliceTrack: midiEvent[] = [];
+            let discarded: midiEvent[] = [];
+            let totalKept: number = 0;
+            let totalDiscarded: number = 0;
+            for (let item of this.getLatestEventOfEachTypeInTrackPriorToTick(tick, i)) {
+                item.delta = 0;
+                item.ticksSinceStart = 0;
+                sliceTrack.push(item);
+            }
+            for (let j: number = 0; j < track.length; j++) {
+                let event: midiEvent = track[j];
+                if (event.ticksSinceStart >= tick) {
+                    event.ticksSinceStart -= tick;
+                    sliceTrack.push(event);
+                    totalKept++;
+                }
+                else {
+                    discarded.push(event);
+                    totalDiscarded++;
+                }
+
+            }
+            slice.tracks.push(sliceTrack);
+        } console.log(slice);
+        return slice;
+    }
+    private getLatestEventOfEachTypeInTrackPriorToTick(tick: number, track: number): midiEvent[] {
+        let latestEventOfType: { [type: string]: midiEvent } = {};
+        for (let event of this.tracks[track]) {
+            if (event.ticksSinceStart > tick) {
+                break;
+            }
+            if (event.isTempo()) {
+                latestEventOfType["tempo"] = event;
+            }
+            if (event.isVolumeChange()) {
+                latestEventOfType["volumeChange"] = event;
+            }
+            if (event.isTimeSignature()) {
+                latestEventOfType["timeSignature"] = event;
+            }
+            if (event.isPatchChange()) {
+                latestEventOfType["patchChange"] = event;
+            }
+            if (event.isPanChange()) {
+                latestEventOfType["panChange"] = event;
+            }
+            if (event.isEndOfTrack()) {
+                latestEventOfType["endOfTrack"] = event;
+            }
+        }
+        let returnValue: midiEvent[] = [];
+        for (let type of ["tempo", "volumeChange", "timeSignature", "patchChange", "panChange", "endOfTrack"])
+            if (latestEventOfType[type]) {
+                returnValue.push(latestEventOfType[type]);
+            }
+
+        return returnValue;
     }
 }

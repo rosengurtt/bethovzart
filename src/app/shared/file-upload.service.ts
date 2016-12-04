@@ -59,8 +59,6 @@ export class FileUploadService {
 
             xhr.upload.onprogress = (event) => {
                 this.progress = Math.round(event.loaded / event.total * 100);
-
-              //  this.progressObserver.next(this.progress);
             };
 
             xhr.open('POST', url, true);

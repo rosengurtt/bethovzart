@@ -14,32 +14,47 @@ export class Midi2JsonService {
         return new Promise((resolve: (songJson) => void, reject) => {
             // Creating the MIDIFile instance
             let midiFile = new MIDIFile(readBuffer);
-            let returnObject = new songJson();
+            let format: number = midiFile.header.getFormat(); // 0, 1 or 2
+            let ticksPerBeat: number = midiFile.header.getTicksPerBeat();
+            let returnObject = new songJson(format, ticksPerBeat, []);
+            let tracksCount: number = midiFile.header.getTracksCount();
 
-            // Reading headers
-            returnObject.format = midiFile.header.getFormat(); // 0, 1 or 2
-            returnObject.tracksCount = midiFile.header.getTracksCount();
-            returnObject.ticksPerBeat = midiFile.header.getTicksPerBeat();
-            returnObject.tracks = [];
-
-            for (var i = 0; i < returnObject.tracksCount; i++) {
+            for (var i = 0; i < tracksCount; i++) {
                 returnObject.tracks[i] = this.addTimeSinceBeginningField(midiFile.getTrackEvents(i));
             }
             resolve(returnObject);
         });
     };
 
-    private addTimeSinceBeginningField(track: midiEvent[]): midiEvent[] {
+    private addTimeSinceBeginningField(track: any): midiEvent[] {
         let timeSinceBeginning: number = 0;
+        let returnValue: midiEvent[] = [];
         for (let i = 0; i < track.length; i++) {
             timeSinceBeginning += track[i].delta;
-            track[i].ticksSinceStart = timeSinceBeginning;
+            let midiEventItem = new midiEvent();
+            midiEventItem.delta = track[i].delta;
+            midiEventItem.ticksSinceStart = timeSinceBeginning;
+            midiEventItem.index = track[i].index;
+            midiEventItem.length = track[i].length;
+            midiEventItem.param1 = track[i].param1;
+            midiEventItem.param2 = track[i].param2;
+            midiEventItem.param3 = track[i].param3;
+            midiEventItem.param4 = track[i].param4;
+            midiEventItem.subtype = track[i].subtype;
+            midiEventItem.type = track[i].type;
+            midiEventItem.data = track[i].data;
+            midiEventItem.tempo = track[i].tempo;
+            midiEventItem.tempoBPM = track[i].tempoBPM;
+            midiEventItem.channel = track[i].channel;
+            midiEventItem.key = track[i].key;
+            midiEventItem.scale = track[i].scale;
+            returnValue.push(midiEventItem);
         }
-        return track;
+        return returnValue;
     }
 
     //converts from json version to binary midi
-    public getMidiBytes(midiObject:songJson) {
+    public getMidiBytes(midiObject: songJson) {
         let buffer = this.getMidiHeader(midiObject.tracks.length, midiObject.ticksPerBeat);
         for (let k = 0; k < midiObject.tracks.length; k++) {
             var bufferTrack = this.getMidiTrackBytes(midiObject.tracks[k]);
@@ -67,7 +82,7 @@ export class Midi2JsonService {
         return buffer;
     }
 
-    private getMidiTrackBytes(track): any {
+    private getMidiTrackBytes(track: midiEvent[]): any {
         var trackHeaderLength = 8;
         var maxLength = track.length * 6 + 30;
         var buffer = new Uint8Array(maxLength);
@@ -79,16 +94,8 @@ export class Midi2JsonService {
         var j = trackHeaderLength; //points to next index in buffer
         // bytes 4 to 7 is the length of the track that we still don't know
         for (let i = 0; i < track.length; i++) {
-            var eventProcessed = false;
-            var deltaLength;
-            var delta = track[i].delta;
-            var channel = track[i].channel;
-            var param1 = track[i].param1;
-            var param2 = track[i].param2;
-            var param3 = track[i].param3;
-            var param4 = track[i].param4;
-            var type = track[i].type;
-            var subtype = track[i].subtype;
+            var deltaLength: number;
+            var delta: number = track[i].delta;
 
             //Delta time calculation. Delta is written in groups of 7 bits, not bytes
             var indexAtBeginningOfEvent = j;
@@ -101,21 +108,21 @@ export class Midi2JsonService {
             buffer[j++] = delta & 0x7F;
             deltaLength = j - indexAtBeginningOfEvent;
             //note on
-            if (type == 8 && subtype == 9) {
-                buffer[j++] = 0x90 | channel;
-                buffer[j++] = param1;
-                buffer[j++] = param2;
-                eventProcessed = true;
+            if (track[i].isNoteOn()) {
+                buffer[j++] = 0x90 | track[i].channel;
+                buffer[j++] = track[i].param1;
+                buffer[j++] = track[i].param2;
+                continue;
             }
             //note off
-            if (type == 8 && subtype == 8) {
-                buffer[j++] = 0x80 | channel;
-                buffer[j++] = param1;
-                buffer[j++] = param2;
-                eventProcessed = true;
+            if (track[i].isNoteOff()) {
+                buffer[j++] = 0x80 | track[i].channel;
+                buffer[j++] = track[i].param1;
+                buffer[j++] = track[i].param2;
+                continue;
             }
             //tempo
-            if (type == 255 && subtype == 81) {
+            if (track[i].isTempo()) {
                 buffer[j++] = 0xFF;
                 buffer[j++] = 0x51;
                 buffer[j++] = 0x03;
@@ -127,87 +134,86 @@ export class Midi2JsonService {
                 if (tempo > 0x100)
                     buffer[j++] = (tempo >> 8) & 0xFF;
                 buffer[j++] = tempo & 0xFF;
-                eventProcessed = true;
+                continue;
             }
             // Patch change (instrument)
-            if (type == 8 && subtype == 12) {
-                buffer[j++] = 0xC0 | channel;
-                buffer[j++] = param1;
-                eventProcessed = true;
+            if (track[i].isPatchChange()) {
+                buffer[j++] = 0xC0 | track[i].channel;
+                buffer[j++] = track[i].param1;
+                continue;
             }
             // Volume change (setea volumen global del track)
-            if (type == 8 && subtype === 11 && param1 == 7) {
-                buffer[j++] = 0xB0 | channel;
+            if (track[i].isVolumeChange()) {
+                buffer[j++] = 0xB0 | track[i].channel;
                 buffer[j++] = 0x07;
-                buffer[j++] = param2;
-                eventProcessed = true;
+                buffer[j++] = track[i].param2;
+                continue;
             }
             // Pan change (setea volumenes relativos de izq y der)
-            if (type == 8 && subtype === 11 && param1 == 10) {
-                buffer[j++] = 0xB0 | channel;
+            if (track[i].isPanChange()) {
+                buffer[j++] = 0xB0 | track[i].channel;
                 buffer[j++] = 0x0A;
-                buffer[j++] = param2;
-                eventProcessed = true;
+                buffer[j++] = track[i].param2;
+                continue;
             }
             // Reset all controllers
-            if (type == 8 && subtype == 11 && param1 == 121) {
-                buffer[j++] = 0xB0 | channel;
+            if (track[i].isResetAllControllers()) {
+                buffer[j++] = 0xB0 | track[i].channel;
                 buffer[j++] = 0x79;
                 buffer[j++] = 0x00;
-                eventProcessed = true;
+                continue;
             }
             // Effect 1 Depth ( Usually controls reverb send amount)
-            if (type == 8 && subtype == 11 && param1 == 91) {
-                buffer[j++] = 0xB0 | channel;
+            if (track[i].isEffect1Depht()) {
+                buffer[j++] = 0xB0 | track[i].channel;
                 buffer[j++] = 0x5B;
-                buffer[j++] = param2;
-                eventProcessed = true;
+                buffer[j++] = track[i].param2;
+                continue;
             }
             // Effect 3 Depth( Usually controls chorus amount)
-            if (type == 8 && subtype == 11 && param1 == 93) {
-                buffer[j++] = 0xB0 | channel;
+            if (track[i].isEffect3Depht()) {
+                buffer[j++] = 0xB0 | track[i].channel;
                 buffer[j++] = 0x5D;
-                buffer[j++] = param2;
-                eventProcessed = true;
+                buffer[j++] = track[i].param2;
+                continue;
             }
             // Midi Port
-            if (type == 255 && subtype === 33) {
+            if (track[i].isMidiPort()) {
                 buffer[j++] = 0xFF;
                 buffer[j++] = 0x21;
                 buffer[j++] = 0x01;
                 buffer[j++] = track[i].data[0];
-                eventProcessed = true;
+                continue;
             }
             // Key Signature
-            if (type == 255 && subtype == 89) {
+            if (track[i].isKeySignature()) {
                 buffer[j++] = 0xFF;
                 buffer[j++] = 0x59;
                 buffer[j++] = 0x02;
                 buffer[j++] = track[i].key;
                 buffer[j++] = track[i].scale;
-                eventProcessed = true;
+                continue;
             }
             // Time Signature
-            if (type == 255 && subtype == 88) {
+            if (track[i].isTimeSignature()) {
                 buffer[j++] = 0xFF;
                 buffer[j++] = 0x58;
                 buffer[j++] = 0x04;
-                buffer[j++] = param1;
-                buffer[j++] = param2;
-                buffer[j++] = param3;
-                buffer[j++] = param4;
-                eventProcessed = true;
+                buffer[j++] = track[i].param1;
+                buffer[j++] = track[i].param2;
+                buffer[j++] = track[i].param3;
+                buffer[j++] = track[i].param4;
+                continue;
             }
             // End of Track
-            if (type == 255 && subtype == 47) {
+            if (track[i].isEndOfTrack()) {
                 buffer[j++] = 0xFF;
                 buffer[j++] = 0x2F;
                 buffer[j++] = 0x00;
-                eventProcessed = true;
+                continue;
             }
-            if (!eventProcessed) {
-                j -= deltaLength;
-            }
+            //We ignore this event
+            j -= deltaLength;           
         };
         //End of track
         // Now that we know the track length, save it

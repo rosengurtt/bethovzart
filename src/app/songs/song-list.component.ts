@@ -77,14 +77,10 @@ export class SongListComponent implements OnInit, OnDestroy {
         if (!this.uploadedFile) {
             return;
         }
-
         try {
-        console.log("entro al try");
             result = await this._fileUploadService.upload(this.uploadUrl, this.uploadedFile);
         } catch (error) {
-            console.log(error)
         }
-        console.log(result);
         this.uploadResult = result.Result;
         this.selectedFileName = '';
     }
