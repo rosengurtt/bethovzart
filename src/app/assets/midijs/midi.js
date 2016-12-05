@@ -189,13 +189,13 @@
                 source.connect(context.destination); // connect the source to the context's destination (the speakers)
                 start_time = context.currentTime;
                 MIDIjs.message_callback("Playing shit ...");
-                RaiseEventPlayStarted();
+                RaiseEvent('PlayStarted');
             }
         }
         request.send();
     }
-    function RaiseEventPlayStarted() {
-        var event = new Event('PlayStarted');
+    function RaiseEvent(eventName) {
+        var event = new Event(eventName);
         var midiControlsElement = document.getElementById("midiPlayControls");
         midiControlsElement.dispatchEvent(event);
     }
@@ -279,7 +279,7 @@
             source.connect(context.destination); // connect the source to the context's destination (the speakers)
             start_time = context.currentTime;
             MIDIjs.message_callback("Playing shit ...");
-            RaiseEventPlayStarted();
+            RaiseEvent('PlayStarted');
         }
     }
 

@@ -16,19 +16,19 @@ declare var MIDIjs: any;
     selector: "play-controls",
     template: `
         <div >       
-        <button type="button" class="btn btn-danger">
+        <button type="button" class="btn btn-danger" (click)="goToBeginning()">
             <span class="glyphicon glyphicon-backward"></span>&nbsp;
         </button>
         <button type="button" class="btn btn-danger" (click)="playSong()">
             <span class="glyphicon glyphicon-play"></span>&nbsp;
         </button>
-        <button type="button" class="btn btn-danger" >
+        <button type="button" class="btn btn-danger" (click)="pauseSong()">
             <span class="glyphicon glyphicon-pause"></span>&nbsp;
         </button>
         <button type="button" class="btn btn-danger" (click)="stopSong()">
             <span class="glyphicon glyphicon-stop"></span>&nbsp;
         </button>
-        <button type="button" class="btn btn-danger">
+        <button type="button" class="btn btn-danger" (click)="goToEnd()">
             <span class="glyphicon glyphicon-forward"></span>&nbsp;
         </button>
         <div id="midiPlayControls" (PlayStarted) = MidiSoundStarted()>
@@ -61,6 +61,7 @@ export class PlayControlsComponent implements OnChanges {
     @Input() selectedSongId: string;
     mouseDown: boolean = false;
     isPlaying: boolean = false;
+    loadFinished: boolean;
 
     constructor(private _songService: SongRepositoryService,
         private _midi2JsonService: Midi2JsonService,
@@ -70,12 +71,14 @@ export class PlayControlsComponent implements OnChanges {
 
 
     async ngOnChanges(changes: { [propKey: string]: SimpleChange }) {
+        this.loadFinished = false;
         for (let propName in changes) {
             let changedProp = changes[propName];
             let from = JSON.stringify(changedProp.previousValue);
             let to = JSON.stringify(changedProp.currentValue);
             if (propName == "selectedSongId" && to !== "")
                 this.GetSongData();
+            this.loadFinished = true;
         }
     }
     async GetSongData() {
@@ -96,12 +99,41 @@ export class PlayControlsComponent implements OnChanges {
         };
     }
     playSong() {
-        let songPartToPlay: ArrayBuffer = this._audioControlsService.GetSongBytesFromStartingPosition();
-        // this.download("midifile.txt", songPartToPlay);
-        MIDIjs.play(songPartToPlay);
-        this.isPlaying = true;
+        if (this.loadFinished) {
+            let songPartToPlay: ArrayBuffer = this._audioControlsService.GetSongBytesFromStartingPosition();
+            // this.download("midifile.txt", songPartToPlay);
+            MIDIjs.play(songPartToPlay);
+            this.isPlaying = true;
+        }
     }
 
+    pauseSong() {
+        if (this.isPlaying) {
+            this._songDisplayService.songPaused();
+            this._audioControlsService.songPaused()
+            MIDIjs.stop();
+            this.isPlaying = false;
+        }
+    }
+    stopSong() {
+        if (this.isPlaying) {
+            this._songDisplayService.songStopped();
+            this._audioControlsService.songStopped()
+            MIDIjs.stop();
+            this.isPlaying = false;
+        }
+    }
+
+    goToBeginning() {
+        if (this.loadFinished && !this.isPlaying) {
+            this._audioControlsService.goToBeginning();
+        }
+    }
+    goToEnd() {
+        if (this.loadFinished && !this.isPlaying) {
+            this._audioControlsService.goToEnd();
+        }
+    }
     //used for debugging. Allows to save buffer to disk
     private download(filename, buffer) {
         let base64encoded = Binary2base64.convert(buffer);
@@ -117,32 +149,26 @@ export class PlayControlsComponent implements OnChanges {
         document.body.removeChild(element);
     }
 
-    stopSong() {
-        if (this.isPlaying) {
-            this._songDisplayService.songStopped();
-            this._audioControlsService.songStopped()
-            MIDIjs.stop();
-        }
-    }
- 
     public ProgressControlClicked(evt: MouseEvent) {
-            console.log("entre a mousedown")
         this.mouseDown = true;
     }
-    @HostListener('mousemove', ['$event'])
+
     public MoveControl(evt: MouseEvent) {
-        if (this.mouseDown) {
+        if (this.loadFinished && this.mouseDown) {
             this._audioControlsService.MoveControl(evt);
         }
     }
-    @HostListener('mouseup')
+
     public MouseUp() {
         this.mouseDown = false;
     }
     @HostListener('PlayStarted')
     MidiSoundStarted() {
-        this._songDisplayService.songStarted();
-        this._audioControlsService.songStarted()
+        this._audioControlsService.songStarted();
+    }
+    @HostListener('PlayFinished') top
+    MidiSoundFinished() {
+        this._audioControlsService.songStopped();
     }
 }
 

@@ -3,6 +3,8 @@ import { Midi2JsonService } from '../midi/midi2json.service'
 import { songJson } from '../midi/song-json';
 import { SongDisplayService } from './song-display.service'
 
+declare var MIDIjs: any;
+
 @Injectable()
 export class AudioControlsService {
 
@@ -53,7 +55,7 @@ export class AudioControlsService {
         this.progressControlPositionCurrentInPixels = 0;
     }
     public songStarted() {
-       this.progressControlPositionAtStartInTicks = this.progressControlPositionCurrentInTicks;
+        this.progressControlPositionAtStartInTicks = this.progressControlPositionCurrentInTicks;
         this.progressControlPositionAtStartInPixels = this.progressControlPositionCurrentInPixels;
         let d: Date = new Date();
         this.timeStarted = d.getTime();
@@ -61,12 +63,30 @@ export class AudioControlsService {
         this.timer = setInterval(function () {
             self.UpdateProgress();
         }, 1000);
+        this._songDisplayService.songStarted();
+    }
+
+    public songPaused() {
+        clearTimeout(this.timer);
+    }
+
+    public goToBeginning() {
+        this.positionProgressControlInPixels(0);
+    }
+    public goToEnd() {
+        this.positionProgressControlInPixels(this.usableWidthOfProgressControlBar);
     }
     public songStopped() {
         clearTimeout(this.timer);
         this.positionProgressControlInPixels(0);
+        this._songDisplayService.songStopped();
     }
     private UpdateProgress() {
+        if (this.progressControlPositionCurrentInPixels === this.usableWidthOfProgressControlBar) {
+            this.songStopped();
+            this._songDisplayService.songStopped();
+            return;
+        }
         let d: Date = new Date();
         let elapsedTimeInSeconds: number = (d.getTime() - this.timeStarted) / 1000;
         let ticksSinceStartedToPlay: number = elapsedTimeInSeconds * this.song.durationInTicks / this.song.durationInSeconds;

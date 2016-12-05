@@ -5,6 +5,7 @@ import { trackRange } from '../midi/track-range';
 import { songJson } from '../midi/song-json';
 import { midiEvent } from '../midi/midi-event';
 
+
 @Injectable()
 export class SongDisplayService {
     song: songJson;
@@ -27,7 +28,7 @@ export class SongDisplayService {
 
 
     public async songDisplay(songData: songJson) {
-        this.song=songData;
+        this.song = songData;
         this.Initialize();
         let noTracks = this.song.notesTracks.length;
         for (let t = 0; t < noTracks; t++) {
@@ -54,21 +55,18 @@ export class SongDisplayService {
 
     public songStarted() {
         this.CreateProgressBar();
-        // let d: Date = new Date();
-        // this.timeStarted = d.getTime();
-        // let self = this;
-        // this.timer = setInterval(function () {
-        //     self.UpdateProgress();
-        // }, 1000);
+    }
+    public songPaused() {
+        if (document.getElementById('progressBar')) {
+            this.svgSongDisplayBox.removeChild(this.progressBar);
+        }
     }
     public songStopped() {
-    //    clearTimeout(this.timer);
-        this.svgSongDisplayBox.removeChild(this.progressBar);
+        if (document.getElementById('progressBar')) {
+            this.svgSongDisplayBox.removeChild(this.progressBar);
+        }
     }
-    public UpdateProgress(x:number) {
-        // let d: Date = new Date();
-        // let elapsedTime = d.getTime() - this.timeStarted;
-        // let controlX = ((elapsedTime / 1000) / this.song.durationInSeconds) * this.svgBoxWidth + 9;
+    public UpdateProgress(x: number) {
         this.progressBar.setAttributeNS(null, "x1", x);
         this.progressBar.setAttributeNS(null, "x2", x);
     }
@@ -80,6 +78,7 @@ export class SongDisplayService {
         this.progressBar.setAttributeNS(null, "y1", 0);
         this.progressBar.setAttributeNS(null, "y2", this.svgBoxHeight);
         this.progressBar.setAttributeNS(null, "style", "stroke:rgb(200,0,0)");
+        this.progressBar.setAttributeNS(null, "id", "progressBar");
         this.svgSongDisplayBox.appendChild(this.progressBar);
     }
 
