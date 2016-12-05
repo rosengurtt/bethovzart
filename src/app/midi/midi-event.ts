@@ -17,23 +17,23 @@ export class midiEvent {
     scale?: number;
 
     public cloneEvent(): midiEvent {
-        let returnValue=new midiEvent();
-            returnValue.delta = this.delta;
-            returnValue.ticksSinceStart = this.ticksSinceStart;
-            returnValue.index = this.index;
-            returnValue.length = this.length;
-            returnValue.param1 = this.param1;
-            returnValue.param2 = this.param2;
-            returnValue.param3 = this.param3;
-            returnValue.param4 = this.param4;
-            returnValue.subtype = this.subtype;
-            returnValue.type = this.type;
-            returnValue.data = this.data;
-            returnValue.tempo = this.tempo;
-            returnValue.tempoBPM = this.tempoBPM;
-            returnValue.channel = this.channel;
-            returnValue.key = this.key;
-            returnValue.scale = this.scale;
+        let returnValue = new midiEvent();
+        returnValue.delta = this.delta;
+        returnValue.ticksSinceStart = this.ticksSinceStart;
+        returnValue.index = this.index;
+        returnValue.length = this.length;
+        returnValue.param1 = this.param1;
+        returnValue.param2 = this.param2;
+        returnValue.param3 = this.param3;
+        returnValue.param4 = this.param4;
+        returnValue.subtype = this.subtype;
+        returnValue.type = this.type;
+        returnValue.data = this.data;
+        returnValue.tempo = this.tempo;
+        returnValue.tempoBPM = this.tempoBPM;
+        returnValue.channel = this.channel;
+        returnValue.key = this.key;
+        returnValue.scale = this.scale;
         return returnValue;
     }
     public isNote(): boolean {
@@ -45,12 +45,19 @@ export class midiEvent {
     public isNoteOff(): boolean {
         return (this.type === 8 && this.subtype === 8);
     }
-    public isTempo(): boolean {
-        return (this.type === 255 && this.subtype === 81);
-    }
+
     public isPatchChange(): boolean {
         return (this.type === 8 && this.subtype === 12)
     }
+    public isPressureChange(): boolean {
+   return (this.type === 8 && this.subtype === 13)
+    }
+    public isPitchBend(): boolean {
+        return (this.type === 8 && this.subtype === 14);
+    }
+    public isModulation(): boolean {
+        return (this.type === 8 && this.subtype === 11 && this.param1 === 1);
+    }   
     public isVolumeChange(): boolean {
         return (this.type === 8 && this.subtype === 11 && this.param1 === 7);
     }
@@ -59,6 +66,10 @@ export class midiEvent {
     }
     public isResetAllControllers(): boolean {
         return (this.type === 8 && this.subtype === 11 && this.param1 === 121);
+    }
+
+    public isTempo(): boolean {
+        return (this.type === 255 && this.subtype === 81);
     }
     public isEffect1Depht(): boolean {
         return (this.type === 8 && this.subtype === 11 && this.param1 === 91);
@@ -77,5 +88,8 @@ export class midiEvent {
     }
     public isEndOfTrack(): boolean {
         return (this.type === 255 && this.subtype === 47);
+    }
+    public isTrackName(): boolean {
+        return (this.type === 255 && this.subtype === 3);
     }
 }

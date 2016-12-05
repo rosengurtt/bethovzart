@@ -114,14 +114,28 @@ export class Midi2JsonService {
                 buffer[j++] = track[i].param2;
                 continue;
             }
-            //note off
+            // note off
             if (track[i].isNoteOff()) {
                 buffer[j++] = 0x80 | track[i].channel;
                 buffer[j++] = track[i].param1;
                 buffer[j++] = track[i].param2;
                 continue;
             }
-            //tempo
+            // pressure change
+            //  if (track[i].isPressureChange()) {
+            //      buffer[j++] = 0xD0 | track[i].channel;
+            //      buffer[j++] = track[i].param1;
+            //      buffer[j++] = track[i].param2;
+            //      continue;
+            // }
+            // bending
+            if (track[i].isPitchBend()) {
+                buffer[j++] = 0xE0 | track[i].channel;
+                buffer[j++] = track[i].param1;
+                buffer[j++] = track[i].param2;
+                continue;
+            }
+            // tempo
             if (track[i].isTempo()) {
                 buffer[j++] = 0xFF;
                 buffer[j++] = 0x51;
@@ -134,6 +148,13 @@ export class Midi2JsonService {
                 if (tempo > 0x100)
                     buffer[j++] = (tempo >> 8) & 0xFF;
                 buffer[j++] = tempo & 0xFF;
+                continue;
+            }
+            //Modulation
+            if (track[i].isModulation()) {
+                buffer[j++] = 0xB0 | track[i].channel;
+                buffer[j++] = track[i].param1;
+                buffer[j++] = track[i].param2;
                 continue;
             }
             // Patch change (instrument)
@@ -213,7 +234,7 @@ export class Midi2JsonService {
                 continue;
             }
             //We ignore this event
-            j -= deltaLength;           
+            j -= deltaLength;
         };
         //End of track
         // Now that we know the track length, save it
