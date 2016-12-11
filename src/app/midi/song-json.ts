@@ -10,6 +10,7 @@ export class songJson {
     ticksPerBeat: number;
     tracks: midiEvent[][];
     private _instruments: instrument[][]; // each track may have different instruments
+    private _trackNames: string[]; // The name of the track when defined with a FF 03 event
     private _durationInTicks: number = -1;
     private _notesTracks: notesTrack[];
     private _durationInSeconds: number = -1;
@@ -40,6 +41,35 @@ export class songJson {
                 }
             }
             returnObject.push(instrumentsInThisTrack);
+        }
+        return returnObject;
+    }
+    get trackNames(): string[] {
+        if (!this._trackNames) {
+            this._trackNames = this.getTrackNames();
+        }
+        return this._trackNames;
+    }
+    private bin2string(array):string {
+        var result = "";
+        for (var i = 0; i < array.length; ++i) {
+            result += (String.fromCharCode(array[i]));
+        }
+        return result;
+    }
+    private getTrackNames(): string[] {
+        const binArrayToString = array => array.map(byte => String.fromCharCode(parseInt(byte, 2))).join('')
+        let returnObject: string[] = [];
+        for (let i = 0; i < this.tracks.length; i++) {
+            let thisTrackName: string = '';
+            for (let j = 0; j < this.tracks[i].length; j++) {
+                let event: midiEvent = this.tracks[i][j];
+                if (event.isTrackName()) {
+                    thisTrackName = this.bin2string(event.data);
+                    break;
+                }
+            }
+            returnObject.push(thisTrackName);
         }
         return returnObject;
     }
@@ -75,18 +105,18 @@ export class songJson {
         return this._tempoEvents;
     }
 
-    //Returns the lowest and highest pitches in a track
+    // Returns the lowest and highest pitches in a track
     private getTrackRange(t: trackNote[]): trackRange {
         let returnValue = new trackRange(500, 0);
         for (let i = 0; i < t.length; i++) {
             let pitch = t[i].pitch;
-            if (pitch < returnValue.minPitch) returnValue.minPitch = pitch;
-            if (pitch > returnValue.maxPitch) returnValue.maxPitch = pitch;
+            if (pitch < returnValue.minPitch) { returnValue.minPitch = pitch; }
+            if (pitch > returnValue.maxPitch) { returnValue.maxPitch = pitch; }
         }
         return returnValue;
     }
 
-    //Returns the number of ticks in the whole song
+    // Returns the number of ticks in the whole song
     private getSongDurationInTicks(): number {
         let duration: number = 0;
         for (let i = 0; i < this._notesTracks.length; i++) {
@@ -138,7 +168,9 @@ export class songJson {
             let trackNotes = this.getNotes(this.tracks[k]);
             if (trackNotes.length > 0) {
                 let range: trackRange = this.getTrackRange(trackNotes);
-                musicTracks.push(new notesTrack(trackNotes, range))
+                let instrument: instrument = this.instruments[k][0];
+                let trackName: string = this.trackNames[k];
+                musicTracks.push(new notesTrack(trackNotes, range, instrument, trackName))
             }
         }
         return musicTracks;

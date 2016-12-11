@@ -12,16 +12,7 @@ declare var MIDIjs: any;
 
 @Component({
     selector: "song-details",
-    template: `
-        <div *ngIf='song'>
-        <span>{{song.name}} - {{song._id}}</span>
-        <play-controls [selectedSongId]="selectedSongId"></play-controls>
-        </div>
-        <div>
-            <svg id="svgBox" width="100%" height="100%" style="border: 1px solid black; background-color:white" xmlns="http://www.w3.org/2000/svg">
-            </svg>
-        </div>
-    `
+    templateUrl:'./song-details.component.html'
 })
 export class SongDetailsComponent implements OnChanges {
     song: Song;
