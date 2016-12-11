@@ -3,9 +3,7 @@ import { Component, Input, OnDestroy, OnChanges, SimpleChange, HostListener } fr
 import { Song } from './song';
 import { SongRepositoryService } from './song-repository.service';
 import { Midi2JsonService } from '../midi/midi2json.service';
-import { IMusicStyle } from './music-style';
 import { Band } from './band';
-import { SongSearchService } from './song-search.service';
 import { SongDisplayService } from '../graphics/song-display.service';
 import { AudioControlsService } from '../graphics/audio-controls.service'
 import { Binary2base64 } from '../shared/binary2base64';
@@ -13,47 +11,8 @@ import { Binary2base64 } from '../shared/binary2base64';
 declare var MIDIjs: any;
 
 @Component({
-    selector: "play-controls",
-    template: `
-        <div >       
-        <button type="button" class="btn btn-danger" (click)="goToBeginning()">
-            <span class="glyphicon glyphicon-backward"></span>&nbsp;
-        </button>
-        <button type="button" class="btn btn-danger" (click)="playSong()">
-            <span class="glyphicon glyphicon-play"></span>&nbsp;
-        </button>
-        <button type="button" class="btn btn-danger" (click)="pauseSong()">
-            <span class="glyphicon glyphicon-pause"></span>&nbsp;
-        </button>
-        <button type="button" class="btn btn-danger" (click)="stopSong()">
-            <span class="glyphicon glyphicon-stop"></span>&nbsp;
-        </button>
-        <button type="button" class="btn btn-danger" (click)="goToEnd()">
-            <span class="glyphicon glyphicon-forward"></span>&nbsp;
-        </button>
-        <div id="midiPlayControls" (PlayStarted) = MidiSoundStarted()>
-            <svg id="svgPlayControlsBox" width="100%" height="30" 
-                style="background-color:#272b30" (mouseout)='MouseUp()'
-                xmlns="http://www.w3.org/2000/svg">
-                <rect x="0" y="13" width="100%" height="6" 
-                fill="url(#Gradient1)" />               
-                <circle id="progressControl" fill="black" cy="16" r="12" 
-                     class="draggable" (mousedown)='ProgressControlClicked($event)'
-                     (mousemove)='MoveControl($event)' (mouseup)='MouseUp()'
-                     fill="url(#Gradient2)"/> 
-                <defs>
-                    <linearGradient id="Gradient1" x1="0" x2="0" y1="0" y2="1">
-                        <stop offset="0%" stop-color="#A40"/>
-                        <stop offset="100%" stop-color="#AA3"/>
-                    </linearGradient>     
-                    <radialGradient id="Gradient2">
-                        <stop offset="0%" stop-color="#AA3"/>
-                        <stop offset="100%" stop-color="#A40"/>
-                    </radialGradient>     
-                </defs>  
-            </svg>
-        </div>
-    `,
+    selector: 'play-controls',
+    templateUrl: './play-controls.component.html',
     styles: ['.draggable {cursor: move; }']
 })
 export class PlayControlsComponent implements OnChanges {
@@ -76,13 +35,13 @@ export class PlayControlsComponent implements OnChanges {
             let changedProp = changes[propName];
             let from = JSON.stringify(changedProp.previousValue);
             let to = JSON.stringify(changedProp.currentValue);
-            if (propName == "selectedSongId" && to !== "")
+            if (propName == 'selectedSongId' && to !== '')
                 this.GetSongData();
             this.loadFinished = true;
         }
     }
     async GetSongData() {
-        if (this.selectedSongId && this.selectedSongId !== "") {
+        if (this.selectedSongId && this.selectedSongId !== '') {
             let songData: any = await (this._songService.getSongById(this.selectedSongId));
 
             this.song = new Song();
@@ -101,7 +60,7 @@ export class PlayControlsComponent implements OnChanges {
     playSong() {
         if (this.loadFinished) {
             let songPartToPlay: ArrayBuffer = this._audioControlsService.GetSongBytesFromStartingPosition();
-            // this.download("midifile.txt", songPartToPlay);
+           // this.download("midifile.txt", songPartToPlay);
             MIDIjs.play(songPartToPlay);
             this.isPlaying = true;
         }
@@ -134,10 +93,30 @@ export class PlayControlsComponent implements OnChanges {
             this._audioControlsService.goToEnd();
         }
     }
-    //used for debugging. Allows to save buffer to disk
+    zoomIn() {
+        this._songDisplayService.changeZoom(1);
+    }
+
+    zoomOut() {
+        this._songDisplayService.changeZoom(-1);
+    }
+    moveLeft() {
+        this._songDisplayService.moveWindow(-1, 0);
+    }
+    moveRight() {
+        this._songDisplayService.moveWindow(1, 0);
+    }
+    moveUp() {
+        this._songDisplayService.moveWindow(0, -1);
+    }
+    moveDown() {
+        this._songDisplayService.moveWindow(0, 1);
+    }
+
+    // used for debugging. Allows to save buffer to disk
     private download(filename, buffer) {
         let base64encoded = Binary2base64.convert(buffer);
-        var element = document.createElement('a');
+        let element = document.createElement('a');
         element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(base64encoded));
         element.setAttribute('download', filename);
 
@@ -166,7 +145,7 @@ export class PlayControlsComponent implements OnChanges {
     MidiSoundStarted() {
         this._audioControlsService.songStarted();
     }
-    @HostListener('PlayFinished') top
+    @HostListener('PlayFinished')
     MidiSoundFinished() {
         this._audioControlsService.songStopped();
     }

@@ -2,12 +2,14 @@ import { midiEvent } from './midi-event';
 import { notesTrack } from './notes-track';
 import { trackRange } from './track-range';
 import { trackNote } from './track-note';
+import { instrument } from './midi-codes/instrument.enum'
 
 
 export class songJson {
     format: number;
     ticksPerBeat: number;
     tracks: midiEvent[][];
+    private _instruments: instrument[][]; // each track may have different instruments
     private _durationInTicks: number = -1;
     private _notesTracks: notesTrack[];
     private _durationInSeconds: number = -1;
@@ -18,6 +20,28 @@ export class songJson {
         this.format = format;
         this.ticksPerBeat = ticksPerBeat;
         this.tracks = tracks;
+    }
+
+    get instruments(): instrument[][] {
+        if (!this._instruments) {
+            this._instruments = this.getInstruments();
+        }
+        return this._instruments;
+
+    }
+    private getInstruments(): instrument[][] {
+        let returnObject: instrument[][] = [];
+        for (let i = 0; i < this.tracks.length; i++) {
+            let instrumentsInThisTrack: instrument[] = [];
+            for (let j = 0; j < this.tracks[i].length; j++) {
+                let event: midiEvent = this.tracks[i][j];
+                if (event.isPatchChange()) {
+                    instrumentsInThisTrack.push(event.param1)
+                }
+            }
+            returnObject.push(instrumentsInThisTrack);
+        }
+        return returnObject;
     }
 
     get tracksCount(): number {
@@ -152,7 +176,7 @@ export class songJson {
 
     // Returns a new song that is a slice of the current song, starting from a specific tick
     public getSliceStartingFromTick(tick: number): songJson {
-        if (tick===0){
+        if (tick === 0) {
             return this;
         }
         let slice: songJson = new songJson(this.format, this.ticksPerBeat, null);

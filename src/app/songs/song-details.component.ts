@@ -19,11 +19,6 @@ declare var MIDIjs: any;
         </div>
         <div>
             <svg id="svgBox" width="100%" height="100%" style="border: 1px solid black; background-color:white" xmlns="http://www.w3.org/2000/svg">
-                <defs>
-                    <circle id="note" fill="black" r="1" />
-                    <line id="separator" x1="0"  style="stroke:rgb(200,180,170);stroke-width:1" />
-                    <line id="progressBar" width="2" style="stroke:rgb(200,0,0);" />
-                </defs>
             </svg>
         </div>
     `

@@ -1,0 +1,57 @@
+<div>
+    <button type="button" class="btn btn-danger" (click)="goToBeginning()">
+            <span class="glyphicon glyphicon-backward"></span>&nbsp;
+        </button>
+    <button type="button" class="btn btn-danger" (click)="playSong()">
+            <span class="glyphicon glyphicon-play"></span>&nbsp;
+        </button>
+    <button type="button" class="btn btn-danger" (click)="pauseSong()">
+            <span class="glyphicon glyphicon-pause"></span>&nbsp;
+        </button>
+    <button type="button" class="btn btn-danger" (click)="stopSong()">
+            <span class="glyphicon glyphicon-stop"></span>&nbsp;
+        </button>
+    <button type="button" class="btn btn-danger" (click)="goToEnd()">
+            <span class="glyphicon glyphicon-forward"></span>&nbsp;
+        </button>
+
+    <span>&nbsp;&nbsp;&nbsp;</span>
+    <button type="button" class="btn btn-danger" (click)="zoomOut()">
+            <span class="glyphicon glyphicon-zoom-out"></span>
+        </button>
+    <button type="button" class="btn btn-danger" (click)="zoomIn()">
+            <span class="glyphicon glyphicon-zoom-in"></span>&nbsp;
+        </button>
+    <span>&nbsp;&nbsp;&nbsp;</span>
+    <button type="button" class="btn btn-danger" (click)="moveLeft()">
+            <span class="glyphicon glyphicon-arrow-left"></span>
+        </button>
+    <button type="button" class="btn btn-danger" (click)="moveRight()">
+            <span class="glyphicon glyphicon-arrow-right"></span>
+        </button>
+    <button type="button" class="btn btn-danger" (click)="moveDown()">
+            <span class="glyphicon glyphicon-arrow-down"></span>
+        </button>
+    <button type="button" class="btn btn-danger" (click)="moveUp()">
+            <span class="glyphicon glyphicon-arrow-up"></span>
+        </button>
+</div>
+<div id="midiPlayControls" (PlayStarted)=MidiSoundStarted()>
+    <svg id="svgPlayControlsBox" width="100%" height="30" style="background-color:#272b30
+       " (mouseout)='MouseUp()' xmlns="http://www.w3.org/2000/svg">
+        <rect x="0" y="13" width="100%" height="6" fill="url(#Gradient1)" />
+        <circle id="progressControl" fill="black" cy="16" r="12" class="draggable" 
+            (mousedown)='ProgressControlClicked($event)' (mousemove)='MoveControl($event)'
+            (mouseup)='MouseUp()' fill="url(#Gradient2)" />
+        <defs>
+            <linearGradient id="Gradient1" x1="0" x2="0" y1="0" y2="1">
+                <stop offset="0%" stop-color="#A40" />
+                <stop offset="100%" stop-color="#AA3" />
+            </linearGradient>
+            <radialGradient id="Gradient2">
+                <stop offset="0%" stop-color="#AA3" />
+                <stop offset="100%" stop-color="#A40" />
+            </radialGradient>
+        </defs>
+    </svg>
+</div>

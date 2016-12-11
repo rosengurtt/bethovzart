@@ -122,12 +122,12 @@ export class Midi2JsonService {
                 continue;
             }
             // pressure change
-            //  if (track[i].isPressureChange()) {
-            //      buffer[j++] = 0xD0 | track[i].channel;
-            //      buffer[j++] = track[i].param1;
-            //      buffer[j++] = track[i].param2;
-            //      continue;
-            // }
+            if (track[i].isPressureChange()) {
+                buffer[j++] = 0xD0 | track[i].channel;
+                buffer[j++] = track[i].param1;
+                buffer[j++] = track[i].param2;
+                continue;
+            }
             // bending
             if (track[i].isPitchBend()) {
                 buffer[j++] = 0xE0 | track[i].channel;
