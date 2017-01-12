@@ -1,4 +1,4 @@
-import { NgModule } from '@angular/core';
+import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { RouterModule } from '@angular/router';
 
 import { SongListComponent } from './song-list.component';
@@ -8,7 +8,8 @@ import { PlayControlsComponent } from './play-controls.component';
 import { SongRepositoryService } from './song-repository.service';
 import { Midi2JsonService } from '../midi/midi2json.service';
 import { SongDisplayService } from '../graphics/song-display.service';
-import { AudioControlsService } from '../graphics/audio-controls.service'
+import { AudioControlsService } from '../graphics/audio-controls.service';
+import { MidiFileCheckerService } from '../midi/midi-file-checker.service';
 
 import { SongFilterPipe } from './song-filter.pipe';
 
@@ -33,7 +34,9 @@ import { FileUploadService } from '../shared/file-upload.service';
     FileUploadService,
     Midi2JsonService,
     SongDisplayService,
-    AudioControlsService
-  ]
+    AudioControlsService,
+    MidiFileCheckerService
+  ],
+  schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
 export class SongModule { }

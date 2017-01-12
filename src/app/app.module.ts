@@ -1,5 +1,5 @@
 import { BrowserModule } from '@angular/platform-browser';
-import { NgModule } from '@angular/core';
+import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { HttpModule } from '@angular/http';
 import { RouterModule } from '@angular/router';
@@ -33,8 +33,9 @@ import { ReactiveFormsModule } from '@angular/forms';
     SongModule,
     ReactiveFormsModule
   ],
-  providers: [FileUploadService, SongSearchService, 
-        { provide: APP_BASE_HREF, useValue: "/" }],
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
+  providers: [FileUploadService, SongSearchService,
+    { provide: APP_BASE_HREF, useValue: '/' }],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

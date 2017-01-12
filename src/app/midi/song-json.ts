@@ -50,7 +50,7 @@ export class songJson {
         }
         return this._trackNames;
     }
-    private bin2string(array):string {
+    private bin2string(array): string {
         var result = "";
         for (var i = 0; i < array.length; ++i) {
             result += (String.fromCharCode(array[i]));
@@ -207,13 +207,13 @@ export class songJson {
     }
 
     // Returns a new song that is a slice of the current song, starting from a specific tick
-    public getSliceStartingFromTick(tick: number): songJson {
-        if (tick === 0) {
-            return this;
-        }
+    public getSliceStartingFromTick(tick: number, mutedTracks: number[] = []): songJson {
         let slice: songJson = new songJson(this.format, this.ticksPerBeat, null);
         slice.tracks = [];
         for (let i: number = 0; i < this.tracks.length; i++) {
+            if (mutedTracks.indexOf(i) > -1) {
+                continue;
+            }
             let track: midiEvent[] = this.tracks[i];
             let sliceTrack: midiEvent[] = [];
             let discarded: midiEvent[] = [];

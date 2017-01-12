@@ -47,5 +47,8 @@ export class SongDetailsComponent implements OnChanges {
             this.song.midiFile = await (this._songService.getSongMidiById(this.selectedSongId));
         };
     }
+    public informationClick(event){
+        this._songDisplayService.InformationAreaClicked(event.offsetX, event.offsetY);
+    }
 }
 

@@ -102,7 +102,8 @@ export class AudioControlsService {
     // Since the user can move the progress control slide to start the song from any
     // place, we need to send to the midi driver only the note bytes from this point in time
     public GetSongBytesFromStartingPosition(): ArrayBuffer {
-        return this._midi2jsonService.getMidiBytes(this.song.getSliceStartingFromTick(this.progressControlPositionCurrentInTicks));
+        let mutedTracks: number[] = this._songDisplayService.GetMutedTracks();
+        return this._midi2jsonService.getMidiBytes(this.song.getSliceStartingFromTick(this.progressControlPositionCurrentInTicks, mutedTracks));
     }
 
     private GetAbsXofElement(element: any) {

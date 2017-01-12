@@ -1,15 +1,12 @@
 import { Injectable } from '@angular/core';
 import { songJson } from './song-json';
 import { midiEvent } from './midi-event';
-var MIDIFile: any = require('midifile');
-
-
-
+let MIDIFile: any = require('midifile');
 
 @Injectable()
 export class Midi2JsonService {
 
-    //converts from binary midi to json version
+    // converts from binary midi to json version
     public async getMidiObject(readBuffer: ArrayBuffer): Promise<songJson> {
         return new Promise((resolve: (songJson) => void, reject) => {
             // Creating the MIDIFile instance
@@ -19,7 +16,7 @@ export class Midi2JsonService {
             let returnObject = new songJson(format, ticksPerBeat, []);
             let tracksCount: number = midiFile.header.getTracksCount();
 
-            for (var i = 0; i < tracksCount; i++) {
+            for (let i = 0; i < tracksCount; i++) {
                 returnObject.tracks[i] = this.addTimeSinceBeginningField(midiFile.getTrackEvents(i));
             }
             resolve(returnObject);
@@ -27,7 +24,7 @@ export class Midi2JsonService {
     };
 
     private addTimeSinceBeginningField(track: any): midiEvent[] {
-        let timeSinceBeginning: number = 0;
+        let timeSinceBeginning = 0;
         let returnValue: midiEvent[] = [];
         for (let i = 0; i < track.length; i++) {
             timeSinceBeginning += track[i].delta;
@@ -53,18 +50,18 @@ export class Midi2JsonService {
         return returnValue;
     }
 
-    //converts from json version to binary midi
+    // converts from json version to binary midi
     public getMidiBytes(midiObject: songJson) {
         let buffer = this.getMidiHeader(midiObject.tracks.length, midiObject.ticksPerBeat);
         for (let k = 0; k < midiObject.tracks.length; k++) {
-            var bufferTrack = this.getMidiTrackBytes(midiObject.tracks[k]);
+            let bufferTrack = this.getMidiTrackBytes(midiObject.tracks[k]);
             buffer = this.concatenateUint8Array(buffer, bufferTrack);
         };
         return buffer;
     }
 
     private getMidiHeader(tracks, ticksPerBeat): any {
-        var buffer = new Uint8Array(14);
+        let buffer = new Uint8Array(14);
         buffer[0] = 0x4D;
         buffer[1] = 0x54;
         buffer[2] = 0x68;
@@ -83,31 +80,34 @@ export class Midi2JsonService {
     }
 
     private getMidiTrackBytes(track: midiEvent[]): any {
-        var trackHeaderLength = 8;
-        var maxLength = track.length * 6 + 30;
-        var buffer = new Uint8Array(maxLength);
+        let trackHeaderLength = 8;
+        let maxLength = track.length * 6 + 30;
+        let buffer = new Uint8Array(maxLength);
         // Magic word of Midi File
         buffer[0] = 0x4D;
         buffer[1] = 0x54;
         buffer[2] = 0x72;
         buffer[3] = 0x6B;
-        var j = trackHeaderLength; //points to next index in buffer
+        let j = trackHeaderLength; // points to next index in buffer
         // bytes 4 to 7 is the length of the track that we still don't know
         for (let i = 0; i < track.length; i++) {
-            var deltaLength: number;
-            var delta: number = track[i].delta;
+            let deltaLength: number;
+            let delta: number = track[i].delta;
 
-            //Delta time calculation. Delta is written in groups of 7 bits, not bytes
-            var indexAtBeginningOfEvent = j;
-            if (delta > (0x80 * 0x80 * 0x80))
+            // Delta time calculation. Delta is written in groups of 7 bits, not bytes
+            let indexAtBeginningOfEvent = j;
+            if (delta > (0x80 * 0x80 * 0x80)) {
                 buffer[j++] = (delta >> 21) & 0x7F | 0x80;
-            if (delta > (0x80 * 0x80))
+            }
+            if (delta > (0x80 * 0x80)) {
                 buffer[j++] = (delta >> 14) & 0x7F | 0x80;
-            if (track[i].delta > 0x80)
+            }
+            if (track[i].delta > 0x80) {
                 buffer[j++] = (delta >> 7) & 0x7F | 0x80;
+            }
             buffer[j++] = delta & 0x7F;
             deltaLength = j - indexAtBeginningOfEvent;
-            //note on
+            // note on
             if (track[i].isNoteOn()) {
                 buffer[j++] = 0x90 | track[i].channel;
                 buffer[j++] = track[i].param1;
@@ -140,17 +140,20 @@ export class Midi2JsonService {
                 buffer[j++] = 0xFF;
                 buffer[j++] = 0x51;
                 buffer[j++] = 0x03;
-                var tempo = track[i].tempo;
-                if (tempo > (0x1000000))
+                let tempo = track[i].tempo;
+                if (tempo > (0x1000000)) {
                     buffer[j++] = (tempo >> 24) & 0xFF;
-                if (tempo > 0x10000)
+                }
+                if (tempo > 0x10000) {
                     buffer[j++] = (tempo >> 16) & 0xFF;
-                if (tempo > 0x100)
+                }
+                if (tempo > 0x100) {
                     buffer[j++] = (tempo >> 8) & 0xFF;
+                }
                 buffer[j++] = tempo & 0xFF;
                 continue;
             }
-            //Modulation
+            // Modulation
             if (track[i].isModulation()) {
                 buffer[j++] = 0xB0 | track[i].channel;
                 buffer[j++] = track[i].param1;
@@ -227,18 +230,18 @@ export class Midi2JsonService {
                 continue;
             }
             // End of Track
-            if (track[i].isEndOfTrack()) {
+            if (track[i].isEndOfTrack() && (i === track.length - 1)) {
                 buffer[j++] = 0xFF;
                 buffer[j++] = 0x2F;
                 buffer[j++] = 0x00;
                 continue;
             }
-            //We ignore this event
+            // We ignore this event
             j -= deltaLength;
         };
-        //End of track
+        // End of track
         // Now that we know the track length, save it
-        var trackLength = j - trackHeaderLength; //has to substract 8 because the length is measured not from
+        let trackLength = j - trackHeaderLength; //has to substract 8 because the length is measured not from
         // the beginning of the track, but from the first byte after
         // the length bytes
         buffer[4] = this.getNthByteOfInteger(trackLength, 3);
@@ -257,16 +260,16 @@ export class Midi2JsonService {
     }
 
     private toArrayBuffer(buffer) {
-        var ab = new ArrayBuffer(buffer.length);
-        var view = new Uint8Array(ab);
-        for (var i = 0; i < buffer.length; ++i) {
+        let ab = new ArrayBuffer(buffer.length);
+        let view = new Uint8Array(ab);
+        for (let i = 0; i < buffer.length; ++i) {
             view[i] = buffer[i];
         }
         return ab;
     };
 
     private concatenateUint8Array(a, b) {
-        var c = new Int8Array(a.length + b.length);
+        let c = new Int8Array(a.length + b.length);
         c.set(a);
         c.set(b, a.length);
         return c;

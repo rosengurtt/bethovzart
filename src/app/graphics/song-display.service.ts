@@ -32,6 +32,8 @@ export class SongDisplayService {
     colorProgressBar: string = 'rgb(200,0,0)';
     noteDotRadio: number = 1;
 
+    mutedTracks: number[];
+
     constructor() {
     }
 
@@ -67,6 +69,7 @@ export class SongDisplayService {
         this.scrollDisplacementX = 0;
         this.scrollDisplacementY = 0;
         this.songIsPlaying = false;
+        this.mutedTracks = [];
     }
 
     //------------------------------------------------------------------------------
@@ -155,6 +158,17 @@ export class SongDisplayService {
             this.progressBar.setAttributeNS(null, 'visibility', 'hidden');
         }
     }
+    public InformationAreaClicked(x: number, y: number) {
+        let trackClicked = Math.floor(y / (this.trackHeight + this.separationBetweenTracks));
+        let index = this.mutedTracks.indexOf(trackClicked);
+        if (index > -1) {
+            this.mutedTracks.splice(index, 1);
+        }
+        else {
+            this.mutedTracks.push(trackClicked);
+        }
+        console.log(this.mutedTracks);
+    }
 
     //------------------------------------------------------------------------------
     // Utilities for drawing
@@ -198,6 +212,14 @@ export class SongDisplayService {
         this.informationAreaBox.appendChild(text);
         return text;
     }
+    private AddIcon(filePath: string, x: number, y: number) {
+        let use: any = document.createElementNS(this.svgns, 'use');
+        use.setAttributeNS(null, 'x', x);
+        use.setAttributeNS(null, 'y', y);
+        use.setAttributeNS('http://www.w3.org/2000/svg', 'href', filePath);
+        this.informationAreaBox.appendChild(use);
+        return use;
+    }
 
 
     // Draws everything in the svg box, given the zoom value and x/y discplacements
@@ -229,6 +251,8 @@ export class SongDisplayService {
 
             this.CreateText(trackInfo, 5, heightOfSeparator - this.trackHeight + 6,
                 'font-family:"Verdana";font-size:10')
+
+            this.AddIcon('./app/assets/svg/Mute_Icon.svg:#muteicon', 10, 10);
 
             // Add a line separating the tracks
             if (heightOfSeparator < this.staffAreaHeight) {
@@ -284,5 +308,10 @@ export class SongDisplayService {
 
     private zoom() {
         return this.zoomSteps[this.zoomIndex];
+    }
+    //----------------------------------------------------------------------------------
+    // Functions called from other services
+    public GetMutedTracks(): number[] {
+        return this.mutedTracks;
     }
 }

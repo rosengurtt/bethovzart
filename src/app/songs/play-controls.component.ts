@@ -7,6 +7,7 @@ import { Band } from './band';
 import { SongDisplayService } from '../graphics/song-display.service';
 import { AudioControlsService } from '../graphics/audio-controls.service'
 import { Binary2base64 } from '../shared/binary2base64';
+import { MidiFileCheckerService } from '../midi/midi-file-checker.service';
 
 declare var MIDIjs: any;
 
@@ -25,7 +26,8 @@ export class PlayControlsComponent implements OnChanges {
     constructor(private _songService: SongRepositoryService,
         private _midi2JsonService: Midi2JsonService,
         private _songDisplayService: SongDisplayService,
-        private _audioControlsService: AudioControlsService) {
+        private _audioControlsService: AudioControlsService,
+        private _midiFileCheckerService: MidiFileCheckerService) {
     }
 
 
@@ -52,7 +54,6 @@ export class PlayControlsComponent implements OnChanges {
             this.song.band.name = songData.band.name;
             this.song.midiFile = await (this._songService.getSongMidiById(this.selectedSongId));
             this.song.jsonFile = await this._midi2JsonService.getMidiObject(this.song.midiFile);
-            console.log(this.song.jsonFile);
             this._songDisplayService.songDisplay(this.song.jsonFile);
             this._audioControlsService.Initialize(this.song.jsonFile);
         };
@@ -61,6 +62,7 @@ export class PlayControlsComponent implements OnChanges {
         if (this.loadFinished) {
             let songPartToPlay: ArrayBuffer = this._audioControlsService.GetSongBytesFromStartingPosition();
            // this.download("midifile.txt", songPartToPlay);
+            let check = this._midiFileCheckerService.check(songPartToPlay);
             MIDIjs.play(songPartToPlay);
             this.isPlaying = true;
         }
