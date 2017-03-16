@@ -1,21 +1,21 @@
 import { Injectable } from '@angular/core';
-import { Midi2JsonService } from '../midi/midi2json.service'
-import { songJson } from '../midi/song-json';
-import { SongDisplayService } from './song-display.service'
+import { Midi2JsonService } from '../midi/midi-to-json.service';
+import { SongJson } from '../midi/song-json';
+import { SongDisplayService } from './song-display.service';
 
 declare var MIDIjs: any;
 
 @Injectable()
 export class AudioControlsService {
 
-    song: songJson;
+    song: SongJson;
     svgPlayControlBox: any; // The svg box that has an horizontal bar and a circle that can be slided in the bar
     progressControl: any;  // Circle used to select a position in the song
     timeStarted: number; // The number of milliseconds since 1/1/1970 when the song started to play
     timer: any;
     svgBoxWidth: number; // The length in pixels of the svg html element
 
-    //Absolute measures
+    // Absolute measures
     XcoordOfSvgBox: number;  // The x coordinate of the svg html element left side
     radioOfProgressControl: number = 12; // The size in pixels of the circle used as progress control
     usableWidthOfProgressControlBar: number;  // The number of pixels that the control bar can be moved (it is not the same
@@ -24,12 +24,12 @@ export class AudioControlsService {
     xOfEndOfProgressControl: number;  // x coordinate when progress control is at end of song
     xOfProgressControl: number;  // x coordinate of progress control now
 
-    //Relative measures
+    // Relative measures
     progressControlPositionAtStartInTicks: number;  // A value of position inside the song, measured in ticks
     progressControlPositionCurrentInTicks: number;
     progressControlPositionAtStartInPixels: number; // The position of the control relative to the left side 
     progressControlPositionCurrentInPixels: number; // in the usableWidthOfProgressControlBar measured in pixels. 
-    //If it is at the beginning it is 0, if it is at the end,
+    // If it is at the beginning it is 0, if it is at the end,
     // it is usableWidthOfProgressControlBar
 
 
@@ -38,7 +38,7 @@ export class AudioControlsService {
         private _songDisplayService: SongDisplayService) {
     }
 
-    public Initialize(songData: songJson) {
+    public Initialize(songData: SongJson) {
         this.song = songData;
         this.svgPlayControlBox = document.getElementById('svgPlayControlsBox');
         this.progressControl = document.getElementById('progressControl');

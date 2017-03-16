@@ -1,14 +1,14 @@
-import { trackNote } from './track-note';
-import { trackRange } from './track-range';
+import { TrackNote } from './track-note';
+import { TrackRange } from './track-range';
 import { instrument } from './midi-codes/instrument.enum'
 
-export class notesTrack {
-    notesSequence: trackNote[];
-    range: trackRange;
+export class NotesTrack {
+    notesSequence: TrackNote[];
+    range: TrackRange;
     instrument: instrument;
     trackName: string;
 
-    constructor(seq: trackNote[], range: trackRange, instrument: instrument, trackName: string) {
+    constructor(seq: TrackNote[], range: TrackRange, instrument: instrument, trackName: string) {
         this.notesSequence = seq;
         this.range = range;
         this.instrument = instrument;

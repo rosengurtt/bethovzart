@@ -1,14 +1,11 @@
 import { Injectable } from '@angular/core';
-import { trackNote } from '../midi/track-note';
-import { notesTrack } from '../midi/notes-track';
-import { trackRange } from '../midi/track-range';
-import { songJson } from '../midi/song-json';
-import { midiEvent } from '../midi/midi-event';
-import { instrument } from '../midi/midi-codes/instrument.enum'
+import { TrackNote } from '../midi/track-note';
+import { SongJson } from '../midi/song-json';
+import { instrument } from '../midi/midi-codes/instrument.enum';
 
 @Injectable()
 export class SongDisplayService {
-    song: songJson;
+    song: SongJson;
     songIsPlaying: boolean;
     noTracksWithNotes: number = 0;
     svgns: string = 'http://www.w3.org/2000/svg';
@@ -38,7 +35,7 @@ export class SongDisplayService {
     }
 
 
-    public async songDisplay(songData: songJson) {
+    public async songDisplay(songData: SongJson) {
         this.song = songData;
         this.Initialize();
         let noTracks = this.song.notesTracks.length;
@@ -239,7 +236,7 @@ export class SongDisplayService {
             horizontalScale = horizontalScale * this.zoom();
             let verticalShift: number = ((i + 1) * (this.trackHeight)) + (i * this.separationBetweenTracks);
             verticalShift = verticalShift * this.zoom();
-            let noteSeq: trackNote[] = thisTrack.notesSequence;
+            let noteSeq: TrackNote[] = thisTrack.notesSequence;
 
             // Populate information section
             let heightOfSeparator = verticalShift + this.separationBetweenTracks / 2;
@@ -262,7 +259,7 @@ export class SongDisplayService {
 
             // Create a dot for each note in the track
             for (let m = 0; m < noteSeq.length; m++) {
-                let note: trackNote = noteSeq[m];
+                let note: TrackNote = noteSeq[m];
                 let cx: number = note.ticksFromStart * horizontalScale;
                 let cy: number;
                 if (thisTrack.range.maxPitch > thisTrack.range.minPitch) {

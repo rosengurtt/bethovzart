@@ -1,7 +1,7 @@
-import {IMusicStyle} from "./music-style";
+import {MusicStyle} from './music-style';
 
 export class Band{
     name: string;
     _id: string;
-    style:IMusicStyle;
+    style:MusicStyle;
 }

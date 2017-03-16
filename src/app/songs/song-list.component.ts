@@ -2,7 +2,7 @@ import { Component, OnInit, Input, OnDestroy } from '@angular/core';
 
 import { Song } from './song';
 import { SongRepositoryService } from './song-repository.service';
-import { IMusicStyle } from './music-style';
+import { MusicStyle } from './music-style';
 import { Band } from './band';
 import { FileUploadService } from '../shared/file-upload.service';
 import { SongSearchService } from './song-search.service';
@@ -16,7 +16,7 @@ export class SongListComponent implements OnInit, OnDestroy {
     uploadUrl: string = 'http://localhost:3000/api/uploads';
     pageTitle: string = 'Songs List';
     errorMessage: string;
-    styles: IMusicStyle[];
+    styles: MusicStyle[];
     bands: Band[];
     songs: Song[];
     selectedStyleId: string = '';

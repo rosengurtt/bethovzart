@@ -2,11 +2,11 @@ import { Component, Input, OnDestroy, OnChanges, SimpleChange, HostListener } fr
 
 import { Song } from './song';
 import { SongRepositoryService } from './song-repository.service';
-import { Midi2JsonService } from '../midi/midi2json.service';
+import { Midi2JsonService } from '../midi/midi-to-json.service';
 import { Band } from './band';
 import { SongDisplayService } from '../graphics/song-display.service';
 import { AudioControlsService } from '../graphics/audio-controls.service'
-import { Binary2base64 } from '../shared/binary2base64';
+import { Binary2base64 } from '../shared/binary-to-base64';
 import { MidiFileCheckerService } from '../midi/midi-file-checker.service';
 
 declare var MIDIjs: any;

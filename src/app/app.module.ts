@@ -9,7 +9,6 @@ import { AppComponent } from './app.component';
 import { WelcomeComponent } from './home/welcome.component';
 
 /* Feature Modules */
-import { ProductModule } from './products/product.module';
 import { SongModule } from './songs/song.module';
 import { FileUploadService } from './shared/file-upload.service';
 import { SongSearchService } from './songs/song-search.service';
@@ -29,7 +28,6 @@ import { ReactiveFormsModule } from '@angular/forms';
       { path: '', redirectTo: 'welcome', pathMatch: 'full' },
       { path: '**', redirectTo: 'welcome', pathMatch: 'full' }
     ]),
-    ProductModule,
     SongModule,
     ReactiveFormsModule
   ],

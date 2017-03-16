@@ -2,10 +2,8 @@ import { Component, Input, OnDestroy, OnChanges, SimpleChange } from '@angular/c
 
 import { Song } from './song';
 import { SongRepositoryService } from './song-repository.service';
-import { Midi2JsonService } from '../midi/midi2json.service';
-import { IMusicStyle } from './music-style';
+import { Midi2JsonService } from '../midi/midi-to-json.service';
 import { Band } from './band';
-import { SongSearchService } from './song-search.service';
 import { SongDisplayService } from '../graphics/song-display.service';
 
 declare var MIDIjs: any;

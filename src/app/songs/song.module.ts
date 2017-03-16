@@ -6,7 +6,7 @@ import { SongDetailsComponent } from './song-details.component';
 import { PlayControlsComponent } from './play-controls.component';
 
 import { SongRepositoryService } from './song-repository.service';
-import { Midi2JsonService } from '../midi/midi2json.service';
+import { Midi2JsonService } from '../midi/midi-to-json.service';
 import { SongDisplayService } from '../graphics/song-display.service';
 import { AudioControlsService } from '../graphics/audio-controls.service';
 import { MidiFileCheckerService } from '../midi/midi-file-checker.service';

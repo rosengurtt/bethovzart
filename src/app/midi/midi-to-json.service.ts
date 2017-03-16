@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { songJson } from './song-json';
+import { SongJson } from './song-json';
 import { midiEvent } from './midi-event';
 let MIDIFile: any = require('midifile');
 
@@ -7,13 +7,13 @@ let MIDIFile: any = require('midifile');
 export class Midi2JsonService {
 
     // converts from binary midi to json version
-    public async getMidiObject(readBuffer: ArrayBuffer): Promise<songJson> {
-        return new Promise((resolve: (songJson) => void, reject) => {
+    public async getMidiObject(readBuffer: ArrayBuffer): Promise<SongJson> {
+        return new Promise((resolve: (SongJson) => void, reject) => {
             // Creating the MIDIFile instance
             let midiFile = new MIDIFile(readBuffer);
             let format: number = midiFile.header.getFormat(); // 0, 1 or 2
             let ticksPerBeat: number = midiFile.header.getTicksPerBeat();
-            let returnObject = new songJson(format, ticksPerBeat, []);
+            let returnObject = new SongJson(format, ticksPerBeat, []);
             let tracksCount: number = midiFile.header.getTracksCount();
 
             for (let i = 0; i < tracksCount; i++) {
@@ -51,7 +51,7 @@ export class Midi2JsonService {
     }
 
     // converts from json version to binary midi
-    public getMidiBytes(midiObject: songJson) {
+    public getMidiBytes(midiObject: SongJson) {
         let buffer = this.getMidiHeader(midiObject.tracks.length, midiObject.ticksPerBeat);
         for (let k = 0; k < midiObject.tracks.length; k++) {
             let bufferTrack = this.getMidiTrackBytes(midiObject.tracks[k]);

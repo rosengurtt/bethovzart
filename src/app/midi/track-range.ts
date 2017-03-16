@@ -1,4 +1,4 @@
-export class trackRange {
+export class TrackRange {
     minPitch: number;
     maxPitch: number;
     public constructor(min: number, max: number) {

@@ -1,4 +1,4 @@
-export class trackNote {
+export class TrackNote {
     ticksFromStart: number;
     pitch: number;
     duration: number;
