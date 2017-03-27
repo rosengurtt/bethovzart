@@ -53,7 +53,7 @@ export class PlayControlsComponent implements OnChanges {
             this.song.band._id = songData.band;
             this.song.band.name = songData.band.name;
             this.song.midiFile = await (this._songService.getSongMidiById(this.selectedSongId));
-            this.song.jsonFile = await this._midi2JsonService.getMidiObject(this.song.midiFile);
+            this.song.jsonFile =  this._midi2JsonService.getMidiObject(this.song.midiFile);
             this._songDisplayService.songDisplay(this.song.jsonFile);
             this._audioControlsService.Initialize(this.song.jsonFile);
         };
@@ -62,7 +62,7 @@ export class PlayControlsComponent implements OnChanges {
         if (this.loadFinished) {
             let songPartToPlay: ArrayBuffer = this._audioControlsService.GetSongBytesFromStartingPosition();
            // this.download("midifile.txt", songPartToPlay);
-            let check = this._midiFileCheckerService.check(songPartToPlay);
+           // let check = this._midiFileCheckerService.check(songPartToPlay);
             MIDIjs.play(songPartToPlay);
             this.isPlaying = true;
         }

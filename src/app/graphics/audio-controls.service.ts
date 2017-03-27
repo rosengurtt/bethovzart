@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { Midi2JsonService } from '../midi/midi-to-json.service';
 import { SongJson } from '../midi/song-json';
 import { SongDisplayService } from './song-display.service';
+import { Uint8Array2ArrayBuffer } from '../shared/uint8array-to-arraybuffer'
 
 declare var MIDIjs: any;
 
@@ -103,7 +104,9 @@ export class AudioControlsService {
     // place, we need to send to the midi driver only the note bytes from this point in time
     public GetSongBytesFromStartingPosition(): ArrayBuffer {
         let mutedTracks: number[] = this._songDisplayService.GetMutedTracks();
-        return this._midi2jsonService.getMidiBytes(this.song.getSliceStartingFromTick(this.progressControlPositionCurrentInTicks, mutedTracks));
+        let sliceFromCurrentPosition = this.song.getSliceStartingFromTick(this.progressControlPositionCurrentInTicks, mutedTracks);
+        let midiBytes = this._midi2jsonService.getMidiBytes(sliceFromCurrentPosition);
+        return Uint8Array2ArrayBuffer.convertNew(midiBytes);
     }
 
     private GetAbsXofElement(element: any) {

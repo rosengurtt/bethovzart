@@ -6,9 +6,9 @@ let MIDIFile: any = require('midifile');
 @Injectable()
 export class Midi2JsonService {
 
-    // converts from binary midi to json version
-    public async getMidiObject(readBuffer: ArrayBuffer): Promise<SongJson> {
-        return new Promise((resolve: (SongJson) => void, reject) => {
+    // Converts from binary midi to json version
+    // Uses an external library "midiFile"
+    public  getMidiObject(readBuffer: ArrayBuffer): SongJson {
             // Creating the MIDIFile instance
             let midiFile = new MIDIFile(readBuffer);
             let format: number = midiFile.header.getFormat(); // 0, 1 or 2
@@ -17,10 +17,13 @@ export class Midi2JsonService {
             let tracksCount: number = midiFile.header.getTracksCount();
 
             for (let i = 0; i < tracksCount; i++) {
+                // The external library "midiFile" produces a json object that is bascically
+                // a set of tracks, each containing a sequence of events. 
+                // We add an extra property to each event, that is the time in ticks 
+                // since the beginning of the song
                 returnObject.tracks[i] = this.addTimeSinceBeginningField(midiFile.getTrackEvents(i));
             }
-            resolve(returnObject);
-        });
+            return returnObject;
     };
 
     private addTimeSinceBeginningField(track: any): midiEvent[] {
@@ -60,7 +63,7 @@ export class Midi2JsonService {
         return buffer;
     }
 
-    private getMidiHeader(tracks, ticksPerBeat): any {
+    private getMidiHeader(tracks, ticksPerBeat): Uint8Array {
         let buffer = new Uint8Array(14);
         buffer[0] = 0x4D;
         buffer[1] = 0x54;
@@ -79,7 +82,7 @@ export class Midi2JsonService {
         return buffer;
     }
 
-    private getMidiTrackBytes(track: midiEvent[]): any {
+    private getMidiTrackBytes(track: midiEvent[]): Uint8Array {
         let trackHeaderLength = 8;
         let maxLength = track.length * 6 + 30;
         let buffer = new Uint8Array(maxLength);
@@ -269,7 +272,7 @@ export class Midi2JsonService {
     };
 
     private concatenateUint8Array(a, b) {
-        let c = new Int8Array(a.length + b.length);
+        let c = new Uint8Array(a.length + b.length);
         c.set(a);
         c.set(b, a.length);
         return c;

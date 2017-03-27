@@ -3,10 +3,11 @@ import { Injectable } from '@angular/core';
 @Injectable()
 export class MidiFileCheckerService {
 
-    // returns OK if no errors, returns a description of errors if it founds any
-    public check(buffer: ArrayBuffer): string {
+    // Checks an ArrayBuffer containing the bytes of a midi file,
+    // against the midi file standards
+    // Returns OK if no errors, returns a description of errors if it founds any
+    public check(midiBuffer: Uint8Array): string {
         let returnString = '';
-        let midiBuffer = new Uint8Array(buffer);
         returnString += this.checkHeader(midiBuffer);
         let numberOfTracks = this.getNumberOfTracks(midiBuffer);
         returnString += this.checkTracks(midiBuffer, numberOfTracks);
@@ -73,7 +74,17 @@ export class MidiFileCheckerService {
                     indexOfTrackStart + ' but there is none.\n';
                 break;
             }
+            if (!this.isLastEventEndOfTrack(midiBuffer, indexOfTrackStart)) {
+                returnString += 'Expected an end of track event corresponding to track ' + (i - 1) + ' at index ' +
+                    (indexOfTrackStart - 3) + ' but there is none.\n';
+                break;
+            }
             indexOfPreviousTrackStart = indexOfTrackStart;
+        }
+        if (!this.isLastEventEndOfTrack(midiBuffer, midiBuffer.length)) {
+            returnString += 'Expected an end of track event corresponding to track ' + numberOfTracks + ' at index ' +
+                (midiBuffer.length - 2) + ' but there is none.\n';
+
         }
         return returnString;
     }
@@ -83,6 +94,18 @@ export class MidiFileCheckerService {
             midiBuffer[index + 1] !== 0x54 ||
             midiBuffer[index + 2] !== 0x72 ||
             midiBuffer[index + 3] !== 0x6B) {
+            return false;
+        }
+        return true;
+    }
+    // checks that the last 3 bytes before index are the end of track sequence FF 2F 00
+    private isLastEventEndOfTrack(midiBuffer: Uint8Array, index: number): boolean {
+        if (index < 3 || midiBuffer.length < 3) {
+            return false;
+        }
+        if (midiBuffer[index - 3] !== 0xFF ||
+            midiBuffer[index - 2] !== 0x2F ||
+            midiBuffer[index - 1] !== 0x00) {
             return false;
         }
         return true;
@@ -114,8 +137,7 @@ export class MidiFileCheckerService {
             while (trackBytes.length > 0) {
                 trackBytes = this.processNextEvent(trackBytes);
             }
-        }
-        catch (error) {
+        } catch (error) {
             let indexOfError = trackLength - trackBytes.length;
             return 'Error in track ' + i + ' at aprox index ' + indexOfError +
                 ': ' + error.message;
@@ -127,8 +149,7 @@ export class MidiFileCheckerService {
         let indexOfTrackStart: number;
         if (trackNumber === 0) {
             indexOfTrackStart = 14;
-        }
-        else {
+        } else {
             let indexOfPreviousTrackStart = 14;
             for (let i = 1; i < trackNumber; i++) {
                 indexOfPreviousTrackStart = this.getIndexOfTrackStart(midiBuffer, indexOfPreviousTrackStart);
@@ -151,14 +172,11 @@ export class MidiFileCheckerService {
     private removeDeltaTimeOfFirstEvent(midiBuffer: Uint8Array): Uint8Array {
         if (midiBuffer[0] < 0x80) {
             return midiBuffer.slice(1);
-        }
-        else if (midiBuffer[1] < 0x80) {
+        } else if (midiBuffer[1] < 0x80) {
             return midiBuffer.slice(2);
-        }
-        else if (midiBuffer[2] < 0x80) {
+        } else if (midiBuffer[2] < 0x80) {
             return midiBuffer.slice(3);
-        }
-        else if (midiBuffer[3] < 0x80) {
+        } else if (midiBuffer[3] < 0x80) {
             return midiBuffer.slice(4);
         }
         throw new Error('Event has invalid delta time');
@@ -169,17 +187,15 @@ export class MidiFileCheckerService {
         let eventExpectedLength: number
         if ((firstNibble >= 0x8 && firstNibble <= 0xB) || firstNibble === 0xE) {
             eventExpectedLength = 3;
-        }
-        else if (firstNibble >= 0x12 && firstNibble <= 0x13) {
+        } else if (firstNibble >= 0x12 && firstNibble <= 0x13) {
             eventExpectedLength = 2;
-        }
-        else if (midiBuffer[0] === 0xFF) {
+        } else if (midiBuffer[0] === 0xFF) {
             if (midiBuffer.length < 3) {
                 throw new Error('Error: meta events should have at least 3 bytes and it has only ' +
                     midiBuffer.length + '\n');
             }
             if (midiBuffer[1] === 0x2F &&
-                midiBuffer[2] === 0 && 
+                midiBuffer[2] === 0 &&
                 midiBuffer.length > 3) {
                 throw new Error('Error: there is a spurious "End of Track" event before the end of the track');
             }
