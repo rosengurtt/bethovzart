@@ -46,7 +46,7 @@ export class SongDetailsComponent implements OnChanges {
         };
     }
     public informationClick(event){
-        this._songDisplayService.InformationAreaClicked(event.offsetX, event.offsetY);
+        this._songDisplayService.informationAreaClicked(event.offsetX, event.offsetY);
     }
 }
 

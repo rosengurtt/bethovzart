@@ -1,23 +1,25 @@
-import { midiEvent } from './midi-event';
+import { MidiEvent } from './midi-event';
 import { NotesTrack } from './notes-track';
 import { TrackRange } from './track-range';
 import { TrackNote } from './track-note';
-import { instrument } from './midi-codes/instrument.enum'
+import { instrument } from './midi-codes/instrument.enum';
+import { TimeSignature } from './time-signature';
 
 
 export class SongJson {
     format: number;
     ticksPerBeat: number;
-    tracks: midiEvent[][];
+    tracks: MidiEvent[][];
     private _instruments: instrument[][]; // each track may have different instruments
     private _trackNames: string[]; // The name of the track when defined with a FF 03 event
     private _durationInTicks: number = -1;
     private _notesTracks: NotesTrack[];
     private _durationInSeconds: number = -1;
-    private _tempoEvents: midiEvent[];
+    private _tempoEvents: MidiEvent[];
+    private _timeSignature: TimeSignature;
 
 
-    constructor(format?: number, ticksPerBeat?: number, tracks?: midiEvent[][]) {
+    constructor(format?: number, ticksPerBeat?: number, tracks?: MidiEvent[][]) {
         this.format = format;
         this.ticksPerBeat = ticksPerBeat;
         this.tracks = tracks;
@@ -30,12 +32,13 @@ export class SongJson {
         return this._instruments;
 
     }
+
     private getInstruments(): instrument[][] {
         let returnObject: instrument[][] = [];
         for (let i = 0; i < this.tracks.length; i++) {
             let instrumentsInThisTrack: instrument[] = [];
             for (let j = 0; j < this.tracks[i].length; j++) {
-                let event: midiEvent = this.tracks[i][j];
+                let event: MidiEvent = this.tracks[i][j];
                 if (event.isPatchChange()) {
                     instrumentsInThisTrack.push(event.param1)
                 }
@@ -58,12 +61,11 @@ export class SongJson {
         return result;
     }
     private getTrackNames(): string[] {
-        const binArrayToString = array => array.map(byte => String.fromCharCode(parseInt(byte, 2))).join('')
         let returnObject: string[] = [];
         for (let i = 0; i < this.tracks.length; i++) {
-            let thisTrackName: string = '';
+            let thisTrackName = '';
             for (let j = 0; j < this.tracks[i].length; j++) {
-                let event: midiEvent = this.tracks[i][j];
+                let event: MidiEvent = this.tracks[i][j];
                 if (event.isTrackName()) {
                     thisTrackName = this.bin2string(event.data);
                     break;
@@ -98,7 +100,7 @@ export class SongJson {
         return this._durationInSeconds;
     }
 
-    get tempoEvents(): midiEvent[] {
+    get tempoEvents(): MidiEvent[] {
         if (!this._tempoEvents) {
             this._tempoEvents = this.getTempoEvents();
         }
@@ -140,17 +142,17 @@ export class SongJson {
             let tempo: number = tempoEvents[i].tempoBPM;
             let start: number = tempoEvents[i].ticksSinceStart;
             let end: number;
-            if (i < tempoEvents.length - 1){
+            if (i < tempoEvents.length - 1) {
                 end = tempoEvents[i + 1].ticksSinceStart;
-            }else{
+            } else {
                 end = this.getSongDurationInTicks();
             }
             duration += ((end - start) / this.ticksPerBeat) / (tempo / 60);
         }
         return duration;
     }
-    private getTempoEvents(): midiEvent[] {
-        let returnValue: midiEvent[] = [];
+    private getTempoEvents(): MidiEvent[] {
+        let returnValue: MidiEvent[] = [];
         for (let i = 0; i < this.tracks.length; i++) {
             let track = this.tracks[i];
             for (let j = 0; j < track.length; j++) {
@@ -178,7 +180,7 @@ export class SongJson {
     }
 
     // Used to get the events in a midi track that correspond to notes on and notes off
-    private getNotes(midiTrack: midiEvent[]): TrackNote[] {
+    private getNotes(midiTrack: MidiEvent[]): TrackNote[] {
         let noteOn = 9;
         let noteOff = 8;
         let returnArray: TrackNote[] = [];
@@ -215,9 +217,9 @@ export class SongJson {
             if (mutedTracks.indexOf(i) > -1) {
                 continue;
             }
-            let track: midiEvent[] = this.tracks[i];
-            let sliceTrack: midiEvent[] = [];
-            let discarded: midiEvent[] = [];
+            let track: MidiEvent[] = this.tracks[i];
+            let sliceTrack: MidiEvent[] = [];
+            let discarded: MidiEvent[] = [];
             let totalKept = 0;
             let totalDiscarded = 0;
             for (let item of this.getLatestEventOfEachTypeInTrackPriorToTick(tick, i)) {
@@ -226,12 +228,12 @@ export class SongJson {
                 sliceTrack.push(item);
             }
             for (let j = 0; j < track.length; j++) {
-                let event: midiEvent = track[j];
+                let event: MidiEvent = track[j];
                 if (event.ticksSinceStart >= tick) {
                     event.ticksSinceStart -= tick;
                     sliceTrack.push(event);
                     totalKept++;
-                }else {
+                } else {
                     discarded.push(event);
                     totalDiscarded++;
                 }
@@ -241,8 +243,8 @@ export class SongJson {
         } console.log(slice);
         return slice;
     }
-    private getLatestEventOfEachTypeInTrackPriorToTick(tick: number, track: number): midiEvent[] {
-        let latestEventOfType: { [type: string]: midiEvent } = {};
+    private getLatestEventOfEachTypeInTrackPriorToTick(tick: number, track: number): MidiEvent[] {
+        let latestEventOfType: { [type: string]: MidiEvent } = {};
         for (let event of this.tracks[track]) {
             if (event.ticksSinceStart > tick) {
                 break;
@@ -266,13 +268,52 @@ export class SongJson {
                 latestEventOfType['endOfTrack'] = event;
             }
         }
-        let returnValue: midiEvent[] = [];
-        for (let type of ['tempo', 'volumeChange', 'timeSignature', 'patchChange', 'panChange', 'endOfTrack']){
+        let returnValue: MidiEvent[] = [];
+        for (let type of ['tempo', 'volumeChange', 'timeSignature', 'patchChange', 'panChange', 'endOfTrack']) {
             if (latestEventOfType[type]) {
                 returnValue.push(latestEventOfType[type]);
             }
         }
 
         return returnValue;
+    }
+
+    get timeSignature(): TimeSignature {
+        if (!this._timeSignature) {
+            this._timeSignature = this.getTimeSignature();
+        }
+        return this._timeSignature;
+    }
+
+    private getTimeSignature(): TimeSignature {
+        for (let i = 0; i < this.tracks.length; i++) {
+            for (let j = 0; j < this.tracks[i].length; j++) {
+                let event: MidiEvent = this.tracks[i][j];
+                if (event.isTimeSignature()) {
+                    let returnObject = new TimeSignature();
+                    returnObject.nn = event.param1;
+                    returnObject.dd = event.param2;
+                    returnObject.cc = event.param3;
+                    returnObject.bb = event.param4;
+                    return returnObject;
+                }
+            }
+        }
+        return null;
+    }
+    public getTicksPerBar(): number {
+        if (!this.timeSignature) {
+            return 0; // if there is no time signature info, can't draw bars
+        }
+        switch (this.timeSignature.dd) {
+            case 1: // beat is a half note
+                return this.timeSignature.nn * this.ticksPerBeat * 2;
+            case 2: // beat is a quarter note
+                return this.timeSignature.nn * this.ticksPerBeat;
+            case 3: // beat is a corchea
+                return this.timeSignature.nn * this.ticksPerBeat / 2;
+            default: // unknown
+                return 0;
+        }
     }
 }

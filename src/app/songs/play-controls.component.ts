@@ -1,4 +1,4 @@
-import { Component, Input, OnDestroy, OnChanges, SimpleChange, HostListener } from '@angular/core';
+import { Component, Input, OnChanges, SimpleChange, HostListener } from '@angular/core';
 
 import { Song } from './song';
 import { SongRepositoryService } from './song-repository.service';
@@ -53,16 +53,16 @@ export class PlayControlsComponent implements OnChanges {
             this.song.band._id = songData.band;
             this.song.band.name = songData.band.name;
             this.song.midiFile = await (this._songService.getSongMidiById(this.selectedSongId));
-            this.song.jsonFile =  this._midi2JsonService.getMidiObject(this.song.midiFile);
+            this.song.jsonFile = this._midi2JsonService.getMidiObject(this.song.midiFile);
             this._songDisplayService.songDisplay(this.song.jsonFile);
-            this._audioControlsService.Initialize(this.song.jsonFile);
+            this._audioControlsService.initialize(this.song.jsonFile);
         };
     }
     playSong() {
         if (this.loadFinished) {
-            let songPartToPlay: ArrayBuffer = this._audioControlsService.GetSongBytesFromStartingPosition();
-           // this.download("midifile.txt", songPartToPlay);
-           // let check = this._midiFileCheckerService.check(songPartToPlay);
+            let songPartToPlay: ArrayBuffer = this._audioControlsService.getSongBytesFromStartingPosition();
+            // this.download("midifile.txt", songPartToPlay);
+            // let check = this._midiFileCheckerService.check(songPartToPlay);
             MIDIjs.play(songPartToPlay);
             this.isPlaying = true;
         }
@@ -136,7 +136,7 @@ export class PlayControlsComponent implements OnChanges {
 
     public MoveControl(evt: MouseEvent) {
         if (this.loadFinished && this.mouseDown) {
-            this._audioControlsService.MoveControl(evt);
+            this._audioControlsService.moveControl(evt);
         }
     }
 
@@ -150,6 +150,10 @@ export class PlayControlsComponent implements OnChanges {
     @HostListener('PlayFinished')
     MidiSoundFinished() {
         this._audioControlsService.songStopped();
+    }
+    @HostListener('PlayProgress')
+    MidiSoundProgress(event: any) {
+        this._audioControlsService.updateProgress(event);
     }
 }
 

@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { SongJson } from './song-json';
-import { midiEvent } from './midi-event';
+import { MidiEvent } from './midi-event';
 let MIDIFile: any = require('midifile');
 
 @Injectable()
@@ -26,12 +26,12 @@ export class Midi2JsonService {
             return returnObject;
     };
 
-    private addTimeSinceBeginningField(track: any): midiEvent[] {
+    private addTimeSinceBeginningField(track: any): MidiEvent[] {
         let timeSinceBeginning = 0;
-        let returnValue: midiEvent[] = [];
+        let returnValue: MidiEvent[] = [];
         for (let i = 0; i < track.length; i++) {
             timeSinceBeginning += track[i].delta;
-            let midiEventItem = new midiEvent();
+            let midiEventItem = new MidiEvent();
             midiEventItem.delta = track[i].delta;
             midiEventItem.ticksSinceStart = timeSinceBeginning;
             midiEventItem.index = track[i].index;
@@ -82,7 +82,7 @@ export class Midi2JsonService {
         return buffer;
     }
 
-    private getMidiTrackBytes(track: midiEvent[]): Uint8Array {
+    private getMidiTrackBytes(track: MidiEvent[]): Uint8Array {
         let trackHeaderLength = 8;
         let maxLength = track.length * 6 + 30;
         let buffer = new Uint8Array(maxLength);

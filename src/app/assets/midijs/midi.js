@@ -134,7 +134,7 @@
     }
 
     function get_next_wave(ev) {
-        var player_event = new Object();
+        var player_event = new Event('PlayProgress');
         player_event.time = context.currentTime - start_time;
         MIDIjs.player_callback(player_event);
         // collect new wave data from libtimidity into waveBuffer
@@ -189,13 +189,12 @@
                 source.connect(context.destination); // connect the source to the context's destination (the speakers)
                 start_time = context.currentTime;
                 MIDIjs.message_callback("Playing shit ...");
-                RaiseEvent('PlayStarted');
+                RaiseEvent(new Event('PlayStarted'));
             }
         }
         request.send();
     }
-    function RaiseEvent(eventName) {
-        var event = new Event(eventName);
+    function RaiseEvent(event) {
         var midiControlsElement = document.getElementById("midiPlayControls");
         midiControlsElement.dispatchEvent(event);
     }
@@ -215,7 +214,7 @@
     }
 
     function play_WebAudioAPI(midiContent) {
-        console.log(midiContent);
+        // console.log(midiContent);
         stop_WebAudioAPI();
 
         // get this scripts URL
@@ -279,7 +278,7 @@
             source.connect(context.destination); // connect the source to the context's destination (the speakers)
             start_time = context.currentTime;
             MIDIjs.message_callback("Playing shit ...");
-            RaiseEvent('PlayStarted');
+            RaiseEvent(new Event('PlayStarted'));
         }
     }
 
@@ -304,7 +303,7 @@
             source = 0;
         }
         MIDIjs.message_callback(audio_status);
-        var player_event = new Object;
+        var player_event = new Event('PlayProgress');
         player_event.time = 0;
         MIDIjs.player_callback(player_event);
     }
@@ -390,7 +389,7 @@
         console.log(message);
     };
     global.MIDIjs.player_callback = function (player_event) {
-        return;
+        RaiseEvent(player_event);
     };
     global.MIDIjs.get_audio_status = function () {
         return audio_status;
@@ -418,4 +417,4 @@
         audio_status = "audioMethod: No method found";
     }
 
-} (this));
+}(this));

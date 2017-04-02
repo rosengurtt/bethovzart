@@ -1,4 +1,4 @@
-import { midiEvent } from './midi-event';
+import { MidiEvent } from './midi-event';
 import { Midi2JsonService } from './midi-to-json.service';
 import { Uint8Array2ArrayBuffer } from '../shared/uint8array-to-arraybuffer';
 import { SongJson } from './song-json';
@@ -25,7 +25,7 @@ describe('Test of Midi2JsonService: midi -> json', () => {
         expect(song.tracksCount).toBe(2);
     });
     it('ticksSinceStart property must be added to every event in each track', () => {
-        let events: midiEvent[] = song.tracks[0];
+        let events: MidiEvent[] = song.tracks[0];
         let thereAreEventsWithoutProperty = false;
         for (let event of events) {
             if (event.ticksSinceStart === null) {
@@ -43,31 +43,31 @@ describe('Test of Midi2JsonService: json -> midi', () => {
     let songWithTwoTracks: SongJson = new SongJson(1, 120);
     songWithTwoTracks.tracks = [[], []];
     // Tempo
-    songWithTwoTracks.tracks[0].push(new midiEvent({
+    songWithTwoTracks.tracks[0].push(new MidiEvent({
         delta: 0, type: 0xFF, subtype: 0x51, tempo: 750000,
         tempoBPM: 80, ticksSinceStart: 0
     }));
     // Time signature
-    songWithTwoTracks.tracks[0].push(new midiEvent({
+    songWithTwoTracks.tracks[0].push(new MidiEvent({
         delta: 0, type: 0xFF, subtype: 0x58, param1: 4, param2: 2, param3: 24, param4: 8,
         ticksSinceStart: 0
     }));
     // End of first track
-    songWithTwoTracks.tracks[0].push(new midiEvent({
+    songWithTwoTracks.tracks[0].push(new MidiEvent({
         delta: 10, type: 0xFF, subtype: 0x2F, ticksSinceStart: 10
     }));
     // Note one on second track
-    songWithTwoTracks.tracks[1].push(new midiEvent({
+    songWithTwoTracks.tracks[1].push(new MidiEvent({
         delta: 15, type: 0x8, subtype: 0x9, param1: 76, param2: 52,
         ticksSinceStart: 15
     }));
     // Note one off second track
-    songWithTwoTracks.tracks[1].push(new midiEvent({
+    songWithTwoTracks.tracks[1].push(new MidiEvent({
         delta: 15, type: 0x8, subtype: 0x8, param1: 76, param2: 127,
         ticksSinceStart: 30
     }));
     // End of first track
-    songWithTwoTracks.tracks[1].push(new midiEvent({
+    songWithTwoTracks.tracks[1].push(new MidiEvent({
         delta: 10, type: 0xFF, subtype: 0x2F, ticksSinceStart: 25
     }));
     let song: Uint8Array;

@@ -1,4 +1,4 @@
-export class midiEvent {
+export class MidiEvent {
     delta: number;
     ticksSinceStart?: number;
     index?: number;
@@ -37,8 +37,8 @@ export class midiEvent {
         }
     }
 
-    public cloneEvent(): midiEvent {
-        let returnValue = new midiEvent();
+    public cloneEvent(): MidiEvent {
+        let returnValue = new MidiEvent();
         returnValue.delta = this.delta;
         returnValue.ticksSinceStart = this.ticksSinceStart;
         returnValue.index = this.index;

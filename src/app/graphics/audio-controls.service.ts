@@ -10,10 +10,9 @@ declare var MIDIjs: any;
 export class AudioControlsService {
 
     song: SongJson;
+    isSongPlaying: boolean;
     svgPlayControlBox: any; // The svg box that has an horizontal bar and a circle that can be slided in the bar
     progressControl: any;  // Circle used to select a position in the song
-    timeStarted: number; // The number of milliseconds since 1/1/1970 when the song started to play
-    timer: any;
     svgBoxWidth: number; // The length in pixels of the svg html element
 
     // Absolute measures
@@ -39,14 +38,14 @@ export class AudioControlsService {
         private _songDisplayService: SongDisplayService) {
     }
 
-    public Initialize(songData: SongJson) {
+    public initialize(songData: SongJson) {
         this.song = songData;
         this.svgPlayControlBox = document.getElementById('svgPlayControlsBox');
         this.progressControl = document.getElementById('progressControl');
         this.progressControl.setAttributeNS(null, 'cx', this.radioOfProgressControl);
         this.svgPlayControlBox.appendChild(this.progressControl);
         this.svgBoxWidth = this.svgPlayControlBox.clientWidth;
-        this.XcoordOfSvgBox = this.GetAbsXofElement(this.svgPlayControlBox);
+        this.XcoordOfSvgBox = this.getAbsXofElement(this.svgPlayControlBox);
         this.usableWidthOfProgressControlBar = this.svgBoxWidth - 2 * this.radioOfProgressControl;
         this.xOfZeroOfProgressControl = this.XcoordOfSvgBox + this.radioOfProgressControl;
         this.xOfEndOfProgressControl = this.xOfZeroOfProgressControl + this.usableWidthOfProgressControlBar;
@@ -54,21 +53,23 @@ export class AudioControlsService {
         this.progressControlPositionCurrentInTicks = 0;
         this.progressControlPositionAtStartInPixels = 0;
         this.progressControlPositionCurrentInPixels = 0;
+        this.isSongPlaying = false;
     }
     public songStarted() {
-        this.progressControlPositionAtStartInTicks = this.progressControlPositionCurrentInTicks;
-        this.progressControlPositionAtStartInPixels = this.progressControlPositionCurrentInPixels;
-        let d: Date = new Date();
-        this.timeStarted = d.getTime();
-        let self = this;
-        this.timer = setInterval(function () {
-            self.UpdateProgress();
-        }, 1000);
-        this._songDisplayService.songStarted();
+        try {
+            this.isSongPlaying = true;
+            this.progressControlPositionAtStartInTicks = this.progressControlPositionCurrentInTicks;
+            this.progressControlPositionAtStartInPixels = this.progressControlPositionCurrentInPixels;
+
+            this._songDisplayService.songStarted(this.progressControlPositionAtStartInTicks);
+        } catch (error) {
+            console.log('An exception was raised in audioControlsService.songStarted:');
+            console.log(error);
+        }
     }
 
     public songPaused() {
-        clearTimeout(this.timer);
+        this.isSongPlaying = false;
     }
 
     public goToBeginning() {
@@ -78,38 +79,54 @@ export class AudioControlsService {
         this.positionProgressControlInPixels(this.usableWidthOfProgressControlBar);
     }
     public songStopped() {
-        clearTimeout(this.timer);
-        this.positionProgressControlInPixels(0);
-        this._songDisplayService.songStopped();
+        try {
+            this.isSongPlaying = false;
+            this.positionProgressControlInPixels(0);
+            this._songDisplayService.songStopped();
+        } catch (error) {
+            console.log('An exception was raised in audioControlsService.songStopped:');
+            console.log(error);
+        }
     }
-    private UpdateProgress() {
+    public updateProgress(event: any) {
+        // This method is called by means of an event. It may be triggered before
+        // the song has actually started, so we check if the song is really playing
+        if (!this.isSongPlaying) {
+            return;
+        }
         if (this.progressControlPositionCurrentInPixels === this.usableWidthOfProgressControlBar) {
             this.songStopped();
             this._songDisplayService.songStopped();
             return;
         }
-        let d: Date = new Date();
-        let elapsedTimeInSeconds: number = (d.getTime() - this.timeStarted) / 1000;
-        let ticksSinceStartedToPlay: number = elapsedTimeInSeconds * this.song.durationInTicks / this.song.durationInSeconds;
+        let elapsedTimeInSeconds: number = event.time;
 
+        let ticksSinceStartedToPlay: number = elapsedTimeInSeconds * this.song.durationInTicks / this.song.durationInSeconds;
         let ticksFromBeginningOfSong = this.progressControlPositionAtStartInTicks + ticksSinceStartedToPlay;
         this.positionProgressControlInTicks(ticksFromBeginningOfSong);
-        this._songDisplayService.UpdateProgress(this.xOfProgressControl);
+
+        this._songDisplayService.updateProgress(this.xOfProgressControl);
     }
-    public MoveControl(evt: any) {
-        this.positionProgressControlInPixels(evt.clientX - this.xOfZeroOfProgressControl);
+    public moveControl(evt: any) {
+        try {
+            this.positionProgressControlInPixels(evt.clientX - this.xOfZeroOfProgressControl);
+
+        } catch (error) {
+            console.log('An exception was raised in audioControlsService.MoveControl:');
+            console.log(error);
+        }
     }
 
     // Since the user can move the progress control slide to start the song from any
     // place, we need to send to the midi driver only the note bytes from this point in time
-    public GetSongBytesFromStartingPosition(): ArrayBuffer {
-        let mutedTracks: number[] = this._songDisplayService.GetMutedTracks();
+    public getSongBytesFromStartingPosition(): ArrayBuffer {
+        let mutedTracks: number[] = this._songDisplayService.getMutedTracks();
         let sliceFromCurrentPosition = this.song.getSliceStartingFromTick(this.progressControlPositionCurrentInTicks, mutedTracks);
         let midiBytes = this._midi2jsonService.getMidiBytes(sliceFromCurrentPosition);
-        return Uint8Array2ArrayBuffer.convertNew(midiBytes);
+        return Uint8Array2ArrayBuffer.convert(midiBytes);
     }
 
-    private GetAbsXofElement(element: any) {
+    private getAbsXofElement(element: any) {
         let boundingRect: any = element.getBoundingClientRect();
         return boundingRect.left;
     }

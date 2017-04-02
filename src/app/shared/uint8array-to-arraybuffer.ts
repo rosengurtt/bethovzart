@@ -3,6 +3,9 @@
 // that binary data is handled in the browser
 
 export class Uint8Array2ArrayBuffer {
+/*    
+This version works. But the other below is nicer and it seems that it works OK
+
     static convert(input: Uint8Array): ArrayBuffer {
         let buffer = new ArrayBuffer(input.length);
         let javascriptIhateYou = new DataView(buffer)
@@ -11,9 +14,9 @@ export class Uint8Array2ArrayBuffer {
             return 1;
         });
         return buffer;
-    }
+    }*/
 
-    static convertNew(buffer: Uint8Array): ArrayBuffer {
+    static convert(buffer: Uint8Array): ArrayBuffer {
         let ab = new ArrayBuffer(buffer.length);
         let view = new Uint8Array(ab);
         for (let i = 0; i < buffer.length; ++i) {
