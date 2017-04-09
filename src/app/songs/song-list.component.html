@@ -27,7 +27,7 @@
 					<li class="list-group-item" [class.active]="selectedBandId===''">
 						<a (click)="selectBand('')">All</a>
 					</li>
-					<li class="list-group-item" [class.active]="band._id===selectedBandId" *ngFor='let band of bands'>
+					<li class="list-group-item" [class.active]="band._id===selectedBandId" *ngFor="let band of (bands | sortBy : 'name')">
 						<a (click)='selectBand(band._id)'>{{band.name}}</a>
 					</li>
 				</ul>

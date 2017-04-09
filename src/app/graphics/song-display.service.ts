@@ -16,7 +16,7 @@ export class SongDisplayService {
     informationAreaWidth: number;
     separationBetweenTracks: number; // separation in pixels
     trackHeight: number;
-    progressBar: any;
+    progressBarId = 'progressBar';
     timer: any;
     zoomIndex: number;  // is the index inside the zoomSteps array
     zoomSteps: number[] = [1, 1.5, 2, 3, 4, 6, 8, 12, 16, 20];
@@ -130,8 +130,9 @@ export class SongDisplayService {
     public songPaused() {
         this.songIsPlaying = false;
         try {
-            if (document.getElementById('progressBar')) {
-                this.staffAreaBox.removeChild(this.progressBar);
+            let progressBar = document.getElementById(this.progressBarId)
+            if (progressBar) {
+                this.staffAreaBox.removeChild(progressBar);
             }
         } catch (error) {
             console.log('An exception was raised at SongDisplayService.songPaused()');
@@ -140,10 +141,14 @@ export class SongDisplayService {
     }
     public songStopped() {
         this.songIsPlaying = false;
+        this.removeProgressBar();
+    }
+
+    private removeProgressBar() {
         try {
-            if (this.progressBar) {
-                this.staffAreaBox.removeChild(this.progressBar);
-                this.progressBar = null;
+            let progressBar = document.getElementById(this.progressBarId)
+            if (progressBar) {
+                this.staffAreaBox.removeChild(progressBar);
             }
         } catch (error) {
             console.log('An exception was raised at SongDisplayService.songStopped()');
@@ -156,15 +161,16 @@ export class SongDisplayService {
         }
         try {
             let actualx: number = x * this.zoom() - this.scrollDisplacementX;
-            if (!this.progressBar) {
-                this.createProgressBar(0);
+            let progressBar = document.getElementById(this.progressBarId);
+            if (!progressBar) {
+                progressBar = this.createProgressBar(0);
             }
             if (actualx > 0 && actualx < this.staffAreaWidth) {
-                this.progressBar.setAttributeNS(null, 'x1', actualx);
-                this.progressBar.setAttributeNS(null, 'x2', actualx);
-                this.progressBar.setAttributeNS(null, 'visibility', 'visible');
+                progressBar.setAttributeNS(null, 'x1', actualx.toString());
+                progressBar.setAttributeNS(null, 'x2', actualx.toString());
+               progressBar.setAttributeNS(null, 'visibility', 'visible');
             } else {
-                this.progressBar.setAttributeNS(null, 'visibility', 'hidden');
+                progressBar.setAttributeNS(null, 'visibility', 'hidden');
             }
 
         } catch (error) {
@@ -189,16 +195,17 @@ export class SongDisplayService {
 
     // ------------------------------------------------------------------------------
     // Utilities for drawing
-    public createProgressBar(x = 0) {
-        if (this.progressBar) {
+    public createProgressBar(x = 0): any {
+        let progressBar = document.getElementById('svgBoxStaffArea');
+        if (progressBar) {
             try {
-                this.staffAreaBox.removeChild(this.progressBar);
+                this.staffAreaBox.removeChild(progressBar);
             } catch (error) {
-                console.log("The progressBar object is not null, but when trying to remove it an exception was raised");
+                console.log('The progressBar object is not null, but when trying to remove it an exception was raised');
                 console.log(error);
             }
         }
-        this.progressBar = this.createLine(x, x, 0, this.staffAreaHeight, 2,
+        return this.createLine(x, x, 0, this.staffAreaHeight, 2,
             this.colorProgressBar, 'progressBar');
     }
     private createLine(x1: number, x2: number, y1: number, y2: number, width: number,

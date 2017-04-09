@@ -70,7 +70,7 @@ export class SongListComponent implements OnInit, OnDestroy {
     }
     fileChange(input: any) {
         this.selectedFileName = input.files[0].name;
-        this.uploadedFile=input.files[0];
+        this.uploadedFile = input.files[0];
     }
     async UploadHandler(): Promise<any> {
         let result: any;

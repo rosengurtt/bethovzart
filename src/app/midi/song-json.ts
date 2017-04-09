@@ -229,8 +229,7 @@ export class SongJson {
             }
             for (let j = 0; j < track.length; j++) {
                 let event: MidiEvent = track[j];
-                if (event.ticksSinceStart >= tick) {
-                    event.ticksSinceStart -= tick;
+                if (event.ticksSinceStart >= tick ) {
                     sliceTrack.push(event);
                     totalKept++;
                 } else {
@@ -240,7 +239,7 @@ export class SongJson {
 
             }
             slice.tracks.push(sliceTrack);
-        } console.log(slice);
+        } 
         return slice;
     }
     private getLatestEventOfEachTypeInTrackPriorToTick(tick: number, track: number): MidiEvent[] {

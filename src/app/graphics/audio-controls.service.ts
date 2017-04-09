@@ -46,7 +46,7 @@ export class AudioControlsService {
         this.svgPlayControlBox.appendChild(this.progressControl);
         this.svgBoxWidth = this.svgPlayControlBox.clientWidth;
         this.XcoordOfSvgBox = this.getAbsXofElement(this.svgPlayControlBox);
-        this.usableWidthOfProgressControlBar = this.svgBoxWidth - 2 * this.radioOfProgressControl;
+        this.usableWidthOfProgressControlBar = this.svgBoxWidth  - 2 * this.radioOfProgressControl;
         this.xOfZeroOfProgressControl = this.XcoordOfSvgBox + this.radioOfProgressControl;
         this.xOfEndOfProgressControl = this.xOfZeroOfProgressControl + this.usableWidthOfProgressControlBar;
         this.progressControlPositionAtStartInTicks = 0;
@@ -57,11 +57,11 @@ export class AudioControlsService {
     }
     public songStarted() {
         try {
-            this.isSongPlaying = true;
             this.progressControlPositionAtStartInTicks = this.progressControlPositionCurrentInTicks;
             this.progressControlPositionAtStartInPixels = this.progressControlPositionCurrentInPixels;
 
             this._songDisplayService.songStarted(this.progressControlPositionAtStartInTicks);
+            this.isSongPlaying = true;
         } catch (error) {
             console.log('An exception was raised in audioControlsService.songStarted:');
             console.log(error);
@@ -151,7 +151,8 @@ export class AudioControlsService {
         if (xInTicks > this.song.durationInTicks) {
             xInTicks = this.song.durationInTicks;
         }
-        let xInPixels = xInTicks * this.usableWidthOfProgressControlBar / this.song.durationInTicks;
+        let xInPixels =
+            xInTicks * this.usableWidthOfProgressControlBar / this.song.durationInTicks;
         this.xOfProgressControl = this.radioOfProgressControl + xInPixels;
         this.progressControl.setAttributeNS(null, 'cx', this.xOfProgressControl);
         this.progressControlPositionCurrentInPixels = xInPixels;

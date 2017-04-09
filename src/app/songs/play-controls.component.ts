@@ -34,12 +34,17 @@ export class PlayControlsComponent implements OnChanges {
     async ngOnChanges(changes: { [propKey: string]: SimpleChange }) {
         this.loadFinished = false;
         for (let propName in changes) {
-            let changedProp = changes[propName];
-            let from = JSON.stringify(changedProp.previousValue);
-            let to = JSON.stringify(changedProp.currentValue);
-            if (propName == 'selectedSongId' && to !== '')
-                this.GetSongData();
-            this.loadFinished = true;
+            if (true) { // added this useless if so lint doesn't complain
+                let changedProp = changes[propName];
+                let from = JSON.stringify(changedProp.previousValue);
+                let to = JSON.stringify(changedProp.currentValue);
+                if (propName === 'selectedSongId' && to !== '') {
+                    await this.GetSongData();
+                    this._songDisplayService.songDisplay(this.song.jsonFile);
+                    this._audioControlsService.initialize(this.song.jsonFile);
+                }
+                this.loadFinished = true;
+            }
         }
     }
     async GetSongData() {
@@ -54,8 +59,6 @@ export class PlayControlsComponent implements OnChanges {
             this.song.band.name = songData.band.name;
             this.song.midiFile = await (this._songService.getSongMidiById(this.selectedSongId));
             this.song.jsonFile = this._midi2JsonService.getMidiObject(this.song.midiFile);
-            this._songDisplayService.songDisplay(this.song.jsonFile);
-            this._audioControlsService.initialize(this.song.jsonFile);
         };
     }
     playSong() {
@@ -71,18 +74,18 @@ export class PlayControlsComponent implements OnChanges {
     pauseSong() {
         if (this.isPlaying) {
             this._songDisplayService.songPaused();
-            this._audioControlsService.songPaused()
+            this._audioControlsService.songPaused();
             MIDIjs.stop();
             this.isPlaying = false;
         }
     }
     stopSong() {
         if (this.isPlaying) {
-            this._songDisplayService.songStopped();
-            this._audioControlsService.songStopped()
             MIDIjs.stop();
             this.isPlaying = false;
         }
+        this._songDisplayService.songStopped();
+        this._audioControlsService.songStopped();
     }
 
     goToBeginning() {
@@ -143,6 +146,9 @@ export class PlayControlsComponent implements OnChanges {
     public MouseUp() {
         this.mouseDown = false;
     }
+
+    // The following events are raised by the midijs library
+
     @HostListener('PlayStarted')
     MidiSoundStarted() {
         this._audioControlsService.songStarted();

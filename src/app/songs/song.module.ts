@@ -15,6 +15,7 @@ import { SongFilterPipe } from './song-filter.pipe';
 
 import { SharedModule } from '../shared/shared.module';
 import { FileUploadService } from '../shared/file-upload.service';
+import { SortPipe } from '../shared/sort-by.pipe';
 
 @NgModule({
   imports: [
@@ -27,7 +28,8 @@ import { FileUploadService } from '../shared/file-upload.service';
     SongListComponent,
     SongFilterPipe,
     SongDetailsComponent,
-    PlayControlsComponent
+    PlayControlsComponent,
+    SortPipe
   ],
   providers: [
     SongRepositoryService,
