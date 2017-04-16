@@ -2,7 +2,7 @@ import { MidiEvent } from './midi-event';
 import { NotesTrack } from './notes-track';
 import { TrackRange } from './track-range';
 import { TrackNote } from './track-note';
-import { instrument } from './midi-codes/instrument.enum';
+import { Instrument } from './midi-codes/instrument.enum';
 import { TimeSignature } from './time-signature';
 
 
@@ -10,7 +10,7 @@ export class SongJson {
     format: number;
     ticksPerBeat: number;
     tracks: MidiEvent[][];
-    private _instruments: instrument[][]; // each track may have different instruments
+    private _instruments: Instrument[][]; // each track may have different instruments
     private _trackNames: string[]; // The name of the track when defined with a FF 03 event
     private _durationInTicks: number = -1;
     private _notesTracks: NotesTrack[];
@@ -25,7 +25,8 @@ export class SongJson {
         this.tracks = tracks;
     }
 
-    get instruments(): instrument[][] {
+
+    get instruments(): Instrument[][] {
         if (!this._instruments) {
             this._instruments = this.getInstruments();
         }
@@ -33,10 +34,10 @@ export class SongJson {
 
     }
 
-    private getInstruments(): instrument[][] {
-        let returnObject: instrument[][] = [];
+    private getInstruments(): Instrument[][] {
+        let returnObject: Instrument[][] = [];
         for (let i = 0; i < this.tracks.length; i++) {
-            let instrumentsInThisTrack: instrument[] = [];
+            let instrumentsInThisTrack: Instrument[] = [];
             for (let j = 0; j < this.tracks[i].length; j++) {
                 let event: MidiEvent = this.tracks[i][j];
                 if (event.isPatchChange()) {
@@ -171,7 +172,7 @@ export class SongJson {
             let TrackNotes = this.getNotes(this.tracks[k]);
             if (TrackNotes.length > 0) {
                 let range: TrackRange = this.getTrackRange(TrackNotes);
-                let instrument: instrument = this.instruments[k][0];
+                let instrument: Instrument = this.instruments[k][0];
                 let trackName: string = this.trackNames[k];
                 musicTracks.push(new NotesTrack(TrackNotes, range, instrument, trackName))
             }
@@ -229,7 +230,7 @@ export class SongJson {
             }
             for (let j = 0; j < track.length; j++) {
                 let event: MidiEvent = track[j];
-                if (event.ticksSinceStart >= tick ) {
+                if (event.ticksSinceStart >= tick) {
                     sliceTrack.push(event);
                     totalKept++;
                 } else {
@@ -239,7 +240,7 @@ export class SongJson {
 
             }
             slice.tracks.push(sliceTrack);
-        } 
+        }
         return slice;
     }
     private getLatestEventOfEachTypeInTrackPriorToTick(tick: number, track: number): MidiEvent[] {

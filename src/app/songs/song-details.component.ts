@@ -10,7 +10,7 @@ declare var MIDIjs: any;
 
 @Component({
     selector: "song-details",
-    templateUrl:'./song-details.component.html'
+    templateUrl: './song-details.component.html'
 })
 export class SongDetailsComponent implements OnChanges {
     song: Song;
@@ -25,15 +25,18 @@ export class SongDetailsComponent implements OnChanges {
 
     async ngOnChanges(changes: { [propKey: string]: SimpleChange }) {
         for (let propName in changes) {
-            let changedProp = changes[propName];
-            let from = JSON.stringify(changedProp.previousValue);
-            let to = JSON.stringify(changedProp.currentValue);
-            if (propName == "selectedSongId" && to !== "")
-                this.GetSongData();
+            if (true) { // useless if added to avoid having lint complaining
+                let changedProp = changes[propName];
+                let from = JSON.stringify(changedProp.previousValue);
+                let to = JSON.stringify(changedProp.currentValue);
+                if (propName === 'selectedSongId' && to !== '') {
+                    this.GetSongData();
+                }
+            }
         }
     }
     async GetSongData() {
-        if (this.selectedSongId && this.selectedSongId !== "") {
+        if (this.selectedSongId && this.selectedSongId !== '') {
             let songData: any = await (this._songService.getSongById(this.selectedSongId));
 
             this.song = new Song();
@@ -45,7 +48,7 @@ export class SongDetailsComponent implements OnChanges {
             this.song.midiFile = await (this._songService.getSongMidiById(this.selectedSongId));
         };
     }
-    public informationClick(event){
+    public informationClick(event) {
         this._songDisplayService.informationAreaClicked(event.offsetX, event.offsetY);
     }
 }

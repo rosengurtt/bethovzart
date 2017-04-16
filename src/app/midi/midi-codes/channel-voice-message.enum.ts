@@ -1,4 +1,4 @@
-export enum channelVoiceMessage{
+export enum ChannelVoiceMessage{
     noteOff = 8,
     noteOn = 9,
     polyphonicKeyPressure = 10,

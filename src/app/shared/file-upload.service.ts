@@ -8,7 +8,7 @@ export class FileUploadService {
     /**
      * @param Observable<number>
      */
-    private progress$: Observable<number>;
+    private progress$: Observable<any>;
 
     /**
      * @type {number}

@@ -5,9 +5,11 @@ import { SongRepositoryService } from './song-repository.service';
 import { Midi2JsonService } from '../midi/midi-to-json.service';
 import { Band } from './band';
 import { SongDisplayService } from '../graphics/song-display.service';
-import { AudioControlsService } from '../graphics/audio-controls.service'
+import { AudioControlsService } from '../graphics/audio-controls.service';
 import { Binary2base64 } from '../shared/binary-to-base64';
 import { MidiFileCheckerService } from '../midi/midi-file-checker.service';
+import { PlayControlsEventsService } from '../graphics/play-controls-events.service';
+import { PlayControlEvents } from '../graphics/play-controls-events.enum';
 
 declare var MIDIjs: any;
 
@@ -27,7 +29,8 @@ export class PlayControlsComponent implements OnChanges {
         private _midi2JsonService: Midi2JsonService,
         private _songDisplayService: SongDisplayService,
         private _audioControlsService: AudioControlsService,
-        private _midiFileCheckerService: MidiFileCheckerService) {
+        private _midiFileCheckerService: MidiFileCheckerService,
+        private _playControlsEventsService: PlayControlsEventsService) {
     }
 
 
@@ -68,6 +71,7 @@ export class PlayControlsComponent implements OnChanges {
             // let check = this._midiFileCheckerService.check(songPartToPlay);
             MIDIjs.play(songPartToPlay);
             this.isPlaying = true;
+            this._playControlsEventsService.raiseEvent(PlayControlEvents.play, );
         }
     }
 
@@ -77,6 +81,7 @@ export class PlayControlsComponent implements OnChanges {
             this._audioControlsService.songPaused();
             MIDIjs.stop();
             this.isPlaying = false;
+            this._playControlsEventsService.raiseEvent(PlayControlEvents.pause);
         }
     }
     stopSong() {
@@ -86,52 +91,61 @@ export class PlayControlsComponent implements OnChanges {
         }
         this._songDisplayService.songStopped();
         this._audioControlsService.songStopped();
+        this._playControlsEventsService.raiseEvent(PlayControlEvents.stop);
     }
 
     goToBeginning() {
         if (this.loadFinished && !this.isPlaying) {
             this._audioControlsService.goToBeginning();
+            this._playControlsEventsService.raiseEvent(PlayControlEvents.goToBeginning);
         }
     }
     goToEnd() {
         if (this.loadFinished && !this.isPlaying) {
             this._audioControlsService.goToEnd();
+            this._playControlsEventsService.raiseEvent(PlayControlEvents.goToEnd);
         }
     }
     zoomIn() {
         this._songDisplayService.changeZoom(1);
+        this._playControlsEventsService.raiseEvent(PlayControlEvents.zoomIn);
     }
 
     zoomOut() {
         this._songDisplayService.changeZoom(-1);
+        this._playControlsEventsService.raiseEvent(PlayControlEvents.zoomOut);
     }
     moveLeft() {
         this._songDisplayService.moveWindow(-1, 0);
+        this._playControlsEventsService.raiseEvent(PlayControlEvents.moveLeft);
     }
     moveRight() {
         this._songDisplayService.moveWindow(1, 0);
+        this._playControlsEventsService.raiseEvent(PlayControlEvents.moveRight);
     }
     moveUp() {
         this._songDisplayService.moveWindow(0, -1);
+        this._playControlsEventsService.raiseEvent(PlayControlEvents.moveUp);
     }
     moveDown() {
         this._songDisplayService.moveWindow(0, 1);
+        this._playControlsEventsService.raiseEvent(PlayControlEvents.moveDown);
     }
 
     // used for debugging. Allows to save buffer to disk
-    private download(filename, buffer) {
-        let base64encoded = Binary2base64.convert(buffer);
-        let element = document.createElement('a');
-        element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(base64encoded));
-        element.setAttribute('download', filename);
+    // private download(filename, buffer) {
+    //     let base64encoded = Binary2base64.convert(buffer);
+    //     let element = document.createElement('a');
+    //     element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(base64encoded));
+    //     element.setAttribute('download', filename);
 
-        element.style.display = 'none';
-        document.body.appendChild(element);
+    //     element.style.display = 'none';
+    //     document.body.appendChild(element);
 
-        element.click();
+    //     element.click();
 
-        document.body.removeChild(element);
-    }
+    //     document.body.removeChild(element);
+    // }
 
     public ProgressControlClicked(evt: MouseEvent) {
         this.mouseDown = true;

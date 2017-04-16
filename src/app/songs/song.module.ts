@@ -10,16 +10,20 @@ import { Midi2JsonService } from '../midi/midi-to-json.service';
 import { SongDisplayService } from '../graphics/song-display.service';
 import { AudioControlsService } from '../graphics/audio-controls.service';
 import { MidiFileCheckerService } from '../midi/midi-file-checker.service';
+import { PlayControlsEventsService } from '../graphics/play-controls-events.service';
 
 import { SongFilterPipe } from './song-filter.pipe';
 
 import { SharedModule } from '../shared/shared.module';
+import { AudioControlsModule } from '../audio-controls/audio-controls.module';
 import { FileUploadService } from '../shared/file-upload.service';
+import { TrackDisplayComponent } from '../songs/track-display.component';
 import { SortPipe } from '../shared/sort-by.pipe';
 
 @NgModule({
   imports: [
     SharedModule,
+    AudioControlsModule,
     RouterModule.forChild([
       { path: 'songs', component: SongListComponent },
     ])
@@ -29,6 +33,7 @@ import { SortPipe } from '../shared/sort-by.pipe';
     SongFilterPipe,
     SongDetailsComponent,
     PlayControlsComponent,
+    TrackDisplayComponent,
     SortPipe
   ],
   providers: [
@@ -37,7 +42,8 @@ import { SortPipe } from '../shared/sort-by.pipe';
     Midi2JsonService,
     SongDisplayService,
     AudioControlsService,
-    MidiFileCheckerService
+    MidiFileCheckerService,
+    PlayControlsEventsService
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })

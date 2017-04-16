@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { TrackNote } from '../midi/track-note';
 import { SongJson } from '../midi/song-json';
-import { instrument } from '../midi/midi-codes/instrument.enum';
+import { Instrument } from '../midi/midi-codes/instrument.enum';
 
 @Injectable()
 export class SongDisplayService {
@@ -17,7 +17,6 @@ export class SongDisplayService {
     separationBetweenTracks: number; // separation in pixels
     trackHeight: number;
     progressBarId = 'progressBar';
-    timer: any;
     zoomIndex: number;  // is the index inside the zoomSteps array
     zoomSteps: number[] = [1, 1.5, 2, 3, 4, 6, 8, 12, 16, 20];
     scrollDisplacementX: number; // when the user has zoomed in, and only part of the image is
@@ -279,7 +278,7 @@ export class SongDisplayService {
                 this.colorTrackSeparator, '', this.informationAreaBox);
             let trackInfo: string = this.song.notesTracks[n].trackName;
 
-            trackInfo += ' - ' + instrument[this.song.notesTracks[n].instrument];
+            trackInfo += ' - ' + Instrument[this.song.notesTracks[n].instrument];
 
             this.createText(trackInfo, 5, heightOfSeparator - this.trackHeight + 6,
                 'font-family:"Verdana";font-size:10')

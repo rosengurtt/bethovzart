@@ -1,4 +1,4 @@
-export enum channelModeMessage {
+export enum ChannelModeMessage {
     allSoundOff = 120,
     resetAllControllers = 121,
     localControl = 122,

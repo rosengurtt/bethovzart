@@ -1,4 +1,4 @@
-export enum instrument {
+export enum Instrument {
     AcousticGrandPiano = 1,
     BrightPiano = 2,
     ElectricGrandPiano = 3,
