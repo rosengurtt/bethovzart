@@ -1,4 +1,4 @@
-export enum AudioControlsEvents {
+export enum AudioControlsEventTypes {
     play,
     stop,
     zoomIn,
@@ -9,5 +9,8 @@ export enum AudioControlsEvents {
     moveRight,
     moveLeft,
     moveUp,
-    moveDown
+    moveDown,
+    musicStarted,
+    musicProgress,
+    musicStopped
 }

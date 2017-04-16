@@ -1,6 +1,7 @@
 import { Component, Input, OnDestroy, OnChanges, SimpleChange } from '@angular/core';
 
 import { Song } from './song';
+import { SongJson } from '../midi/song-json';
 import { SongRepositoryService } from './song-repository.service';
 import { Midi2JsonService } from '../midi/midi-to-json.service';
 import { Band } from './band';
@@ -14,6 +15,7 @@ declare var MIDIjs: any;
 })
 export class SongDetailsComponent implements OnChanges {
     song: Song;
+    songJson: SongJson;
     @Input() selectedSongId: string;
 
     constructor(private _songService: SongRepositoryService,
@@ -46,6 +48,7 @@ export class SongDetailsComponent implements OnChanges {
             this.song.band._id = songData.band;
             this.song.band.name = songData.band.name;
             this.song.midiFile = await (this._songService.getSongMidiById(this.selectedSongId));
+            this.songJson = this._midi2JsonService.getMidiObject(this.song.midiFile);
         };
     }
     public informationClick(event) {

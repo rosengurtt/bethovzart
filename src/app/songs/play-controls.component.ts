@@ -71,7 +71,7 @@ export class PlayControlsComponent implements OnChanges {
             // let check = this._midiFileCheckerService.check(songPartToPlay);
             MIDIjs.play(songPartToPlay);
             this.isPlaying = true;
-            this._playControlsEventsService.raiseEvent(PlayControlEvents.play, );
+            this._playControlsEventsService.raiseEvent(PlayControlEvents.play );
         }
     }
 
@@ -159,7 +159,7 @@ export class PlayControlsComponent implements OnChanges {
 
     public MouseUp() {
         this.mouseDown = false;
-    }
+    } 
 
     // The following events are raised by the midijs library
 

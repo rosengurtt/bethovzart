@@ -4,21 +4,25 @@ import { AudioControlsComponent } from './audio-controls.component';
 import { AudioButtonsComponent } from './audio-buttons.component';
 import { SharedModule } from '../shared/shared.module';
 import { AudioControlsEventsService } from './audio-controls-events.service';
-import { AudioProgressBarComponent } from './audio-progress-bar.component';
+import { AudioControlsService } from './audio-controls.service';
+import { AudioControlBarComponent } from './audio-control-bar.component';
 
 
 @NgModule({
     imports: [
         SharedModule
-
     ],
     declarations: [
         AudioButtonsComponent,
         AudioControlsComponent,
-        AudioProgressBarComponent
+        AudioControlBarComponent
     ],
     providers: [
-        AudioControlsEventsService
+        AudioControlsEventsService,
+        AudioControlsService
+    ],
+    exports: [
+        AudioControlsComponent
     ],
     schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })

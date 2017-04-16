@@ -195,7 +195,7 @@
         request.send();
     }
     function RaiseEvent(event) {
-        var midiControlsElement = document.getElementById("midiPlayControls");
+        var midiControlsElement = document.getElementById("audioPlayControls");
         midiControlsElement.dispatchEvent(event);
     }
 

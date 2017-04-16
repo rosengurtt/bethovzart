@@ -1,8 +1,15 @@
 <div *ngIf='song'>
     <span>{{song.name}} - {{song._id}}</span>
-    <play-controls [selectedSongId]="selectedSongId"></play-controls>
+   <!--<play-controls [selectedSongId]="selectedSongId"></play-controls>-->
+    <div *ngIf='songJson'>
+    <audio-controls [song]="songJson" ></audio-controls>
+    <song-display [song]="songJson" ></song-display>   
+   <!-- <div *ngFor="let track of songJson.notesTracks;let i = index;">
+        <track-display [song]="songJson" [trackNumber]="i"  ></track-display>
+    </div>-->
 </div>
-<div style='position:relative;width:100%'>
+</div>
+<!--<div style='position:relative;width:100%'>
     <div style='float:left;width:15%' (click)="informationClick($event)">
         <svg id="svgBoxInformationArea" width="100%" height="100%" style="border: 1px solid black; background-color:white" xmlns="http://www.w3.org/2000/svg">
         </svg>
@@ -12,4 +19,4 @@
         <svg id="svgBoxStaffArea" width="100%" height="100%" style="border: 1px solid black; background-color:white" xmlns="http://www.w3.org/2000/svg">
         </svg>
     </div>
-</div>
+</div>-->

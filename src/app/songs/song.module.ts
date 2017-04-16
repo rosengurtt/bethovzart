@@ -16,6 +16,7 @@ import { SongFilterPipe } from './song-filter.pipe';
 
 import { SharedModule } from '../shared/shared.module';
 import { AudioControlsModule } from '../audio-controls/audio-controls.module';
+import { SongDisplayModule } from '../song-display/song-display.module';
 import { FileUploadService } from '../shared/file-upload.service';
 import { TrackDisplayComponent } from '../songs/track-display.component';
 import { SortPipe } from '../shared/sort-by.pipe';
@@ -24,6 +25,7 @@ import { SortPipe } from '../shared/sort-by.pipe';
   imports: [
     SharedModule,
     AudioControlsModule,
+    SongDisplayModule,
     RouterModule.forChild([
       { path: 'songs', component: SongListComponent },
     ])
