@@ -15,6 +15,7 @@ import { AudioControlsModule } from '../audio-controls/audio-controls.module';
 import { SongDisplayModule } from '../song-display/song-display.module';
 import { FileUploadService } from '../shared/file-upload.service';
 import { SortPipe } from '../shared/sort-by.pipe';
+import { TrackDisplayService } from '../song-display/track-display.service';
 
 @NgModule({
   imports: [
@@ -36,6 +37,7 @@ import { SortPipe } from '../shared/sort-by.pipe';
     FileUploadService,
     Midi2JsonService,
     MidiFileCheckerService,
+    TrackDisplayService
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
