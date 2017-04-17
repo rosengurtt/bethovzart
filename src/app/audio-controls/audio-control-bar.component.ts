@@ -1,8 +1,8 @@
 import { Component, Input, OnChanges, SimpleChange, HostListener } from '@angular/core';
 
 import { AudioControlsService } from './audio-controls.service';
-import { AudioControlsEventsService } from './audio-controls-events.service';
-import { AudioControlsEventTypes } from './audio-controls-event-types.enum';
+import { AudioControlsEventsService } from '../shared/audio-controls-events.service';
+import { AudioControlsEventTypes } from '../shared/audio-controls-event-types.enum';
 import { Midi2JsonService } from '../midi/midi-to-json.service';
 import { SongJson } from '../midi/song-json';
 
@@ -34,13 +34,17 @@ export class AudioControlBarComponent implements OnChanges {
         this.mouseDown = true;
     }
 
-    public MoveControl(evt: MouseEvent) {
+    public MoveControl(event: MouseEvent) {
         if (this.mouseDown) {
-            this._audioControlsService.moveControl(evt);
+            this._audioControlsService.moveControl(event.clientX);
         }
     }
 
     public MouseUp() {
         this.mouseDown = false;
+    }
+
+    public barClicked(event: any) {
+        this._audioControlsService.moveControl(event.clientX);
     }
 }

@@ -3,10 +3,10 @@ import { Subscription } from 'rxjs/Subscription';
 
 import { Midi2JsonService } from '../midi/midi-to-json.service';
 import { SongJson } from '../midi/song-json';
-import { AudioControlsEventsService } from '../audio-controls/audio-controls-events.service';
+import { AudioControlsEventsService } from '../shared/audio-controls-events.service';
 import { Uint8Array2ArrayBuffer } from '../shared/uint8array-to-arraybuffer';
-import { AudioControlEvent } from '../audio-controls/audio-control-event';
-import { AudioControlsEventTypes } from '../audio-controls/audio-controls-event-types.enum';
+import { AudioControlEvent } from '../shared/audio-control-event';
+import { AudioControlsEventTypes } from '../shared/audio-controls-event-types.enum';
 
 declare var MIDIjs: any;
 
@@ -37,6 +37,7 @@ export class AudioControlsService {
     // If it is at the beginning it is 0, if it is at the end,
     // it is usableWidthOfProgressControlBar
 
+    mutedTracks: number[];
 
 
     constructor(
@@ -68,6 +69,17 @@ export class AudioControlsService {
             case AudioControlsEventTypes.musicProgress:
                 this.updateProgress(event.data);
                 break;
+            case AudioControlsEventTypes.trackMuted:
+                if (this.mutedTracks.indexOf(event.data) === -1) {
+                    this.mutedTracks.push(event.data);
+                }
+                break;
+            case AudioControlsEventTypes.trackUnmuted:
+                let index = this.mutedTracks.indexOf(event.data)
+                if (index !== -1) {
+                    this.mutedTracks.splice(index, 1);
+                }
+                break;
         }
     }
 
@@ -87,6 +99,7 @@ export class AudioControlsService {
         this.positionControlLocationAtStartInPixels = 0;
         this.positionControlLocationCurrentInPixels = 0;
         this.isSongPlaying = false;
+        this.mutedTracks = [];
     }
     public songStarted() {
         try {
@@ -136,9 +149,9 @@ export class AudioControlsService {
         this.positionProgressControlInTicks(ticksFromBeginningOfSong);
 
     }
-    public moveControl(evt: any) {
+    public moveControl(x: number) {
         try {
-            this.positionProgressControlInPixels(evt.clientX - this.xOfZeroOfPositionControl);
+            this.positionProgressControlInPixels(x - this.xOfZeroOfPositionControl);
 
         } catch (error) {
             console.log('An exception was raised in audioControlsService.MoveControl:');
@@ -146,11 +159,14 @@ export class AudioControlsService {
         }
     }
 
+    private tracksMutedChange(trackNumber: number, isMuted: boolean) {
+
+    }
+
     // Since the user can move the progress control slide to start the song from any
     // place, we need to send to the midi driver only the note bytes from this point in time
     public getSongBytesFromStartingPosition(): ArrayBuffer {
-        //  let mutedTracks: number[] = this._songDisplayService.getMutedTracks();
-        let sliceFromCurrentPosition = this.song.getSliceStartingFromTick(this.positionControlLocationCurrentInTicks, []);
+        let sliceFromCurrentPosition = this.song.getSliceStartingFromTick(this.positionControlLocationCurrentInTicks, this.mutedTracks);
         let midiBytes = this._midi2jsonService.getMidiBytes(sliceFromCurrentPosition);
         return Uint8Array2ArrayBuffer.convert(midiBytes);
     }

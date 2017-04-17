@@ -5,13 +5,16 @@ import { Instrument } from './midi-codes/instrument.enum'
 export class NotesTrack {
     notesSequence: TrackNote[];
     range: TrackRange;
-    instrument: Instrument;
+    instrument: Instrument[];
     trackName: string;
+    trackNumber: number; // The sequence number in the sequence of all tracks
 
-    constructor(seq: TrackNote[], range: TrackRange, instrument: Instrument, trackName: string) {
+    constructor(seq: TrackNote[], range: TrackRange, instrument: Instrument[], trackName: string,
+        trackNumber: number) {
         this.notesSequence = seq;
         this.range = range;
         this.instrument = instrument;
         this.trackName = trackName;
+        this.trackNumber = trackNumber;
     }
 }

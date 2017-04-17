@@ -5,9 +5,10 @@ import { SongJson } from '../midi/song-json';
 import { Midi2JsonService } from '../midi/midi-to-json.service';
 import { TrackNote } from '../midi/track-note';
 import { Instrument } from '../midi/midi-codes/instrument.enum';
-import { AudioControlsEventsService } from '../audio-controls/audio-controls-events.service';
-import { AudioControlsEventTypes } from '../audio-controls/audio-controls-event-types.enum';
-import { AudioControlEvent } from '../audio-controls/audio-control-event';
+import { AudioControlsEventsService } from '../shared/audio-controls-events.service';
+import { AudioControlsEventTypes } from '../shared/audio-controls-event-types.enum';
+import { AudioControlEvent } from '../shared/audio-control-event';
+import { GeneralMidiInstrument } from '../shared/general-midi-instrument';
 
 declare var MIDIjs: any;
 
@@ -18,15 +19,16 @@ declare var MIDIjs: any;
 })
 export class TrackDisplayComponent implements OnChanges, AfterViewChecked, OnInit {
     @Input() song: SongJson;
-    @Input() trackNumber: number;
+    @Input() trackNotesNumber: number;
+    trackNumber: number;
     subscriptionAudioEvents: Subscription;
     isInitialized = false;
     songIsPlaying: boolean;
     svgns: string = 'http://www.w3.org/2000/svg';
-    staffAreaBox: any;  // html svg element where the music is shown graphically
-    staffAreaWidth: number;
+    svgBoxId = 'svgBox' + this.trackNumber;
+    svgBox: any;  // html svg element where the music is shown graphically
+    svgBoxWidth: number;
     trackHeight: number = 150; // height in pixels. When there are many tracks, we may want to reduce it
-    staffAreaBoxId: string;
     progressBarId = 'progressBar' + this.trackNumber;
     zoomIndex: number;  // is the index inside the zoomSteps array
     zoomSteps: number[] = [1, 1.5, 2, 3, 4, 6, 8, 12, 16, 20];
@@ -34,11 +36,14 @@ export class TrackDisplayComponent implements OnChanges, AfterViewChecked, OnIni
     // shown, scrollDisplacement is the length from the left border
     // shown to the beginning of the song (outside the image)
     scrollDisplacementY: number;
-    colorTrackSeparator: string = 'rgb(200,180,170)';
     colorMusicBar: string = 'rgb(200,180,170)';
     colorProgressBar: string = 'rgb(200,0,0)';
     noteDotRadio: number = 1;
     trackInfo: string;
+    muteButtonCurrentImage: string = './app/assets/images/speakerOn.png';
+    imageSpeakerOn = './app/assets/images/speakerOn.png';
+    imageSpeakerOff = './app/assets/images/speakerOff.png';
+    trackIsMuted: boolean;
 
     constructor(
         private _midi2JsonService: Midi2JsonService,
@@ -85,15 +90,26 @@ export class TrackDisplayComponent implements OnChanges, AfterViewChecked, OnIni
                 this.moveWindow(1, 0);
                 break;
             case AudioControlsEventTypes.musicProgress:
-                this.updateProgress(event.data.time);
+                this.updateProgress(event.data.locationProgressControl);
 
         }
     }
 
     ngOnInit() {
         // Populate information section
-        this.trackInfo = this.song.notesTracks[this.trackNumber].trackName;
-        this.trackInfo += ' - ' + Instrument[this.song.notesTracks[this.trackNumber].instrument];
+        this.trackInfo = '';
+        this.trackNumber = this.song.notesTracks[this.trackNotesNumber].trackNumber;
+        if (this.song.notesTracks[this.trackNotesNumber].trackName) {
+            this.trackInfo = this.song.notesTracks[this.trackNotesNumber].trackName + '-';
+        }
+        let thisTrackInfo = this.song.notesTracks[this.trackNotesNumber];
+        for (let i = 0; i < thisTrackInfo.instrument.length; i++) {
+            let instrumentCode: number = thisTrackInfo.instrument[i];
+            this.trackInfo += GeneralMidiInstrument.GetInstrumentName(instrumentCode) + ', ';
+        }
+        // Remove last comma
+        this.trackInfo = this.trackInfo.slice(0, -2);
+
     }
 
     ngAfterViewChecked() {
@@ -104,34 +120,37 @@ export class TrackDisplayComponent implements OnChanges, AfterViewChecked, OnIni
         }
     }
     private initialize() {
-        this.staffAreaBoxId = 'svgBoxStaffArea' + this.trackNumber;
-        this.staffAreaBox = document.getElementById(this.staffAreaBoxId);
+        this.trackIsMuted = false;
+        this.muteButtonCurrentImage = this.imageSpeakerOn;
+        this.svgBoxId = 'svgBox' + this.trackNumber;
+        this.progressBarId = 'progressBar' + this.trackNumber;
+        this.svgBox = document.getElementById(this.svgBoxId);
         this.zoomIndex = 0;
         this.scrollDisplacementX = 0;
         this.scrollDisplacementY = 0;
         this.songIsPlaying = false;
-        this.staffAreaWidth = this.staffAreaBox.clientWidth;
+        this.svgBoxWidth = this.svgBox.clientWidth;
         let heightText: string = this.trackHeight + 'px';
-        this.staffAreaBox.setAttribute('height', heightText);
+        this.svgBox.setAttribute('height', heightText);
     }
 
     // ------------------------------------------------------------------------------
     // Utilities for drawing
     public createProgressBar(x = 0): any {
-        let progressBar = document.getElementById('svgBoxStaffArea');
+        let progressBar = document.getElementById(this.progressBarId);
         if (progressBar) {
             try {
-                this.staffAreaBox.removeChild(progressBar);
+                this.svgBox.removeChild(progressBar);
             } catch (error) {
                 console.log('The progressBar object is not null, but when trying to remove it an exception was raised');
                 console.log(error);
             }
         }
         return this.createLine(x, x, 0, this.trackHeight, 2,
-            this.colorProgressBar, 'progressBar');
+            this.colorProgressBar, this.progressBarId);
     }
     private createLine(x1: number, x2: number, y1: number, y2: number, width: number,
-        color: string, id: string, control: any = this.staffAreaBox): any {
+        color: string, id: string, control: any = this.svgBox): any {
         let line: any = document.createElementNS(this.svgns, 'line');
         line.setAttributeNS(null, 'width', width);
         line.setAttributeNS(null, 'x1', x1);
@@ -152,7 +171,7 @@ export class TrackDisplayComponent implements OnChanges, AfterViewChecked, OnIni
         dot.setAttributeNS(null, 'cy', y);
         dot.setAttributeNS(null, 'r', r);
         dot.setAttributeNS(null, 'fill', color);
-        this.staffAreaBox.appendChild(dot);
+        this.svgBox.appendChild(dot);
         return dot;
     }
 
@@ -171,10 +190,10 @@ export class TrackDisplayComponent implements OnChanges, AfterViewChecked, OnIni
     // Draws everything in the svg box, given the zoom value and x/y discplacements
     private drawGraphic() {
         this.cleanSvg();
-        let horizontalScale: number = this.staffAreaWidth / this.song.durationInTicks;
+        let horizontalScale: number = this.svgBoxWidth / this.song.durationInTicks;
         horizontalScale = horizontalScale * this.zoom();
 
-        let thisTrack = this.song.notesTracks[this.trackNumber];
+        let thisTrack = this.song.notesTracks[this.trackNotesNumber];
         let verticalScale: number = this.trackHeight / (thisTrack.range.maxPitch - thisTrack.range.minPitch);
         verticalScale = verticalScale * this.zoom();
         let noteSeq: TrackNote[] = thisTrack.notesSequence;
@@ -191,7 +210,7 @@ export class TrackDisplayComponent implements OnChanges, AfterViewChecked, OnIni
             } else {
                 cy = this.trackHeight / 2;
             }
-            if (cx - this.scrollDisplacementX < this.staffAreaWidth &&
+            if (cx - this.scrollDisplacementX < this.svgBoxWidth &&
                 cx - this.scrollDisplacementX > 0 &&
                 cy - this.scrollDisplacementY < this.trackHeight &&
                 cy - this.scrollDisplacementY > 0) {
@@ -206,9 +225,9 @@ export class TrackDisplayComponent implements OnChanges, AfterViewChecked, OnIni
     }
     private createStaffBars(horizontalScale: number) {
         let barx = 0;
-        while (barx < this.staffAreaWidth) {
+        while (barx < this.svgBoxWidth) {
             this.createLine(barx, barx, 0, this.trackHeight, 1, this.colorMusicBar, '',
-                this.staffAreaBox)
+                this.svgBox)
             barx += this.song.getTicksPerBar() * horizontalScale;
         }
     }
@@ -218,11 +237,11 @@ export class TrackDisplayComponent implements OnChanges, AfterViewChecked, OnIni
 
     // Cleans the graphic and the information svg boxes
     private cleanSvg() {
-        let parentElement = this.staffAreaBox.parentElement;
-        let emptySvg = this.staffAreaBox.cloneNode(false);
-        parentElement.removeChild(this.staffAreaBox);
+        let parentElement = this.svgBox.parentElement;
+        let emptySvg = this.svgBox.cloneNode(false);
+        parentElement.removeChild(this.svgBox);
         parentElement.appendChild(emptySvg);
-        this.staffAreaBox = document.getElementById(this.staffAreaBoxId);
+        this.svgBox = document.getElementById(this.svgBoxId);
     }
     // ----------------------------------------------------------------------------------
 
@@ -257,12 +276,12 @@ export class TrackDisplayComponent implements OnChanges, AfterViewChecked, OnIni
         let initialScrollDisplacementX = this.scrollDisplacementX;
         let initialScrollDisplacementY = this.scrollDisplacementY;
         if (directionX !== 0) {
-            let fullWidth: number = this.zoom() * this.staffAreaWidth;
-            let distanceToMove = this.staffAreaWidth * 0.7 * directionX;
+            let fullWidth: number = this.zoom() * this.svgBoxWidth;
+            let distanceToMove = this.svgBoxWidth * 0.7 * directionX;
             if (this.scrollDisplacementX + distanceToMove < 0) {
                 this.scrollDisplacementX = 0;
-            } else if (this.scrollDisplacementX + distanceToMove + this.staffAreaWidth > fullWidth) {
-                this.scrollDisplacementX = fullWidth - this.staffAreaWidth;
+            } else if (this.scrollDisplacementX + distanceToMove + this.svgBoxWidth > fullWidth) {
+                this.scrollDisplacementX = fullWidth - this.svgBoxWidth;
             } else {
                 this.scrollDisplacementX += distanceToMove;
             }
@@ -292,7 +311,7 @@ export class TrackDisplayComponent implements OnChanges, AfterViewChecked, OnIni
         try {
             let progressBar = document.getElementById(this.progressBarId)
             if (progressBar) {
-                this.staffAreaBox.removeChild(progressBar);
+                this.svgBox.removeChild(progressBar);
             }
         } catch (error) {
             console.log('An exception was raised at SongDisplayService.songPaused()');
@@ -308,7 +327,7 @@ export class TrackDisplayComponent implements OnChanges, AfterViewChecked, OnIni
         try {
             let progressBar = document.getElementById(this.progressBarId)
             if (progressBar) {
-                this.staffAreaBox.removeChild(progressBar);
+                this.svgBox.removeChild(progressBar);
             }
         } catch (error) {
             console.log('An exception was raised at SongDisplayService.songStopped()');
@@ -325,7 +344,7 @@ export class TrackDisplayComponent implements OnChanges, AfterViewChecked, OnIni
             if (!progressBar) {
                 progressBar = this.createProgressBar(0);
             }
-            if (actualx > 0 && actualx < this.staffAreaWidth) {
+            if (actualx > 0 && actualx < this.svgBoxWidth) {
                 progressBar.setAttributeNS(null, 'x1', actualx.toString());
                 progressBar.setAttributeNS(null, 'x2', actualx.toString());
                 progressBar.setAttributeNS(null, 'visibility', 'visible');
@@ -336,6 +355,17 @@ export class TrackDisplayComponent implements OnChanges, AfterViewChecked, OnIni
         } catch (error) {
             console.log('An exception was raised at SongDisplayService.updateProgress()');
             console.log(error);
+        }
+    }
+
+    public toggleMute() {
+        this.trackIsMuted = !this.trackIsMuted;
+        if (this.trackIsMuted) {
+            this.muteButtonCurrentImage = this.imageSpeakerOff;
+            this._audioControlsEventsService.raiseEvent(AudioControlsEventTypes.trackMuted, this.trackNumber);
+        } else {
+            this.muteButtonCurrentImage = this.imageSpeakerOn;
+            this._audioControlsEventsService.raiseEvent(AudioControlsEventTypes.trackUnmuted, this.trackNumber);
         }
     }
 }

@@ -5,7 +5,6 @@ import { SongJson } from '../midi/song-json';
 import { SongRepositoryService } from './song-repository.service';
 import { Midi2JsonService } from '../midi/midi-to-json.service';
 import { Band } from './band';
-import { SongDisplayService } from '../graphics/song-display.service';
 
 declare var MIDIjs: any;
 
@@ -18,9 +17,9 @@ export class SongDetailsComponent implements OnChanges {
     songJson: SongJson;
     @Input() selectedSongId: string;
 
-    constructor(private _songService: SongRepositoryService,
-        private _midi2JsonService: Midi2JsonService,
-        private _songDisplayService: SongDisplayService) {
+    constructor(
+        private _songService: SongRepositoryService,
+        private _midi2JsonService: Midi2JsonService) {
     }
 
 
@@ -50,9 +49,6 @@ export class SongDetailsComponent implements OnChanges {
             this.song.midiFile = await (this._songService.getSongMidiById(this.selectedSongId));
             this.songJson = this._midi2JsonService.getMidiObject(this.song.midiFile);
         };
-    }
-    public informationClick(event) {
-        this._songDisplayService.informationAreaClicked(event.offsetX, event.offsetY);
     }
 }
 

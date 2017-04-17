@@ -1,9 +1,10 @@
 <div>
     <div class="col-md-1 col-lg-1">
-        {{trackInfo}}
+        <div>{{trackInfo}}</div>
+        <div><img [src]="muteButtonCurrentImage" width="25" (click)="toggleMute()"></div>
     </div>
     <div class="col-md-11 col-lg-11">
-        <svg id="svgBoxStaffArea{{trackNumber}}" width="100%" height="100%" style="border: 1px solid black; background-color:white"
+        <svg id="svgBox{{trackNumber}}" width="100%" height="100%" style="border: 1px solid black; background-color:white"
             xmlns="http://www.w3.org/2000/svg">
             </svg>
     </div>

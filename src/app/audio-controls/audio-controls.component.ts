@@ -2,8 +2,8 @@ import { Component, Input } from '@angular/core';
 
 import { SongJson } from '../midi/song-json';
 import { AudioControlsService } from './audio-controls.service';
-import { AudioControlsEventsService } from './audio-controls-events.service';
-import { AudioControlsEventTypes } from './audio-controls-event-types.enum';
+import { AudioControlsEventsService } from '../shared/audio-controls-events.service';
+import { AudioControlsEventTypes } from '../shared/audio-controls-event-types.enum';
 
 declare var MIDIjs: any;
 
@@ -28,6 +28,10 @@ export class AudioControlsComponent {
         this._audioControlsEventsService.raiseEvent(AudioControlsEventTypes.musicStopped);
     }
     MidiSoundProgress(event: any) {
-        this._audioControlsEventsService.raiseEvent(AudioControlsEventTypes.musicProgress, event);
+        let progressObject = {
+            time: event.time,
+            locationProgressControl: this._audioControlsService.positionControlLocationCurrentInPixels
+        }
+        this._audioControlsEventsService.raiseEvent(AudioControlsEventTypes.musicProgress, progressObject);
     }
 }

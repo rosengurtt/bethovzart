@@ -1,9 +1,9 @@
 import { Component, Input, OnChanges, SimpleChange, HostListener } from '@angular/core';
 
 import { Song } from '../songs/song';
-import { AudioControlsEventsService } from './audio-controls-events.service';
+import { AudioControlsEventsService } from '../shared/audio-controls-events.service';
 import { AudioControlsService } from './audio-controls.service';
-import { AudioControlsEventTypes } from './audio-controls-event-types.enum';
+import { AudioControlsEventTypes } from '../shared/audio-controls-event-types.enum';
 
 declare var MIDIjs: any;
 
@@ -84,7 +84,5 @@ export class AudioButtonsComponent {
     moveDown() {
         this._audioControlsEventsService.raiseEvent(AudioControlsEventTypes.moveDown);
     }
-
- 
 }
 

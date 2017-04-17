@@ -1,5 +1,5 @@
 <div *ngIf='song'>
     <div *ngFor="let track of song.notesTracks;let i = index;">
-        <track-display [song]="song" [trackNumber]="i"  ></track-display>
+        <track-display [song]="song" [trackNotesNumber]="i"  ></track-display>
     </div>
 </div>

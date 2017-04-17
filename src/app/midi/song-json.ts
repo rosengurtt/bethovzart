@@ -41,7 +41,9 @@ export class SongJson {
             for (let j = 0; j < this.tracks[i].length; j++) {
                 let event: MidiEvent = this.tracks[i][j];
                 if (event.isPatchChange()) {
-                    instrumentsInThisTrack.push(event.param1)
+                    if (instrumentsInThisTrack.indexOf(event.param1) === -1) {
+                        instrumentsInThisTrack.push(event.param1)
+                    }
                 }
             }
             returnObject.push(instrumentsInThisTrack);
@@ -172,9 +174,9 @@ export class SongJson {
             let TrackNotes = this.getNotes(this.tracks[k]);
             if (TrackNotes.length > 0) {
                 let range: TrackRange = this.getTrackRange(TrackNotes);
-                let instrument: Instrument = this.instruments[k][0];
+                let instrument: Instrument[] = this.instruments[k];
                 let trackName: string = this.trackNames[k];
-                musicTracks.push(new NotesTrack(TrackNotes, range, instrument, trackName))
+                musicTracks.push(new NotesTrack(TrackNotes, range, instrument, trackName, k));
             }
         }
         return musicTracks;
