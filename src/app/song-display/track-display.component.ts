@@ -27,7 +27,6 @@ export class TrackDisplayComponent implements AfterViewChecked, OnInit {
     svgBoxId = 'svgBox' + this.trackNotesNumber;
     svgBox: any;  // html svg element where the music is shown graphically
     svgBoxWidth: number;
-    trackHeight: number = 150; // height in pixels. When there are many tracks, we may want to reduce it
     progressBarId = 'progressBar' + this.trackNotesNumber;
     zoomIndex: number;  // is the index inside the zoomSteps array
     zoomSteps: number[] = [1, 1.5, 2, 3, 4, 6, 8, 12, 16, 20];
@@ -43,6 +42,10 @@ export class TrackDisplayComponent implements AfterViewChecked, OnInit {
     imageSpeakerOn = './app/assets/images/speakerOn.png';
     imageSpeakerOff = './app/assets/images/speakerOff.png';
     trackIsMuted: boolean;
+    trackIsSolo: boolean;
+    soloUnsolo: string; // text that shows if track is playing solo or not
+    maxLengthInstrumentsList = 50;  // if a track has too many instruments, showing them all distorts
+    // the image
 
     constructor(
         private _trackDisplayService: TrackDisplayService,
@@ -55,38 +58,20 @@ export class TrackDisplayComponent implements AfterViewChecked, OnInit {
 
     private handleEvent(event: AudioControlEvent) {
         switch (event.type) {
-            case AudioControlsEventTypes.play:
-                this._trackDisplayService.songStarted(event.data, this.trackNotesNumber);
+            case AudioControlsEventTypes.trackSolo:
+                if (event.data !== this.trackNumber) {
+                    this.muteButtonCurrentImage = this.imageSpeakerOff;
+                    this.trackIsMuted = true;
+                    this.soloUnsolo = 'Solo';
+                }
                 break;
-            case AudioControlsEventTypes.stop:
-                this._trackDisplayService.songStopped(this.trackNotesNumber);
+            case AudioControlsEventTypes.trackUnsolo:
+                if (event.data !== this.trackNumber) {
+                    this.muteButtonCurrentImage = this.imageSpeakerOn;
+                    this.trackIsMuted = false;
+                    this.soloUnsolo = 'Solo';
+                }
                 break;
-            case AudioControlsEventTypes.pause:
-                this._trackDisplayService.songPaused(this.trackNotesNumber);
-                break;
-            case AudioControlsEventTypes.goToBeginning: break;
-            case AudioControlsEventTypes.goToEnd: break;
-            case AudioControlsEventTypes.zoomIn:
-                this._trackDisplayService.changeZoom(1, this.trackNotesNumber);
-                break;
-            case AudioControlsEventTypes.zoomOut:
-                this._trackDisplayService.changeZoom(-1, this.trackNotesNumber);
-                break;
-            case AudioControlsEventTypes.moveUp:
-                this._trackDisplayService.moveWindow(0, -1, this.trackNotesNumber);
-                break;
-            case AudioControlsEventTypes.moveDown:
-                this._trackDisplayService.moveWindow(0, 1, this.trackNotesNumber);
-                break;
-            case AudioControlsEventTypes.moveLeft:
-                this._trackDisplayService.moveWindow(-1, 0, this.trackNotesNumber);
-                break;
-            case AudioControlsEventTypes.moveRight:
-                this._trackDisplayService.moveWindow(1, 0, this.trackNotesNumber);
-                break;
-            case AudioControlsEventTypes.musicProgress:
-                this._trackDisplayService.updateProgress(event.data.locationProgressControl, this.trackNotesNumber);
-
         }
     }
 
@@ -104,7 +89,14 @@ export class TrackDisplayComponent implements AfterViewChecked, OnInit {
         }
         // Remove last comma
         this.trackInfo = this.trackInfo.slice(0, -2);
-
+        if (this.trackInfo.length > this.maxLengthInstrumentsList) {
+            this.trackInfo = this.trackInfo.substring(0, this.maxLengthInstrumentsList);
+        }
+        if (this.song.notesTracks.length > 1) {
+            this.soloUnsolo = 'Solo';
+        } else {
+            this.soloUnsolo = '';
+        }
     }
 
     ngAfterViewChecked() {
@@ -117,6 +109,7 @@ export class TrackDisplayComponent implements AfterViewChecked, OnInit {
     }
     private initialize() {
         this.trackIsMuted = false;
+        this.trackIsSolo = false;
         this.muteButtonCurrentImage = this.imageSpeakerOn;
     }
 
@@ -130,5 +123,23 @@ export class TrackDisplayComponent implements AfterViewChecked, OnInit {
             this.muteButtonCurrentImage = this.imageSpeakerOn;
             this._audioControlsEventsService.raiseEvent(AudioControlsEventTypes.trackUnmuted, this.trackNumber);
         }
+    }
+
+    public toggleSolo() {
+        this.trackIsSolo = !this.trackIsSolo;
+        if (this.trackIsSolo) {
+            this.soloUnsolo = 'Unsolo';
+            this.muteButtonCurrentImage = this.imageSpeakerOn;
+            this.trackIsMuted = false;
+            this._audioControlsEventsService.raiseEvent(AudioControlsEventTypes.trackSolo, this.trackNumber);
+        } else {
+            this.soloUnsolo = 'Solo';
+            this.muteButtonCurrentImage = this.imageSpeakerOn;
+            this._audioControlsEventsService.raiseEvent(AudioControlsEventTypes.trackUnsolo, this.trackNumber);
+        }
+    }
+
+    public volumeChange(vol) {
+
     }
 }

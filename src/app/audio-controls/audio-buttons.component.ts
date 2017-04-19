@@ -32,7 +32,7 @@ export class AudioButtonsComponent {
         MIDIjs.play(songPartToPlay);
         this.isPlaying = true;
         this._audioControlsEventsService.raiseEvent(AudioControlsEventTypes.play,
-        this._audioControlsService.positionControlLocationAtStartInTicks);
+            this._audioControlsService.positionControlLocationAtStartInTicks);
 
     }
 
@@ -54,14 +54,12 @@ export class AudioButtonsComponent {
     }
 
     goToBeginning() {
-        if (this.loadFinished && !this.isPlaying) {
-            this._audioControlsService.goToBeginning();
+        if (!this.isPlaying) {
             this._audioControlsEventsService.raiseEvent(AudioControlsEventTypes.goToBeginning);
         }
     }
     goToEnd() {
-        if (this.loadFinished && !this.isPlaying) {
-            this._audioControlsService.goToEnd();
+        if (!this.isPlaying) {
             this._audioControlsEventsService.raiseEvent(AudioControlsEventTypes.goToEnd);
         }
     }

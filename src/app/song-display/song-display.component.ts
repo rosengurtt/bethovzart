@@ -1,6 +1,14 @@
 import { Component, Input } from '@angular/core';
+import { Subscription } from 'rxjs/Subscription';
 
 import { SongJson } from '../midi/song-json';
+import { TrackNote } from '../midi/track-note';
+import { AudioControlsEventsService } from '../shared/audio-controls-events.service';
+import { AudioControlsEventTypes } from '../shared/audio-controls-event-types.enum';
+import { AudioControlEvent } from '../shared/audio-control-event';
+import { GeneralMidiInstrument } from '../shared/general-midi-instrument';
+import { TrackDisplayService } from '../song-display/track-display.service';
+
 
 declare var MIDIjs: any;
 
@@ -10,8 +18,51 @@ declare var MIDIjs: any;
 })
 export class SongDisplayComponent  {
     @Input() song: SongJson;
+    subscriptionAudioEvents: Subscription;
 
-    constructor() {
+    constructor(
+        private _trackDisplayService: TrackDisplayService,
+        private _audioControlsEventsService: AudioControlsEventsService) {
+        this.subscriptionAudioEvents = this._audioControlsEventsService
+            .getEvents().subscribe(event => {
+                this.handleEvent(event);
+            });
+    }
+  private handleEvent(event: AudioControlEvent) {
+        switch (event.type) {
+            case AudioControlsEventTypes.play:
+                this._trackDisplayService.songStarted(event.data);
+                break;
+            case AudioControlsEventTypes.stop:
+                this._trackDisplayService.songStopped();
+                break;
+            case AudioControlsEventTypes.pause:
+                this._trackDisplayService.songPaused();
+                break;
+            case AudioControlsEventTypes.goToBeginning: break;
+            case AudioControlsEventTypes.goToEnd: break;
+            case AudioControlsEventTypes.zoomIn:
+                this._trackDisplayService.changeZoom(1);
+                break;
+            case AudioControlsEventTypes.zoomOut:
+                this._trackDisplayService.changeZoom(-1);
+                break;
+            case AudioControlsEventTypes.moveUp:
+                this._trackDisplayService.moveWindow(0, -1);
+                break;
+            case AudioControlsEventTypes.moveDown:
+                this._trackDisplayService.moveWindow(0, 1);
+                break;
+            case AudioControlsEventTypes.moveLeft:
+                this._trackDisplayService.moveWindow(-1, 0);
+                break;
+            case AudioControlsEventTypes.moveRight:
+                this._trackDisplayService.moveWindow(1, 0);
+                break;
+            case AudioControlsEventTypes.musicProgress:
+                this._trackDisplayService.updateProgress(event.data.locationProgressControl);
+
+        }
     }
 
 

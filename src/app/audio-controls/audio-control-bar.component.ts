@@ -17,7 +17,6 @@ export class AudioControlBarComponent implements OnChanges {
     @Input() song: SongJson;
     mouseDown: boolean = false;
     isPlaying: boolean = false;
-    loadFinished: boolean;
 
     constructor(
         private _midi2JsonService: Midi2JsonService,

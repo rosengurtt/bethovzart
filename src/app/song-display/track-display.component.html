@@ -1,7 +1,15 @@
 <div>
     <div class="col-md-1 col-lg-1">
-        <div>{{trackInfo}}</div>
-        <div><img [src]="muteButtonCurrentImage" width="25" (click)="toggleMute()"></div>
+        <div><small>{{trackInfo}}</small></div>
+        <div>
+            <img [src]="muteButtonCurrentImage" width="25" (click)="toggleMute()">
+            <a (click)="toggleSolo()"><small>{{soloUnsolo}}</small></a>
+        </div>
+        <div style="width:100%;height:26">
+            <slider-soret sliderId="sliderVol{{trackNotesNumber}}" (valueChange)="volumeChange($event)"
+            boxHeight="26" barHeight="5" radius="7" enabled="true" initialValue="0.5">
+        </slider-soret>
+        </div>
     </div>
     <div class="col-md-11 col-lg-11">
         <svg id="svgBox{{trackNotesNumber}}" width="100%" height="150" style="border: 1px solid black; background-color:white"

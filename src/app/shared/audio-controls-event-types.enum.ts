@@ -14,5 +14,8 @@ export enum AudioControlsEventTypes {
     musicProgress,
     musicStopped,
     trackMuted,
-    trackUnmuted
+    trackUnmuted,
+    trackSolo,
+    trackUnsolo,
+    volumeChange
 }

@@ -80,6 +80,17 @@ export class AudioControlsService {
                     this.mutedTracks.splice(index, 1);
                 }
                 break;
+            case AudioControlsEventTypes.trackSolo:
+                this.mutedTracks = [];
+                for (let i = 0; i < this.song.notesTracks.length; i++) {
+                    if (this.song.notesTracks[i].trackNumber !== event.data) {
+                        this.mutedTracks.push(this.song.notesTracks[i].trackNumber);
+                    }
+                }
+                break;
+            case AudioControlsEventTypes.trackUnsolo:
+                this.mutedTracks = [];
+                break;
         }
     }
 
@@ -159,9 +170,7 @@ export class AudioControlsService {
         }
     }
 
-    private tracksMutedChange(trackNumber: number, isMuted: boolean) {
 
-    }
 
     // Since the user can move the progress control slide to start the song from any
     // place, we need to send to the midi driver only the note bytes from this point in time

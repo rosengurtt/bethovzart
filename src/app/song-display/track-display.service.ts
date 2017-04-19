@@ -27,6 +27,7 @@ export class TrackDisplayService {
     trackIsMuted: boolean;
     svgBoxIdPrefix = 'svgBox';
     progressBarIdPrefix = 'progressBar';
+    moveStep: number = 0.7;    // How much the image move when clicking the arrow buttons. 70%
 
     constructor() {
     }
@@ -156,7 +157,7 @@ export class TrackDisplayService {
     // Responses to events
     // ------------------------------------------------------------------------------
     // stepSign is +1 for zoom in and -1 for zoom out
-    public changeZoom(stepSign: number, trackNotesNumber: number) {
+    public changeZoom(stepSign: number) {
         // if invalid parameter do nothing
         if (stepSign !== 1 && stepSign !== -1) {
             return;
@@ -169,15 +170,16 @@ export class TrackDisplayService {
         }
         this.scrollDisplacementX *= (this.zoom() - 1);
         this.scrollDisplacementY *= (this.zoom() - 1);
-
-        this.drawGraphic(trackNotesNumber);
+        for (let i = 0; i < this.song.notesTracks.length; i++) {
+            this.drawGraphic(i);
+        }
     }
-    public moveWindow(directionX: number, directionY: number, trackNotesNumber: number) {
+    public moveWindow(directionX: number, directionY: number) {
         // when we haven't zoomed in, there is no need to move anything
         if (this.zoom() <= 1) {
             return;
         }
-        let svgBoxId = this.svgBoxIdPrefix + trackNotesNumber;
+        let svgBoxId = this.svgBoxIdPrefix + '0';
         let svgBox = document.getElementById(svgBoxId);
         let svgBoxWidth = svgBox.clientWidth;
         let svgBoxHeight = svgBox.clientHeight;
@@ -185,7 +187,7 @@ export class TrackDisplayService {
         let initialScrollDisplacementY = this.scrollDisplacementY;
         if (directionX !== 0) {
             let fullWidth: number = this.zoom() * svgBoxWidth;
-            let distanceToMove = svgBoxWidth * 0.7 * directionX;
+            let distanceToMove = svgBoxWidth * this.moveStep * directionX;
             if (this.scrollDisplacementX + distanceToMove < 0) {
                 this.scrollDisplacementX = 0;
             } else if (this.scrollDisplacementX + distanceToMove + svgBoxWidth > fullWidth) {
@@ -196,10 +198,10 @@ export class TrackDisplayService {
         }
         if (directionY !== 0) {
             let fullHeight: number = this.zoom() * svgBoxHeight;
-            let distanceToMove = svgBoxHeight * directionY * this.zoom();
+            let distanceToMove = svgBoxHeight * this.moveStep * directionY;
             if (this.scrollDisplacementY + distanceToMove < 0) {
                 this.scrollDisplacementY = 0;
-            } else if (this.scrollDisplacementY + distanceToMove > fullHeight) {
+            } else if (this.scrollDisplacementY + distanceToMove + svgBoxHeight > fullHeight) {
                 this.scrollDisplacementY = fullHeight - svgBoxHeight;
             } else {
                 this.scrollDisplacementY += distanceToMove;
@@ -207,72 +209,82 @@ export class TrackDisplayService {
         }
         if (initialScrollDisplacementX !== this.scrollDisplacementX ||
             initialScrollDisplacementY !== this.scrollDisplacementY) {
-            this.drawGraphic(trackNotesNumber);
-        }
-    }
-    public songStarted(startPositionInTicks: number, trackNotesNumber: number) {
-        this.songIsPlaying = true;
-        this.createProgressBar(0, trackNotesNumber);
-    }
-    public songPaused(trackNotesNumber: number) {
-        let progressBarId = this.progressBarIdPrefix + trackNotesNumber;
-        let svgBoxId = this.svgBoxIdPrefix + trackNotesNumber;
-        let svgBox = document.getElementById(svgBoxId);
-        this.songIsPlaying = false;
-        try {
-            let progressBar = document.getElementById(progressBarId);
-            if (progressBar) {
-                svgBox.removeChild(progressBar);
+            for (let i = 0; i < this.song.notesTracks.length; i++) {
+                this.drawGraphic(i);
             }
-        } catch (error) {
-            console.log('An exception was raised at SongDisplayService.songPaused()');
-            console.log(error);
         }
     }
-    public songStopped(trackNotesNumber: number) {
+    public songStarted(startPositionInTicks: number) {
+        this.songIsPlaying = true;
+        for (let i = 0; i < this.song.notesTracks.length; i++) {
+            this.createProgressBar(0, i);
+        }
+    }
+    public songPaused() {
+        for (let i = 0; i < this.song.notesTracks.length; i++) {
+            let progressBarId = this.progressBarIdPrefix + i;
+            let svgBoxId = this.svgBoxIdPrefix + i;
+            let svgBox = document.getElementById(svgBoxId);
+            this.songIsPlaying = false;
+            try {
+                let progressBar = document.getElementById(progressBarId);
+                if (progressBar) {
+                    svgBox.removeChild(progressBar);
+                }
+            } catch (error) {
+                console.log('An exception was raised at SongDisplayService.songPaused()');
+                console.log(error);
+            }
+        }
+    }
+    public songStopped() {
         this.songIsPlaying = false;
-        this.removeProgressBar(trackNotesNumber);
+        this.removeProgressBar();
     }
 
-    private removeProgressBar(trackNotesNumber: number) {
-        try {
-            let progressBarId = this.progressBarIdPrefix + trackNotesNumber;
-            let svgBoxId = this.svgBoxIdPrefix + trackNotesNumber;
-            let svgBox = document.getElementById(svgBoxId);
-            let progressBar = document.getElementById(progressBarId);
-            if (progressBar) {
-                svgBox.removeChild(progressBar);
+    private removeProgressBar() {
+        for (let i = 0; i < this.song.notesTracks.length; i++) {
+            try {
+                let progressBarId = this.progressBarIdPrefix + i;
+                let svgBoxId = this.svgBoxIdPrefix + i;
+                let svgBox = document.getElementById(svgBoxId);
+                let progressBar = document.getElementById(progressBarId);
+                if (progressBar) {
+                    svgBox.removeChild(progressBar);
+                }
+            } catch (error) {
+                console.log('An exception was raised at SongDisplayService.songStopped()');
+                console.log(error);
             }
-        } catch (error) {
-            console.log('An exception was raised at SongDisplayService.songStopped()');
-            console.log(error);
         }
     }
-    public updateProgress(x: number, trackNotesNumber: number) {
+    public updateProgress(x: number) {
         if (!this.songIsPlaying) {
             return;
         }
-        try {
-            let progressBarId = this.progressBarIdPrefix + trackNotesNumber;
-            let progressBar = document.getElementById(progressBarId);
-            let svgBoxId = this.svgBoxIdPrefix + trackNotesNumber;
-            let svgBox = document.getElementById(svgBoxId);
-            let svgBoxWidth = svgBox.clientWidth;
-            let actualx: number = x * this.zoom() - this.scrollDisplacementX;
-            if (!progressBar) {
-                progressBar = this.createProgressBar(0, trackNotesNumber);
-            }
-            if (actualx > 0 && actualx < svgBoxWidth) {
-                progressBar.setAttributeNS(null, 'x1', actualx.toString());
-                progressBar.setAttributeNS(null, 'x2', actualx.toString());
-                progressBar.setAttributeNS(null, 'visibility', 'visible');
-            } else {
-                progressBar.setAttributeNS(null, 'visibility', 'hidden');
-            }
+        for (let i = 0; i < this.song.notesTracks.length; i++) {
+            try {
+                let progressBarId = this.progressBarIdPrefix + i;
+                let progressBar = document.getElementById(progressBarId);
+                let svgBoxId = this.svgBoxIdPrefix + i;
+                let svgBox = document.getElementById(svgBoxId);
+                let svgBoxWidth = svgBox.clientWidth;
+                let actualx: number = x * this.zoom() - this.scrollDisplacementX;
+                if (!progressBar) {
+                    progressBar = this.createProgressBar(0, i);
+                }
+                if (actualx > 0 && actualx < svgBoxWidth) {
+                    progressBar.setAttributeNS(null, 'x1', actualx.toString());
+                    progressBar.setAttributeNS(null, 'x2', actualx.toString());
+                    progressBar.setAttributeNS(null, 'visibility', 'visible');
+                } else {
+                    progressBar.setAttributeNS(null, 'visibility', 'hidden');
+                }
 
-        } catch (error) {
-            console.log('An exception was raised at SongDisplayService.updateProgress()');
-            console.log(error);
+            } catch (error) {
+                console.log('An exception was raised at SongDisplayService.updateProgress()');
+                console.log(error);
+            }
         }
     }
 }
