@@ -27,6 +27,7 @@ export class SliderSoretComponent implements AfterViewChecked {
     constructor() {
     }
 
+    // Need to initialize at this late stage, because the svg control must exist
     ngAfterViewChecked() {
         if (!this.initialized) {
             let boxHeight = parseInt(this.boxHeight, 10);
@@ -67,7 +68,8 @@ export class SliderSoretComponent implements AfterViewChecked {
             this.valueChange.next(this.currentValue);
         }
     }
-
+    // the value of x received from the event is measured from the border of the screen
+    // need to substract the x coordinate of the left side of the slider
     public barClicked(event: any) {
         if (this.enabled) {
             this.moveCircle(event.clientX - this.xCoordOfLeftBorder);
@@ -75,11 +77,20 @@ export class SliderSoretComponent implements AfterViewChecked {
         }
     }
 
+    // an external caller can use this method to position the slider at any arbitrary place
+    public setValue(value: number) {
+        this.moveCircle(this.calculateXcoord(value));
+    }
+    // value is the value between 0 and 1 that the position of the slider represents
+    // returns the x distance in pixels from the left of the slider
     private calculateXcoord(value: number) {
         let radius = parseInt(this.radius, 10);
         let maxValue = this.getMaxValue();
         return (value * maxValue) + radius;
     }
+
+    // x is the distance in pixels from the left of the slider
+    // positions the center of the circle a distance of x from the left border
     private moveCircle(x: number) {
         let radius = parseInt(this.radius, 10);
         let maxValue = this.getMaxValue();

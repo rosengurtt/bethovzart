@@ -17,6 +17,7 @@ export class SongJson {
     private _durationInSeconds: number = -1;
     private _tempoEvents: MidiEvent[];
     private _timeSignature: TimeSignature;
+    private _trackVolumes: number[];
 
 
     constructor(format?: number, ticksPerBeat?: number, tracks?: MidiEvent[][]) {
@@ -31,7 +32,6 @@ export class SongJson {
             this._instruments = this.getInstruments();
         }
         return this._instruments;
-
     }
 
     private getInstruments(): Instrument[][] {
@@ -47,6 +47,28 @@ export class SongJson {
                 }
             }
             returnObject.push(instrumentsInThisTrack);
+        }
+        return returnObject;
+    }
+
+     get trackVolumes(): number[] {
+        if (!this._trackVolumes) {
+            this._trackVolumes = this.getTrackVolumes();
+        }
+        return this._trackVolumes;
+    }
+
+    private getTrackVolumes(): number[] {
+        let returnObject: number[] = [];
+        for (let i = 0; i < this.tracks.length; i++) {
+            for (let j = 0; j < this.tracks[i].length; j++) {
+                let event: MidiEvent = this.tracks[i][j];
+                if (event.isVolumeChange()) {
+                    // returnObject[i]=event.param1
+                    console.log("el volumen del track " + i)
+                    console.log(event)
+                }
+            }
         }
         return returnObject;
     }

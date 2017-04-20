@@ -97,6 +97,7 @@ export class TrackDisplayComponent implements AfterViewChecked, OnInit {
         } else {
             this.soloUnsolo = '';
         }
+        let soret:number[] = this.song.trackVolumes;
     }
 
     ngAfterViewChecked() {

@@ -40,6 +40,7 @@ export class AudioControlsService {
     mutedTracks: number[];
 
 
+
     constructor(
         private _midi2jsonService: Midi2JsonService,
         private _audioControlsEventsService: AudioControlsEventsService) {
@@ -52,7 +53,7 @@ export class AudioControlsService {
     private handleEvent(event: AudioControlEvent) {
         switch (event.type) {
             case AudioControlsEventTypes.play:
-                this.songStarted()
+                this.songStarted();
                 break;
             case AudioControlsEventTypes.stop:
                 this.songStopped();
