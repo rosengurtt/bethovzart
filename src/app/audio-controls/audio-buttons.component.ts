@@ -1,9 +1,11 @@
 import { Component, Input, OnChanges, SimpleChange, HostListener } from '@angular/core';
+import { Subscription } from 'rxjs/Subscription';
 
 import { Song } from '../songs/song';
 import { AudioControlsEventsService } from '../shared/audio-controls-events.service';
 import { AudioControlsService } from './audio-controls.service';
 import { AudioControlsEventTypes } from '../shared/audio-controls-event-types.enum';
+import { AudioControlEvent } from '../shared/audio-control-event';
 
 declare var MIDIjs: any;
 
@@ -15,53 +17,61 @@ declare var MIDIjs: any;
 export class AudioButtonsComponent {
     song: Song;
     @Input() selectedSongId: string;
+    subscriptionAudioEvents: Subscription;
     mouseDown: boolean = false;
     isPlaying: boolean = false;
     loadFinished: boolean;
 
     constructor(
         private _audioControlsService: AudioControlsService,
-        private _audioControlsEventsService: AudioControlsEventsService
-    ) {
+        private _audioControlsEventsService: AudioControlsEventsService) {
+        this.subscriptionAudioEvents = this._audioControlsEventsService
+            .getEvents().subscribe(event => {
+                this.handleEvent(event);
+            });
+    }
+
+    private handleEvent(event: AudioControlEvent) {
+        switch (event.type) {
+            case AudioControlsEventTypes.musicStarted:
+                this.isPlaying = true;
+                break;
+            case AudioControlsEventTypes.musicStopped:
+                this.isPlaying = false;
+                break;
+        }
     }
 
     playSong() {
-        let songPartToPlay: ArrayBuffer = this._audioControlsService.getSongBytesFromStartingPosition();
-        // this.download("midifile.txt", songPartToPlay);
-        // let check = this._midiFileCheckerService.check(songPartToPlay);
-        MIDIjs.play(songPartToPlay);
         this.isPlaying = true;
-        this._audioControlsEventsService.raiseEvent(AudioControlsEventTypes.play,
-            this._audioControlsService.positionControlLocationAtStartInTicks);
+        this._audioControlsEventsService.raiseEvent(AudioControlsEventTypes.play);
 
     }
 
     pauseSong() {
-        if (this.isPlaying) {
-            this._audioControlsService.songPaused();
-            MIDIjs.stop();
-            this.isPlaying = false;
-            this._audioControlsEventsService.raiseEvent(AudioControlsEventTypes.pause);
-        }
+        this.isPlaying = false;
+        this._audioControlsEventsService.raiseEvent(AudioControlsEventTypes.pause);
     }
     stopSong() {
-        if (this.isPlaying) {
-            MIDIjs.stop();
-            this.isPlaying = false;
-        }
-        this._audioControlsService.songStopped();
+        this.isPlaying = false;
         this._audioControlsEventsService.raiseEvent(AudioControlsEventTypes.stop);
     }
 
     goToBeginning() {
-        if (!this.isPlaying) {
-            this._audioControlsEventsService.raiseEvent(AudioControlsEventTypes.goToBeginning);
+        if (this.isPlaying) {
+            this._audioControlsEventsService.raiseEvent(AudioControlsEventTypes.stop);
+        }
+        this._audioControlsEventsService.raiseEvent(AudioControlsEventTypes.goToBeginning);
+        if (this.isPlaying) {
+            this._audioControlsEventsService.raiseEvent(AudioControlsEventTypes.play);
         }
     }
     goToEnd() {
-        if (!this.isPlaying) {
-            this._audioControlsEventsService.raiseEvent(AudioControlsEventTypes.goToEnd);
+        if (this.isPlaying) {
+            this._audioControlsEventsService.raiseEvent(AudioControlsEventTypes.stop);
+            this.isPlaying = false;
         }
+        this._audioControlsEventsService.raiseEvent(AudioControlsEventTypes.goToEnd);
     }
     zoomIn() {
         this._audioControlsEventsService.raiseEvent(AudioControlsEventTypes.zoomIn);

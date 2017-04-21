@@ -301,6 +301,8 @@
             song = 0;
             Module.ccall('mid_exit', 'void', [], []);
             source = 0;
+            RaiseEvent(new Event('PlayStopped'));
+
         }
         MIDIjs.message_callback(audio_status);
         var player_event = new Event('PlayProgress');
@@ -359,7 +361,7 @@
             sounddiv.parentNode.removeChild(sounddiv);
             source = 0;
         }
-        MIDIjs.message_callback(audio_status);
+        MIDIjs.player_callback(player_event);
     }
 
     var bv = browserVersion();

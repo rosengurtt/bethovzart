@@ -21,17 +21,12 @@ export class AudioControlsComponent {
     // The following events are raised by the midijs library
 
     MidiSoundStarted() {
-        this._audioControlsEventsService.raiseEvent(AudioControlsEventTypes.musicStarted,
-            this._audioControlsService.positionControlLocationAtStartInTicks);
+        this._audioControlsEventsService.raiseEvent(AudioControlsEventTypes.musicStarted);
     }
     MidiSoundFinished() {
         this._audioControlsEventsService.raiseEvent(AudioControlsEventTypes.musicStopped);
     }
     MidiSoundProgress(event: any) {
-        let progressObject = {
-            time: event.time,
-            locationProgressControl: this._audioControlsService.positionControlLocationCurrentInPixels
-        }
-        this._audioControlsEventsService.raiseEvent(AudioControlsEventTypes.musicProgress, progressObject);
+        this._audioControlsEventsService.raiseEvent(AudioControlsEventTypes.musicProgress, event.time);
     }
 }

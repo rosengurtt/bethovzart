@@ -29,7 +29,14 @@ export class TrackDisplayService {
     progressBarIdPrefix = 'progressBar';
     moveStep: number = 0.7;    // How much the image move when clicking the arrow buttons. 70%
 
-    constructor() {
+    sliderPositionAtStart: number = 0;
+
+    constructor(
+        private _audioControlsEventsService: AudioControlsEventsService) {
+        this.subscriptionAudioEvents = this._audioControlsEventsService
+            .getEvents().subscribe(event => {
+                this.handleEvent(event);
+            });
     }
 
     public initialize(song: SongJson, trackNotesNumber: number) {
@@ -39,7 +46,13 @@ export class TrackDisplayService {
         this.scrollDisplacementY = 0;
         this.songIsPlaying = false;
     }
-
+    private handleEvent(event: AudioControlEvent) {
+        switch (event.type) {
+            case AudioControlsEventTypes.playStartPositionCalculated:
+                this.sliderPositionAtStart = event.data;
+                break;
+        }
+    }
     // ------------------------------------------------------------------------------
     // Utilities for drawing
     public createProgressBar(x = 0, trackNotesNumber: number): any {
@@ -258,10 +271,14 @@ export class TrackDisplayService {
             }
         }
     }
-    public updateProgress(x: number) {
-        if (!this.songIsPlaying) {
+
+    public updateProgress(elapsedTimeInSeconds: number) {
+        let totalDuration = this.song.durationInSeconds * (1 - this.sliderPositionAtStart);
+        if (totalDuration === 0) { // check to avoid a division by 0
+            console.log('Unexpected song progress event because the total duration of the part of the song to play is 0');
             return;
         }
+        let progress = elapsedTimeInSeconds / totalDuration + this.sliderPositionAtStart;
         for (let i = 0; i < this.song.notesTracks.length; i++) {
             try {
                 let progressBarId = this.progressBarIdPrefix + i;
@@ -269,6 +286,7 @@ export class TrackDisplayService {
                 let svgBoxId = this.svgBoxIdPrefix + i;
                 let svgBox = document.getElementById(svgBoxId);
                 let svgBoxWidth = svgBox.clientWidth;
+                let x = progress * svgBoxWidth;
                 let actualx: number = x * this.zoom() - this.scrollDisplacementX;
                 if (!progressBar) {
                     progressBar = this.createProgressBar(0, i);

@@ -1,5 +1,6 @@
 export enum AudioControlsEventTypes {
     play,
+    playStartPositionCalculated,
     stop,
     zoomIn,
     zoomOut,

@@ -1,23 +1,8 @@
-<div style='width:100%' (mouseout)='MouseUp()' (mousemove)='MoveControl($event)'>
+<div style='width:100%'>
     <div class="col-md-1 col-lg-1"></div>
     <div class="col-md-11 col-lg-11">
         <slider-soret sliderId="sliderAudioControl" boxHeight="30" barHeight="6" 
         radius="12" enabled="true" (valueChange)="sliderMoved($event)">
         </slider-soret>
-        <svg id="svgAudioControlsBox" width="100%" height="30" style="background-color:#272b30" xmlns="http://www.w3.org/2000/svg">
-            <rect x="0" y="13" width="100%" height="6" fill="url(#Gradient1)" (click)="barClicked($event)" />
-            <circle id="audioPositionControl" fill="black" cy="16" r="12" class="draggable" (mousedown)='ProgressControlClicked($event)'
-                fill="url(#Gradient2)" />
-            <defs>
-                <linearGradient id="Gradient1" x1="0" x2="0" y1="0" y2="1">
-                    <stop offset="0%" stop-color="#20A" />
-                    <stop offset="100%" stop-color="#83D" />
-                </linearGradient>
-                <radialGradient id="Gradient2">
-                    <stop offset="0%" stop-color="#83D" />
-                    <stop offset="100%" stop-color="#20A" />
-                </radialGradient>
-            </defs>
-        </svg>
     </div>
 </div>

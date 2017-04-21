@@ -39,8 +39,6 @@ export class SongDisplayComponent  {
             case AudioControlsEventTypes.pause:
                 this._trackDisplayService.songPaused();
                 break;
-            case AudioControlsEventTypes.goToBeginning: break;
-            case AudioControlsEventTypes.goToEnd: break;
             case AudioControlsEventTypes.zoomIn:
                 this._trackDisplayService.changeZoom(1);
                 break;
@@ -60,7 +58,7 @@ export class SongDisplayComponent  {
                 this._trackDisplayService.moveWindow(1, 0);
                 break;
             case AudioControlsEventTypes.musicProgress:
-                this._trackDisplayService.updateProgress(event.data.locationProgressControl);
+                this._trackDisplayService.updateProgress(event.data);
 
         }
     }

@@ -1,4 +1,5 @@
-<div id="audioPlayControls" (PlayStarted)=MidiSoundStarted() (PlayProgress)=MidiSoundProgress($event)>
+<div id="audioPlayControls" (PlayStarted)=MidiSoundStarted() (PlayProgress)=MidiSoundProgress($event)
+(PlayStopped)="MidiSoundFinished()" >
     <audio-buttons [song]="song"></audio-buttons>
 </div>
 <div>

@@ -24,6 +24,7 @@ export class AudioControlBarComponent implements OnChanges {
     mouseDown: boolean = false;
     sliderPositionAtStart: number = 0;
     sliderLastReportedPosition: number = 0;
+    isPlaying: boolean = false;
 
     constructor(
         private _midi2JsonService: Midi2JsonService,
@@ -42,53 +43,70 @@ export class AudioControlBarComponent implements OnChanges {
     private handleEvent(event: AudioControlEvent) {
         switch (event.type) {
             case AudioControlsEventTypes.play:
-                this.sliderPositionAtStart = this.sliderLastReportedPosition;
+                this.handlePlayEvent();
                 break;
-
             case AudioControlsEventTypes.stop:
-                this.audioControlBarSlider.setValue(0);
-                this.sliderLastReportedPosition = 0;
+                this.handleStopEvent();
                 break;
 
             case AudioControlsEventTypes.musicProgress:
-                let elapsedTimeInSeconds: number = event.data.time;
-                // the following check is needed because after clicking play, the first musicProgress event
-                // arrives before than the play event.
-                if (elapsedTimeInSeconds === 0) {
-                    return;
-                }
-                let totalDuration = this.song.durationInSeconds * (1 - this.sliderPositionAtStart);
-                if (totalDuration === 0) {
-                    console.log('Unexpected song progress event because the total duration of the part of the song to play is 0');
-                    return;
-                }
-                let newSliderPosition = elapsedTimeInSeconds / totalDuration + this.sliderPositionAtStart;
-                this.audioControlBarSlider.setValue(newSliderPosition);
-                this.sliderLastReportedPosition = newSliderPosition;
+                this.musicProgress(event.data);
+                break;
+            case AudioControlsEventTypes.goToEnd:
+                this.handleGoToEnd();
+                break;
+            case AudioControlsEventTypes.musicStopped:
+                this.isPlaying = false;
                 break;
         }
     }
 
-    public ProgressControlClicked(evt: MouseEvent) {
-        this.mouseDown = true;
+    private handleGoToEnd() {
+        this.isPlaying = false;
+        this.audioControlBarSlider.setValue(1);
+        this.sliderLastReportedPosition = 1;
+    }
+    private handlePlayEvent() {
+        this.isPlaying = true;
+        this.sliderPositionAtStart = this.sliderLastReportedPosition;
+        let eventData = this.sliderPositionAtStart;
+        this._audioControlsEventsService.raiseEvent(AudioControlsEventTypes.playStartPositionCalculated, eventData);
     }
 
-    public MoveControl(event: MouseEvent) {
-        if (this.mouseDown) {
-            this._audioControlsService.moveControl(event.clientX);
+    private handleStopEvent() {
+        this.isPlaying = false;
+        this.audioControlBarSlider.setValue(0);
+        this.sliderLastReportedPosition = 0;
+    }
+
+    private musicProgress(elapsedTimeInSeconds: number) {
+        // the following check is needed because after clicking play, the first musicProgress event
+        // arrives before than the play event.
+        if (elapsedTimeInSeconds === 0) {
+            return;
         }
-    }
-
-    public MouseUp() {
-        this.mouseDown = false;
-    }
-
-    public barClicked(event: any) {
-        this._audioControlsService.moveControl(event.clientX);
+        let totalDuration = this.song.durationInSeconds * (1 - this.sliderPositionAtStart);
+        if (totalDuration === 0) {
+            console.log('Unexpected song progress event because the total duration of the part of the song to play is 0');
+            return;
+        }
+        let newSliderPosition = elapsedTimeInSeconds / totalDuration + this.sliderPositionAtStart;
+        this.audioControlBarSlider.setValue(newSliderPosition);
+        this.sliderLastReportedPosition = newSliderPosition;
     }
 
     // value is a number between 0 and 1
+    // this method is called when the user moves the slide
     public sliderMoved(value) {
+        if (this.isPlaying) {
+            this.isPlaying = false;
+            this._audioControlsEventsService.raiseEvent(AudioControlsEventTypes.pause);
+            let self = this;
+            setTimeout(function () {
+                self.isPlaying = true;
+                self._audioControlsEventsService.raiseEvent(AudioControlsEventTypes.play);
+            }, 1000);
+        }
         this.sliderLastReportedPosition = value;
     }
 }
