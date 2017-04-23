@@ -6,6 +6,8 @@ import { AudioControlsEventsService } from '../shared/audio-controls-events.serv
 import { AudioControlsService } from './audio-controls.service';
 import { AudioControlsEventTypes } from '../shared/audio-controls-event-types.enum';
 import { AudioControlEvent } from '../shared/audio-control-event';
+import { Binary2base64 } from '../shared/binary-to-base64';
+import { MidiFileCheckerService } from '../midi/midi-file-checker.service';
 
 declare var MIDIjs: any;
 
@@ -24,6 +26,7 @@ export class AudioButtonsComponent {
 
     constructor(
         private _audioControlsService: AudioControlsService,
+        private _midiFileCheckerService: MidiFileCheckerService,
         private _audioControlsEventsService: AudioControlsEventsService) {
         this.subscriptionAudioEvents = this._audioControlsEventsService
             .getEvents().subscribe(event => {
@@ -35,8 +38,11 @@ export class AudioButtonsComponent {
         switch (event.type) {
             case AudioControlsEventTypes.musicStarted:
                 this.isPlaying = true;
+                //    this.download("midifile.txt", this._audioControlsService.songPartToPlay);
+                let check = this._midiFileCheckerService.check(new Uint8Array(this._audioControlsService.songPartToPlay));
                 break;
             case AudioControlsEventTypes.musicStopped:
+            case AudioControlsEventTypes.endTimeReached:
                 this.isPlaying = false;
                 break;
         }
@@ -91,6 +97,20 @@ export class AudioButtonsComponent {
     }
     moveDown() {
         this._audioControlsEventsService.raiseEvent(AudioControlsEventTypes.moveDown);
+    }
+    //  used for debugging. Allows to save buffer to disk
+    private download(filename, buffer) {
+        let base64encoded = Binary2base64.convert(buffer);
+        let element = document.createElement('a');
+        element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(base64encoded));
+        element.setAttribute('download', filename);
+
+        element.style.display = 'none';
+        document.body.appendChild(element);
+
+        element.click();
+
+        document.body.removeChild(element);
     }
 }
 

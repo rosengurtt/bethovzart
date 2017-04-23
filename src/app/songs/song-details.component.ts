@@ -1,7 +1,7 @@
 import { Component, Input, OnDestroy, OnChanges, SimpleChange } from '@angular/core';
 
 import { Song } from './song';
-import { SongJson } from '../midi/song-json';
+import { SongJson } from '../midi/song-json/song-json';
 import { SongRepositoryService } from './song-repository.service';
 import { Midi2JsonService } from '../midi/midi-to-json.service';
 import { Band } from './band';

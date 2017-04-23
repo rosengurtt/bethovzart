@@ -1,3 +1,4 @@
+// represents a noteOn/noteOff event in a track
 export class TrackNote {
     ticksFromStart: number;
     pitch: number;

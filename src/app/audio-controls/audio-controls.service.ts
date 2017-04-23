@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Subscription } from 'rxjs/Subscription';
 
 import { Midi2JsonService } from '../midi/midi-to-json.service';
-import { SongJson } from '../midi/song-json';
+import { SongJson } from '../midi/song-json/song-json';
 import { Uint8Array2ArrayBuffer } from '../shared/uint8array-to-arraybuffer';
 import { AudioControlEvent } from '../shared/audio-control-event';
 import { AudioControlsEventTypes } from '../shared/audio-controls-event-types.enum';
@@ -17,6 +17,7 @@ export class AudioControlsService {
     song: SongJson;
     sliderPositionAtStart: number = 0;
     mutedTracks: number[];
+    songPartToPlay: ArrayBuffer;
 
 
 
@@ -33,8 +34,9 @@ export class AudioControlsService {
         switch (event.type) {
             case AudioControlsEventTypes.playStartPositionCalculated:
                 this.sliderPositionAtStart = event.data;
-                let songPartToPlay: ArrayBuffer = this.getSongBytesFromStartingPosition();
-                MIDIjs.play(songPartToPlay);
+                console.log(this.song);
+                this.songPartToPlay = this.getSongBytesFromStartingPosition();
+                MIDIjs.play(this.songPartToPlay);
                 break;
 
             case AudioControlsEventTypes.pause:

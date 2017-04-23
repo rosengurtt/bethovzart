@@ -5,7 +5,7 @@ import { AudioControlsService } from './audio-controls.service';
 import { AudioControlsEventsService } from '../shared/audio-controls-events.service';
 import { AudioControlsEventTypes } from '../shared/audio-controls-event-types.enum';
 import { Midi2JsonService } from '../midi/midi-to-json.service';
-import { SongJson } from '../midi/song-json';
+import { SongJson } from '../midi/song-json/song-json';
 import { SliderSoretComponent } from '../shared/slider-soret.component';
 import { AudioControlEvent } from '../shared/audio-control-event';
 
@@ -85,12 +85,16 @@ export class AudioControlBarComponent implements OnChanges {
         if (elapsedTimeInSeconds === 0) {
             return;
         }
-        let totalDuration = this.song.durationInSeconds * (1 - this.sliderPositionAtStart);
-        if (totalDuration === 0) {
+        let durationFromStartingPosition = this.song.durationInSeconds * (1 - this.sliderPositionAtStart);
+        if (durationFromStartingPosition === 0) {
             console.log('Unexpected song progress event because the total duration of the part of the song to play is 0');
             return;
         }
-        let newSliderPosition = elapsedTimeInSeconds / totalDuration + this.sliderPositionAtStart;
+        if (elapsedTimeInSeconds >= this.song.durationInSeconds) {
+            this.isPlaying = false;
+            this._audioControlsEventsService.raiseEvent(AudioControlsEventTypes.endTimeReached);
+        }
+        let newSliderPosition = elapsedTimeInSeconds / durationFromStartingPosition + this.sliderPositionAtStart;
         this.audioControlBarSlider.setValue(newSliderPosition);
         this.sliderLastReportedPosition = newSliderPosition;
     }

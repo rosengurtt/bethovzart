@@ -4,6 +4,7 @@ import { TrackRange } from './track-range';
 import { TrackNote } from './track-note';
 import { Instrument } from './midi-codes/instrument.enum';
 import { TimeSignature } from './time-signature';
+import { Binary2String } from '../shared/binary-to-string';
 
 
 export class SongJson {
@@ -51,7 +52,7 @@ export class SongJson {
         return returnObject;
     }
 
-     get trackVolumes(): number[] {
+    get trackVolumes(): number[] {
         if (!this._trackVolumes) {
             this._trackVolumes = this.getTrackVolumes();
         }
@@ -78,13 +79,7 @@ export class SongJson {
         }
         return this._trackNames;
     }
-    private bin2string(array): string {
-        let result = '';
-        for (let i = 0; i < array.length; ++i) {
-            result += (String.fromCharCode(array[i]));
-        }
-        return result;
-    }
+    
     private getTrackNames(): string[] {
         let returnObject: string[] = [];
         for (let i = 0; i < this.tracks.length; i++) {
@@ -92,7 +87,7 @@ export class SongJson {
             for (let j = 0; j < this.tracks[i].length; j++) {
                 let event: MidiEvent = this.tracks[i][j];
                 if (event.isTrackName()) {
-                    thisTrackName = this.bin2string(event.data);
+                    thisTrackName = Binary2String.convert(event.data);
                     break;
                 }
             }

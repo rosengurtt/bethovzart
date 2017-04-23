@@ -1,7 +1,7 @@
 import { Component, Input } from '@angular/core';
 import { Subscription } from 'rxjs/Subscription';
 
-import { SongJson } from '../midi/song-json';
+import { SongJson } from '../midi/song-json/song-json';
 import { TrackNote } from '../midi/track-note';
 import { AudioControlsEventsService } from '../shared/audio-controls-events.service';
 import { AudioControlsEventTypes } from '../shared/audio-controls-event-types.enum';
