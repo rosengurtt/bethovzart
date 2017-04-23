@@ -89,7 +89,8 @@ export class Midi2JsonService {
 
     private getMidiTrackBytes(track: Track): Uint8Array {
         let trackHeaderLength = 8;
-        let maxLength = track.events.length * 6 + 30;
+        // Reserve a space that is enough for sure for the array
+        let maxLength = track.events.length * 15 + 100;
         let buffer = new Uint8Array(maxLength);
         // Magic word of Midi File
         buffer[0] = 0x4D;
@@ -99,7 +100,7 @@ export class Midi2JsonService {
         let j = trackHeaderLength; // points to next index in buffer
         // bytes 4 to 7 is the length of the track that we still don't know
         for (let i = 0; i < track.events.length; i++) {
-            let deltaLength: number;
+               let deltaLength: number;
             let event = track.events[i];
             let delta: number = event.delta;
 
