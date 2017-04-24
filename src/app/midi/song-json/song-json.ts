@@ -162,7 +162,7 @@ export class SongJson {
     }
 
     // Returns a new song that is a slice of the current song, starting from a specific tick
-    public getSliceStartingFromTick(tick: number, mutedTracks: number[] = []): SongJson {
+    public getSliceStartingFromTick(tick: number, mutedTracks: number[] = [], volumeTracks: number[] = []): SongJson {
         let slice: SongJson = new SongJson(this.format, this.ticksPerBeat, null);
         slice.tracks = [];
         for (let i = 0; i < this.tracks.length; i++) {
@@ -170,7 +170,13 @@ export class SongJson {
             if (mutedTracks.indexOf(i) > -1) {
                 continue;
             }
-            slice.tracks.push(this.tracks[i].getSliceStartingFromTick(tick));
+            if (volumeTracks.length === 0) {
+                slice.tracks.push(this.tracks[i].getSliceStartingFromTick(tick));
+            }
+            else {
+                slice.tracks.push(this.tracks[i].getSliceStartingFromTick(tick, volumeTracks[i]));
+            }
+
         }
         return slice;
     }

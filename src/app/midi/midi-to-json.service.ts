@@ -254,6 +254,7 @@ export class Midi2JsonService {
         let trackLength = j - trackHeaderLength; // has to substract 8 because the length is measured not from
         // the beginning of the track, but from the first byte after
         // the length bytes
+        
         buffer[4] = this.getNthByteOfInteger(trackLength, 3);
         buffer[5] = this.getNthByteOfInteger(trackLength, 2);
         buffer[6] = this.getNthByteOfInteger(trackLength, 1);

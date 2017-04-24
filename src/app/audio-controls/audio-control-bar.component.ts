@@ -58,6 +58,15 @@ export class AudioControlBarComponent implements OnChanges {
             case AudioControlsEventTypes.musicStopped:
                 this.isPlaying = false;
                 break;
+            case AudioControlsEventTypes.volumeChange:
+            case AudioControlsEventTypes.trackSolo:
+            case AudioControlsEventTypes.trackUnsolo:
+            case AudioControlsEventTypes.trackMuted:
+            case AudioControlsEventTypes.trackUnmuted:
+                if (this.isPlaying) {
+                    this.restartSong()
+                }
+                break;
         }
     }
 
@@ -103,14 +112,22 @@ export class AudioControlBarComponent implements OnChanges {
     // this method is called when the user moves the slide
     public sliderMoved(value) {
         if (this.isPlaying) {
-            this.isPlaying = false;
-            this._audioControlsEventsService.raiseEvent(AudioControlsEventTypes.pause);
-            let self = this;
-            setTimeout(function () {
-                self.isPlaying = true;
-                self._audioControlsEventsService.raiseEvent(AudioControlsEventTypes.play);
-            }, 1000);
+            this.restartSong()
         }
         this.sliderLastReportedPosition = value;
+    }
+
+
+    private restartSong() {
+        this.isPlaying = false;
+        let self = this;
+        setTimeout(function () {
+            self.isPlaying = true;
+            self._audioControlsEventsService.raiseEvent(AudioControlsEventTypes.pause);
+        }, 300);
+        setTimeout(function () {
+            self.isPlaying = true;
+            self._audioControlsEventsService.raiseEvent(AudioControlsEventTypes.play);
+        }, 1500);
     }
 }

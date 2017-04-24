@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, OnChanges, OnInit } from '@angular/core';
 import { Subscription } from 'rxjs/Subscription';
 
 import { SongJson } from '../midi/song-json/song-json';
@@ -16,9 +16,10 @@ declare var MIDIjs: any;
     selector: 'song-display',
     templateUrl: './song-display.component.html'
 })
-export class SongDisplayComponent  {
+export class SongDisplayComponent implements OnChanges, OnInit {
     @Input() song: SongJson;
     subscriptionAudioEvents: Subscription;
+    isInitialized = false;
 
     constructor(
         private _trackDisplayService: TrackDisplayService,
@@ -28,7 +29,17 @@ export class SongDisplayComponent  {
                 this.handleEvent(event);
             });
     }
-  private handleEvent(event: AudioControlEvent) {
+
+
+    ngOnChanges() {
+        if (this.isInitialized) {
+            this._audioControlsEventsService.raiseEvent(AudioControlsEventTypes.stop);
+        }
+    }
+    ngOnInit() {
+        this.isInitialized = true;
+    }
+    private handleEvent(event: AudioControlEvent) {
         switch (event.type) {
             case AudioControlsEventTypes.play:
                 this._trackDisplayService.songStarted(event.data);

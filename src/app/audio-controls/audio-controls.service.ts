@@ -17,6 +17,7 @@ export class AudioControlsService {
     song: SongJson;
     sliderPositionAtStart: number = 0;
     mutedTracks: number[];
+    volumeTracks: number[]; // initially is the volume read from the file, but the user can change it
     songPartToPlay: ArrayBuffer;
 
 
@@ -34,7 +35,6 @@ export class AudioControlsService {
         switch (event.type) {
             case AudioControlsEventTypes.playStartPositionCalculated:
                 this.sliderPositionAtStart = event.data;
-                console.log(this.song);
                 this.songPartToPlay = this.getSongBytesFromStartingPosition();
                 MIDIjs.play(this.songPartToPlay);
                 break;
@@ -68,17 +68,26 @@ export class AudioControlsService {
             case AudioControlsEventTypes.trackUnsolo:
                 this.mutedTracks = [];
                 break;
+            case AudioControlsEventTypes.volumeChange:
+                let trackNumber = event.data.trackNumber;
+                let volume = event.data.volume;
+                this.volumeTracks[trackNumber] = volume;
         }
     }
 
     public initialize(songData: SongJson) {
         this.song = songData;
         this.mutedTracks = [];
+        this.volumeTracks = [];
+        for (let i = 0; i < this.song.tracks.length; i++) {
+            this.volumeTracks.push(this.song.tracks[i].Volume);
+        }
     }
 
     public getSongBytesFromStartingPosition(): ArrayBuffer {
         let positionControlLocationCurrentInTicks = this.song.durationInTicks * this.sliderPositionAtStart;
-        let sliceFromCurrentPosition = this.song.getSliceStartingFromTick(positionControlLocationCurrentInTicks, this.mutedTracks);
+        let sliceFromCurrentPosition =
+            this.song.getSliceStartingFromTick(positionControlLocationCurrentInTicks, this.mutedTracks, this.volumeTracks);
         let midiBytes = this._midi2jsonService.getMidiBytes(sliceFromCurrentPosition);
         return Uint8Array2ArrayBuffer.convert(midiBytes);
     }

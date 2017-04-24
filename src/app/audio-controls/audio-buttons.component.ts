@@ -38,8 +38,8 @@ export class AudioButtonsComponent {
         switch (event.type) {
             case AudioControlsEventTypes.musicStarted:
                 this.isPlaying = true;
-                //    this.download("midifile.txt", this._audioControlsService.songPartToPlay);
-                let check = this._midiFileCheckerService.check(new Uint8Array(this._audioControlsService.songPartToPlay));
+               // this.downloadeame("midifile.txt", this._audioControlsService.songPartToPlay);
+            // let check = this._midiFileCheckerService.check(new Uint8Array(this._audioControlsService.songPartToPlay));
                 break;
             case AudioControlsEventTypes.musicStopped:
             case AudioControlsEventTypes.endTimeReached:
@@ -99,7 +99,7 @@ export class AudioButtonsComponent {
         this._audioControlsEventsService.raiseEvent(AudioControlsEventTypes.moveDown);
     }
     //  used for debugging. Allows to save buffer to disk
-    private download(filename, buffer) {
+    private downloadeame(filename, buffer) {
         let base64encoded = Binary2base64.convert(buffer);
         let element = document.createElement('a');
         element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(base64encoded));

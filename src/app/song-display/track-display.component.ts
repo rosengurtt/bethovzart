@@ -46,6 +46,7 @@ export class TrackDisplayComponent implements AfterViewChecked, OnInit {
     soloUnsolo: string; // text that shows if track is playing solo or not
     maxLengthInstrumentsList = 50;  // if a track has too many instruments, showing them all distorts
     // the image
+    initialVolume: number;
 
     constructor(
         private _trackDisplayService: TrackDisplayService,
@@ -97,7 +98,8 @@ export class TrackDisplayComponent implements AfterViewChecked, OnInit {
         } else {
             this.soloUnsolo = '';
         }
-     //   let soret:number[] = this.song.trackVolumes;
+        let thisTrack = this.song.tracks[this.trackNumber];
+        this.initialVolume = thisTrack.Volume;
     }
 
     ngAfterViewChecked() {
@@ -141,6 +143,7 @@ export class TrackDisplayComponent implements AfterViewChecked, OnInit {
     }
 
     public volumeChange(vol) {
-
+        let eventData: any = { trackNumber: this.trackNumber, volume: vol };
+            this._audioControlsEventsService.raiseEvent(AudioControlsEventTypes.volumeChange,eventData);
     }
 }
