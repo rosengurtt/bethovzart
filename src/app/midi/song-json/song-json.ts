@@ -162,7 +162,7 @@ export class SongJson {
     }
 
     // Returns a new song that is a slice of the current song, starting from a specific tick
-    public getSliceStartingFromTick(tick: number, mutedTracks: number[] = [], volumeTracks: number[] = []): SongJson {
+    public getSliceStartingFromTick(tick: number, mutedTracks: number[], volumeTracks: number[], tempo: number): SongJson {
         let slice: SongJson = new SongJson(this.format, this.ticksPerBeat, null);
         slice.tracks = [];
         for (let i = 0; i < this.tracks.length; i++) {
@@ -178,6 +178,7 @@ export class SongJson {
             }
 
         }
+        slice.changeTempo(tempo);
         return slice;
     }
 
@@ -218,6 +219,26 @@ export class SongJson {
                 return this.timeSignature.nn * this.ticksPerBeat / 2;
             default: // unknown
                 return 0;
+        }
+    }
+    public changeTempo(tempoBPM: number) {
+        // we have to con convert from bits per minute to microseconds per beat
+        let newTempo = 1000000 / (tempoBPM / 60);
+        if (this.tempoEvents.length === 0) {
+            // there are no tempo events, so the song has the default tempo that is 120 bpm
+            // we add a new tempo event at the beginning
+            this.tracks[0].events.push(new MidiEvent({
+                delta: 0, type: 0xFF, subtype: 0x51, tempo: newTempo,
+                tempoBPM: tempoBPM, ticksSinceStart: 0
+            }));
+        } else {
+            // if there are tempo events compare the first one with the new tempo to obtain the ratio of change
+            // then alter all tempo events with this ratio
+            let changeRatio = tempoBPM / this.tempoEvents[0].tempoBPM;
+            for (let i = 0; i < this.tempoEvents.length; i++) {
+                this.tempoEvents[i].tempo /= changeRatio;
+                this.tempoEvents[i].tempoBPM *= changeRatio;
+            }
         }
     }
 }

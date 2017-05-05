@@ -1,0 +1,811 @@
+<!DOCTYPE html>
+<!-- saved from url=(0027)http://localhost:4200/songs -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  
+  <title>BethovzartClient</title>
+
+
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="./BethovzartClient_files/bootstrap.min.css" rel="stylesheet">
+  <link href="./BethovzartClient_files/styles.css" rel="stylesheet">
+  <script type="text/javascript" src="./BethovzartClient_files/jquery.min.js"></script>
+  <script type="text/javascript" src="./BethovzartClient_files/bootstrap.min.js"></script>
+  <script type="text/javascript" src="./BethovzartClient_files/midi.js"></script>
+<style type="text/css">/* You can add global styles to this file, and also import other style files */
+.container{
+    margin: 0;
+    width:100%;
+}
+</style><style type="text/css"></style><style>ul[_ngcontent-utm-3]{
+    max-height: 300px;
+    overflow-y:scroll; 
+}</style><style>.draggable[_ngcontent-utm-6] {cursor: move; }</style><style>.draggable[_ngcontent-utm-7] {cursor: move; }</style><style>.draggable[_ngcontent-utm-8] {cursor: move; }</style><style>.draggable[_ngcontent-utm-10] {cursor: move; }</style></head>
+
+<body>
+  <pm-app><div class="container">
+    <nav class="navbar navbar-default navbar-fixed-top">
+        <div class="container">
+            <div class="navbar-header">
+                <button class="navbar-toggle collapsed" data-target="#the-menu" data-toggle="collapse" type="button"><span class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span></button>
+                <a class="navbar-brand brand" ng-reflect-router-link="/welcome" ng-reflect-href="/welcome" href="http://localhost:4200/welcome">Bethovzart</a>
+            </div>
+            <div class="collapse navbar-collapse" id="the-menu">
+                <ul class="nav navbar-nav">
+                    <li><a ng-reflect-router-link="/welcome" ng-reflect-href="/welcome" href="http://localhost:4200/welcome"><span class="glyphicon glyphicon-home"></span>&nbsp;Home</a></li>
+                    <li><a ng-reflect-router-link="/songs" ng-reflect-href="/songs" href="http://localhost:4200/songs"><span class="glyphicon glyphicon-music"></span>&nbsp;Songs</a></li>
+                    <li><a href="http://localhost:4200/analyze.html"><span class="glyphicon glyphicon-pencil"></span>&nbsp;Analyze Song</a></li>
+                    <li><a ng-reflect-router-link="/products" ng-reflect-href="/products" href="http://localhost:4200/products">Product List</a></li>
+                    <li><a href="http://localhost:4200/contact.html"><span class="glyphicon glyphicon-earphone"></span>&nbsp;Contact Us</a></li>
+                </ul>
+                <ul class="nav navbar-nav navbar-right">
+                    <li class="dropdown"><a data-toggle="dropdown" href="http://localhost:4200/songs#"><span class="glyphicon glyphicon-user"></span>Welcome Back&nbsp;<span class="caret"></span></a>
+                    </li>
+                    <li><a href="http://localhost:4200/songs#" id="logonLink"><span class="glyphicon glyphicon-log-in"></span>&nbsp;Sign In</a></li>
+                </ul>
+                <div class="navbar-form navbar-right visible-md-inline visible-lg-inline">
+                    <div class="form-group" style="margin-top: 4px">
+                        <label class="sr-only" for="keyword">Keyword</label>
+                        <input class="form-control input-sm ng-untouched ng-pristine ng-valid" placeholder="Enter Search keyword" type="text" ng-reflect-form="[object Object]">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+    <div class="page-header">
+        <h2></h2>
+    </div>
+    <div class="container">
+        <router-outlet></router-outlet><ng-component _nghost-utm-3=""><div _ngcontent-utm-3="" class="panel-heading">
+	<h2 _ngcontent-utm-3="">Songs List</h2>
+</div>
+<div _ngcontent-utm-3="" class="col-xs-12 col-sm-12 col-md-4 col-lg-4">
+	<div _ngcontent-utm-3="" class="panel panel-info">
+		<div _ngcontent-utm-3="" class="panel-heading">Music Styles</div>
+		<div _ngcontent-utm-3="" class="panel-body">
+			<div _ngcontent-utm-3="" class="row">
+				<ul _ngcontent-utm-3="" class="list-group musiclistbox">
+					<li _ngcontent-utm-3="" class="list-group-item active">
+						<a _ngcontent-utm-3="">All</a>
+					</li>
+					<!--template bindings={
+  "ng-reflect-ng-for-of": "[object Object],[object Object]"
+}--><li _ngcontent-utm-3="" class="list-group-item">
+						<a _ngcontent-utm-3="">Classic</a>
+					</li><li _ngcontent-utm-3="" class="list-group-item">
+						<a _ngcontent-utm-3="">Rock</a>
+					</li>
+				</ul>
+			</div>
+		</div>
+	</div>
+</div>
+<div _ngcontent-utm-3="" class="col-xs-12 col-sm-12 col-md-4 col-lg-4">
+	<div _ngcontent-utm-3="" class="panel panel-info">
+		<div _ngcontent-utm-3="" class="panel-heading">Bands</div>
+		<div _ngcontent-utm-3="" class="panel-body">
+			<div _ngcontent-utm-3="" class="row">
+				<ul _ngcontent-utm-3="" class="list-group musiclistbox">
+					<li _ngcontent-utm-3="" class="list-group-item active">
+						<a _ngcontent-utm-3="">All</a>
+					</li>
+					<!--template bindings={
+  "ng-reflect-ng-for-of": "[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
+}--><li _ngcontent-utm-3="" class="list-group-item">
+						<a _ngcontent-utm-3="">al stewart</a>
+					</li><li _ngcontent-utm-3="" class="list-group-item">
+						<a _ngcontent-utm-3="">alan parsons</a>
+					</li><li _ngcontent-utm-3="" class="list-group-item">
+						<a _ngcontent-utm-3="">Bach</a>
+					</li><li _ngcontent-utm-3="" class="list-group-item">
+						<a _ngcontent-utm-3="">brams</a>
+					</li><li _ngcontent-utm-3="" class="list-group-item">
+						<a _ngcontent-utm-3="">chopin</a>
+					</li><li _ngcontent-utm-3="" class="list-group-item">
+						<a _ngcontent-utm-3="">Deep Purple</a>
+					</li><li _ngcontent-utm-3="" class="list-group-item">
+						<a _ngcontent-utm-3="">dire straits</a>
+					</li><li _ngcontent-utm-3="" class="list-group-item">
+						<a _ngcontent-utm-3="">duran duran</a>
+					</li><li _ngcontent-utm-3="" class="list-group-item">
+						<a _ngcontent-utm-3="">eagles</a>
+					</li><li _ngcontent-utm-3="" class="list-group-item">
+						<a _ngcontent-utm-3="">ELP</a>
+					</li><li _ngcontent-utm-3="" class="list-group-item">
+						<a _ngcontent-utm-3="">Elton John</a>
+					</li><li _ngcontent-utm-3="" class="list-group-item">
+						<a _ngcontent-utm-3="">GunsRoses</a>
+					</li><li _ngcontent-utm-3="" class="list-group-item">
+						<a _ngcontent-utm-3="">handel</a>
+					</li><li _ngcontent-utm-3="" class="list-group-item">
+						<a _ngcontent-utm-3="">haydn</a>
+					</li><li _ngcontent-utm-3="" class="list-group-item">
+						<a _ngcontent-utm-3="">liszt</a>
+					</li><li _ngcontent-utm-3="" class="list-group-item">
+						<a _ngcontent-utm-3="">schubert</a>
+					</li><li _ngcontent-utm-3="" class="list-group-item">
+						<a _ngcontent-utm-3="">U2</a>
+					</li><li _ngcontent-utm-3="" class="list-group-item">
+						<a _ngcontent-utm-3="">Van Halen</a>
+					</li><li _ngcontent-utm-3="" class="list-group-item">
+						<a _ngcontent-utm-3="">vivaldi</a>
+					</li><li _ngcontent-utm-3="" class="list-group-item">
+						<a _ngcontent-utm-3="">wagner</a>
+					</li>
+				</ul>
+			</div>
+		</div>
+	</div>
+</div>
+<div _ngcontent-utm-3="" class="col-xs-12 col-sm-12 col-md-4 col-lg-4">
+	<div _ngcontent-utm-3="" class="panel panel-info">
+		<div _ngcontent-utm-3="" class="panel-heading">Songs</div>
+		<div _ngcontent-utm-3="" class="panel-body">
+			<div _ngcontent-utm-3="" class="row">
+				<ul _ngcontent-utm-3="" class="list-group musiclistbox">
+					<!--template bindings={
+  "ng-reflect-ng-for-of": "[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
+}--><li _ngcontent-utm-3="" class="list-group-item">
+						<a _ngcontent-utm-3="">14 Years.mid</a>
+					</li><li _ngcontent-utm-3="" class="list-group-item">
+						<a _ngcontent-utm-3="">3p_Invention_1.mid</a>
+					</li><li _ngcontent-utm-3="" class="list-group-item">
+						<a _ngcontent-utm-3="">3p_Invention_10.mid</a>
+					</li><li _ngcontent-utm-3="" class="list-group-item">
+						<a _ngcontent-utm-3="">3p_Invention_11.mid</a>
+					</li><li _ngcontent-utm-3="" class="list-group-item">
+						<a _ngcontent-utm-3="">3p_Invention_12.mid</a>
+					</li><li _ngcontent-utm-3="" class="list-group-item">
+						<a _ngcontent-utm-3="">3p_Invention_13.mid</a>
+					</li><li _ngcontent-utm-3="" class="list-group-item">
+						<a _ngcontent-utm-3="">3p_Invention_14.mid</a>
+					</li><li _ngcontent-utm-3="" class="list-group-item">
+						<a _ngcontent-utm-3="">3p_Invention_15.mid</a>
+					</li><li _ngcontent-utm-3="" class="list-group-item">
+						<a _ngcontent-utm-3="">3p_Invention_2.mid</a>
+					</li><li _ngcontent-utm-3="" class="list-group-item">
+						<a _ngcontent-utm-3="">3p_Invention_3.mid</a>
+					</li><li _ngcontent-utm-3="" class="list-group-item">
+						<a _ngcontent-utm-3="">3p_Invention_4.mid</a>
+					</li><li _ngcontent-utm-3="" class="list-group-item">
+						<a _ngcontent-utm-3="">3p_Invention_5.mid</a>
+					</li><li _ngcontent-utm-3="" class="list-group-item">
+						<a _ngcontent-utm-3="">3p_Invention_6.mid</a>
+					</li><li _ngcontent-utm-3="" class="list-group-item">
+						<a _ngcontent-utm-3="">3p_Invention_7.mid</a>
+					</li><li _ngcontent-utm-3="" class="list-group-item">
+						<a _ngcontent-utm-3="">3p_Invention_8.mid</a>
+					</li><li _ngcontent-utm-3="" class="list-group-item">
+						<a _ngcontent-utm-3="">3p_Invention_9.mid</a>
+					</li><li _ngcontent-utm-3="" class="list-group-item">
+						<a _ngcontent-utm-3="">ALAN_PARSONS__I_Robot.mid</a>
+					</li><li _ngcontent-utm-3="" class="list-group-item">
+						<a _ngcontent-utm-3="">AlStewart-Time_Passages.mid</a>
+					</li><li _ngcontent-utm-3="" class="list-group-item">
+						<a _ngcontent-utm-3="">AlStewart-Year_of_the_Cat.mid</a>
+					</li><li _ngcontent-utm-3="" class="list-group-item">
+						<a _ngcontent-utm-3="">AlanPArsons_Eye_in_the_sky.mid</a>
+					</li><li _ngcontent-utm-3="" class="list-group-item">
+						<a _ngcontent-utm-3="">Brahms, Johannes 'Madchenlied' (J. Kirshning).mid</a>
+					</li><li _ngcontent-utm-3="" class="list-group-item">
+						<a _ngcontent-utm-3="">Brahms, Johannes Op.077  'Violin Concerto' (Andre De Brandt).mid</a>
+					</li><li _ngcontent-utm-3="" class="list-group-item">
+						<a _ngcontent-utm-3="">Brahms, Johannes Op.117 No.1 'Intermezzo in Eb' (Robert Finley).mid</a>
+					</li><li _ngcontent-utm-3="" class="list-group-item">
+						<a _ngcontent-utm-3="">Brahms, Johannes Op.117 No.2 'Intermezzo in Bb' (unknown).mid</a>
+					</li><li _ngcontent-utm-3="" class="list-group-item">
+						<a _ngcontent-utm-3="">Brahms, Johannes Op.117 No.3 'Intermezzo in D minor' (unknown).mid</a>
+					</li><li _ngcontent-utm-3="" class="list-group-item">
+						<a _ngcontent-utm-3="">Brahms, Johannes Op.118 No.2 'Intermezzo in A' (Robert Finley).mid</a>
+					</li><li _ngcontent-utm-3="" class="list-group-item">
+						<a _ngcontent-utm-3="">Brahms, Johannes Op.118 No.6 'Intermezzo in Eb' (unknown).mid</a>
+					</li><li _ngcontent-utm-3="" class="list-group-item">
+						<a _ngcontent-utm-3="">Brahms, Johannes Op.120 mov.1 Allegro amabile 'Sonata for Clarinet and Piano No.2 in Eb' (Steve Hopkins).mid</a>
+					</li><li _ngcontent-utm-3="" class="list-group-item">
+						<a _ngcontent-utm-3="">Brahms, Johannes Op.120 mov.2 Allegro appassionato 'Sonata for Clarinet and Piano No.2 in Eb' (Steve Hopkins).mid</a>
+					</li><li _ngcontent-utm-3="" class="list-group-item">
+						<a _ngcontent-utm-3="">Brahms, Johannes mov.1 'A German Requiem' (Michael Petri).mid</a>
+					</li><li _ngcontent-utm-3="" class="list-group-item">
+						<a _ngcontent-utm-3="">Brahms, Johannes mov.2 'A German Requiem' (Michael Petri).mid</a>
+					</li><li _ngcontent-utm-3="" class="list-group-item">
+						<a _ngcontent-utm-3="">Brahms, Johannes mov.5 'A German Requiem' (Michael Petri).mid</a>
+					</li><li _ngcontent-utm-3="" class="list-group-item">
+						<a _ngcontent-utm-3="">Brahms, Johannes mov.6 'A German Requiem' (Michael Petri).mid</a>
+					</li><li _ngcontent-utm-3="" class="list-group-item">
+						<a _ngcontent-utm-3="">Brahms, Johannes mov.7 'A German Requiem' (Michael Petri).mid</a>
+					</li><li _ngcontent-utm-3="" class="list-group-item">
+						<a _ngcontent-utm-3="">Capriccio_in_B_n2.mid</a>
+					</li><li _ngcontent-utm-3="" class="list-group-item">
+						<a _ngcontent-utm-3="">Chopin, Frederic Francois Op.06 'Mazurka No.1 for Piano' (Morgan Fraser).mid</a>
+					</li><li _ngcontent-utm-3="" class="list-group-item">
+						<a _ngcontent-utm-3="">Chopin, Frederic Francois Op.06 'Mazurka No.2 for Piano' (Morgan Fraser).mid</a>
+					</li><li _ngcontent-utm-3="" class="list-group-item">
+						<a _ngcontent-utm-3="">Chopin, Frederic Francois Op.06 'Mazurka No.3 for Piano' (Morgan Fraser).mid</a>
+					</li><li _ngcontent-utm-3="" class="list-group-item">
+						<a _ngcontent-utm-3="">Chopin, Frederic Francois Op.09 'Nocturne No.1 in Bb minor' (Nick Carter).mid</a>
+					</li><li _ngcontent-utm-3="" class="list-group-item">
+						<a _ngcontent-utm-3="">Chopin, Frederic Francois Op.09 'Nocturne No.2 in Eb' (Daisuke Inoue).mid</a>
+					</li><li _ngcontent-utm-3="" class="list-group-item">
+						<a _ngcontent-utm-3="">Chopin, Frederic Francois Op.09 'Nocturne No.3 B' (Daisuke Inoue).mid</a>
+					</li><li _ngcontent-utm-3="" class="list-group-item">
+						<a _ngcontent-utm-3="">Chopin, Frederic Francois Op.10 'Edude No.01 in C' (Jeff Segor).mid</a>
+					</li><li _ngcontent-utm-3="" class="list-group-item">
+						<a _ngcontent-utm-3="">Chopin, Frederic Francois Op.10 'Edude No.02 in A minor' (A. Kitisa).mid</a>
+					</li><li _ngcontent-utm-3="" class="list-group-item">
+						<a _ngcontent-utm-3="">Chopin, Frederic Francois Op.10 'Edude No.03 in E' (A. Kitisa).mid</a>
+					</li><li _ngcontent-utm-3="" class="list-group-item">
+						<a _ngcontent-utm-3="">Chopin, Frederic Francois Op.10 'Edude No.04 in C# minor' (Robert Finley).mid</a>
+					</li><li _ngcontent-utm-3="" class="list-group-item">
+						<a _ngcontent-utm-3="">Chopin, Frederic Francois Op.10 'Edude No.05 in Gb' (A. Kitisa).mid</a>
+					</li><li _ngcontent-utm-3="" class="list-group-item">
+						<a _ngcontent-utm-3="">Chopin, Frederic Francois Op.10 'Edude No.06 in Eb minor' (A. Kitisa).mid</a>
+					</li><li _ngcontent-utm-3="" class="list-group-item">
+						<a _ngcontent-utm-3="">Chopin, Frederic Francois Op.10 'Edude No.07 in C' (A. Kitisa).mid</a>
+					</li><li _ngcontent-utm-3="" class="list-group-item">
+						<a _ngcontent-utm-3="">Chopin, Frederic Francois Op.10 'Edude No.08 in F' (A. Kitisa).mid</a>
+					</li><li _ngcontent-utm-3="" class="list-group-item">
+						<a _ngcontent-utm-3="">Chopin, Frederic Francois Op.10 'Edude No.09 in F minor' (A. Kitisa).mid</a>
+					</li><li _ngcontent-utm-3="" class="list-group-item">
+						<a _ngcontent-utm-3="">Chopin, Frederic Francois Op.10 'Edude No.10 in Ab' (A. Kitisa).mid</a>
+					</li><li _ngcontent-utm-3="" class="list-group-item">
+						<a _ngcontent-utm-3="">Chopin, Frederic Francois Op.10 'Edude No.11 in Eb' (A. Kitisa).mid</a>
+					</li><li _ngcontent-utm-3="" class="list-group-item">
+						<a _ngcontent-utm-3="">Chopin, Frederic Francois Op.10 'Edude No.12 in C minor' (A. Kitisa).mid</a>
+					</li><li _ngcontent-utm-3="" class="list-group-item">
+						<a _ngcontent-utm-3="">Chopin, Frederic Francois Op.15 'Nocturne No.1 in F' (Robert Finley).mid</a>
+					</li><li _ngcontent-utm-3="" class="list-group-item">
+						<a _ngcontent-utm-3="">Chopin, Frederic Francois Op.15 'Nocturne No.2 in F#' (Daisuke Inoue).mid</a>
+					</li><li _ngcontent-utm-3="" class="list-group-item">
+						<a _ngcontent-utm-3="">Chopin, Frederic Francois Op.15 'Nocturne No.3 in G minor' (Daisuke Inoue).mid</a>
+					</li><li _ngcontent-utm-3="" class="list-group-item">
+						<a _ngcontent-utm-3="">Chopin, Frederic Francois Op.21 mov.2 Larghetto 'Piano Concerto No.2 in F minor' (Robert Fisher).mid</a>
+					</li><li _ngcontent-utm-3="" class="list-group-item">
+						<a _ngcontent-utm-3="">Chopin, Frederic Francois Op.25 'Edude No.01' (Nick Carter).mid</a>
+					</li><li _ngcontent-utm-3="" class="list-group-item">
+						<a _ngcontent-utm-3="">Chopin, Frederic Francois Op.25 'Edude No.11 [Winter Wind]' (Robert Finley).mid</a>
+					</li><li _ngcontent-utm-3="" class="list-group-item">
+						<a _ngcontent-utm-3="">Chopin, Frederic Francois Op.27 'Nocturne No.1 in C# minor' (Daisuke Inoue).mid</a>
+					</li><li _ngcontent-utm-3="" class="list-group-item">
+						<a _ngcontent-utm-3="">Chopin, Frederic Francois Op.27 'Nocturne No.2 in Db' (Daisuke Inoue).mid</a>
+					</li><li _ngcontent-utm-3="" class="list-group-item">
+						<a _ngcontent-utm-3="">Chopin, Frederic Francois Op.28 'Prelude in G minor No.04' (Jill Swift).mid</a>
+					</li><li _ngcontent-utm-3="" class="list-group-item">
+						<a _ngcontent-utm-3="">Chopin, Frederic Francois Op.32 'Nocturne No.1 in B' (Daisuke Inoue).mid</a>
+					</li><li _ngcontent-utm-3="" class="list-group-item">
+						<a _ngcontent-utm-3="">Chopin, Frederic Francois Op.32 'Nocturne No.2 in Ab' (Daisuke Inoue).mid</a>
+					</li><li _ngcontent-utm-3="" class="list-group-item">
+						<a _ngcontent-utm-3="">Chopin, Frederic Francois Op.37 'Nocturne No.1 in G minor' (Daisuke Inoue).mid</a>
+					</li><li _ngcontent-utm-3="" class="list-group-item">
+						<a _ngcontent-utm-3="">Chopin, Frederic Francois Op.37 'Nocturne No.2 in G' (Daisuke Inoue).mid</a>
+					</li><li _ngcontent-utm-3="" class="list-group-item">
+						<a _ngcontent-utm-3="">Chopin, Frederic Francois Op.48 'Nocturne No.1 in C minor' (Daisuke Inoue).mid</a>
+					</li><li _ngcontent-utm-3="" class="list-group-item">
+						<a _ngcontent-utm-3="">Chopin, Frederic Francois Op.48 'Nocturne No.2 in F# minor' (Daisuke Inoue).mid</a>
+					</li><li _ngcontent-utm-3="" class="list-group-item">
+						<a _ngcontent-utm-3="">Chopin, Frederic Francois Op.53 'Polonaise in Ab [Heroic]' (Robert Finley).mid</a>
+					</li><li _ngcontent-utm-3="" class="list-group-item">
+						<a _ngcontent-utm-3="">Chopin, Frederic Francois Op.55 'Nocturne No.1 in F minor' (Daisuke Inoue).mid</a>
+					</li><li _ngcontent-utm-3="" class="list-group-item">
+						<a _ngcontent-utm-3="">Chopin, Frederic Francois Op.55 'Nocturne No.2 in Eb' (Daisuke Inoue).mid</a>
+					</li><li _ngcontent-utm-3="" class="list-group-item">
+						<a _ngcontent-utm-3="">Chopin, Frederic Francois Op.58 mov.1 Allegro 'Sonata No.3 in B minor' (Robert Finley).mid</a>
+					</li><li _ngcontent-utm-3="" class="list-group-item">
+						<a _ngcontent-utm-3="">Chopin, Frederic Francois Op.58 mov.2 Scherzo 'Sonata No.3 in B minor' (Robert Finley).mid</a>
+					</li><li _ngcontent-utm-3="" class="list-group-item">
+						<a _ngcontent-utm-3="">Chopin, Frederic Francois Op.58 mov.3 Largo 'Sonata No.3 in B minor' (Robert Finley).mid</a>
+					</li><li _ngcontent-utm-3="" class="list-group-item">
+						<a _ngcontent-utm-3="">Chopin, Frederic Francois Op.58 mov.4 Presto 'Sonata No.3 in B minor' (Robert Finley).mid</a>
+					</li><li _ngcontent-utm-3="" class="list-group-item">
+						<a _ngcontent-utm-3="">Chopin, Frederic Francois Op.62 'Nocturne No.1 in B' (Robert Finley).mid</a>
+					</li><li _ngcontent-utm-3="" class="list-group-item">
+						<a _ngcontent-utm-3="">Chopin, Frederic Francois Op.62 'Nocturne No.2 in E' (Daisuke Inoue).mid</a>
+					</li><li _ngcontent-utm-3="" class="list-group-item">
+						<a _ngcontent-utm-3="">Chopin, Frederic Francois Op.64 'Waltz in C# minor No.2' (Jeff Segor).mid</a>
+					</li><li _ngcontent-utm-3="" class="list-group-item">
+						<a _ngcontent-utm-3="">Chopin, Frederic Francois Op.64 'Waltz in Db No.1' (~~L. Winters).mid</a>
+					</li><li _ngcontent-utm-3="" class="list-group-item">
+						<a _ngcontent-utm-3="">Chopin, Frederic Francois Op.66 'Fantaisie-impromptu in C# minor' (Jeff Segor).mid</a>
+					</li><li _ngcontent-utm-3="" class="list-group-item">
+						<a _ngcontent-utm-3="">Chopin, Frederic Francois Op.70 'Waltz No.2' (Faren E. Raborn).mid</a>
+					</li><li _ngcontent-utm-3="" class="list-group-item">
+						<a _ngcontent-utm-3="">Chopin, Frederic Francois Op.72 'Nocturne No.1 in E minor' (Daisuke Inoue).mid</a>
+					</li><li _ngcontent-utm-3="" class="list-group-item">
+						<a _ngcontent-utm-3="">DeepPurple_Smoke_on_the_water.mid</a>
+					</li><li _ngcontent-utm-3="" class="list-group-item">
+						<a _ngcontent-utm-3="">DuranDuran_Notorious.mid</a>
+					</li><li _ngcontent-utm-3="" class="list-group-item">
+						<a _ngcontent-utm-3="">DuranDuran_Save_a_prayer.mid</a>
+					</li><li _ngcontent-utm-3="" class="list-group-item">
+						<a _ngcontent-utm-3="">DuranDuran_The_reflex.mid</a>
+					</li><li _ngcontent-utm-3="" class="list-group-item">
+						<a _ngcontent-utm-3="">ELP_From_the_beginning.mid</a>
+					</li><li _ngcontent-utm-3="" class="list-group-item">
+						<a _ngcontent-utm-3="">ELP_Jerusalem.mid</a>
+					</li><li _ngcontent-utm-3="" class="list-group-item">
+						<a _ngcontent-utm-3="">ELP_Karn_evil.mid</a>
+					</li><li _ngcontent-utm-3="" class="list-group-item">
+						<a _ngcontent-utm-3="">ELP_Karn_evil_2.mid</a>
+					</li><li _ngcontent-utm-3="" class="list-group-item">
+						<a _ngcontent-utm-3="">ELP_Karn_evil_3.mid</a>
+					</li><li _ngcontent-utm-3="" class="list-group-item">
+						<a _ngcontent-utm-3="">ELP_Lucky_man.mid</a>
+					</li><li _ngcontent-utm-3="" class="list-group-item">
+						<a _ngcontent-utm-3="">EltonJohn_Candle_in_the_wind.mid</a>
+					</li><li _ngcontent-utm-3="" class="list-group-item">
+						<a _ngcontent-utm-3="">EltonJohn_Cocodrile_rock.mid</a>
+					</li><li _ngcontent-utm-3="" class="list-group-item">
+						<a _ngcontent-utm-3="">EltonJohn_Goodbye_yellow_brick_road.mid</a>
+					</li><li _ngcontent-utm-3="" class="list-group-item">
+						<a _ngcontent-utm-3="">EltonJohn_Rocket_man.mid</a>
+					</li><li _ngcontent-utm-3="" class="list-group-item">
+						<a _ngcontent-utm-3="">EltonJohn_YourSong.mid</a>
+					</li><li _ngcontent-utm-3="" class="list-group-item">
+						<a _ngcontent-utm-3="">Elton_John's-Someone_Saved_My_Life_Tonight.mid</a>
+					</li><li _ngcontent-utm-3="" class="list-group-item">
+						<a _ngcontent-utm-3="">GUNS&amp;ROSES_CivilWar.mid</a>
+					</li><li _ngcontent-utm-3="" class="list-group-item">
+						<a _ngcontent-utm-3="">GUNS'NROSES_Sweet child o mine.mid</a>
+					</li><li _ngcontent-utm-3="" class="list-group-item">
+						<a _ngcontent-utm-3="">GUNS'NROSES_Welcome to the Jungle.mid</a>
+					</li><li _ngcontent-utm-3="" class="list-group-item">
+						<a _ngcontent-utm-3="">GUNSNROSES_don't_cry.mid</a>
+					</li><li _ngcontent-utm-3="" class="list-group-item">
+						<a _ngcontent-utm-3="">Handel, George Frideric 'Water Music Suite No.2 in D [Alle Hornpipe]' (G. Breed).mid</a>
+					</li><li _ngcontent-utm-3="" class="list-group-item">
+						<a _ngcontent-utm-3="">Handel, George Frideric All we like sheep 'Messiah' (Michael Petri).mid</a>
+					</li><li _ngcontent-utm-3="" class="list-group-item">
+						<a _ngcontent-utm-3="">Handel, George Frideric And He shall Purify 'Messiah' (Michael Petri).mid</a>
+					</li><li _ngcontent-utm-3="" class="list-group-item">
+						<a _ngcontent-utm-3="">Handel, George Frideric And the Glory of the Lord 'Messiah' (Michael Petri).mid</a>
+					</li><li _ngcontent-utm-3="" class="list-group-item">
+						<a _ngcontent-utm-3="">Handel, George Frideric But thanks be to God 'Messiah' (Michael Petri).mid</a>
+					</li><li _ngcontent-utm-3="" class="list-group-item">
+						<a _ngcontent-utm-3="">Handel, George Frideric Flute Sonata No 7 in A minor (Tony D Matthews).mid</a>
+					</li><li _ngcontent-utm-3="" class="list-group-item">
+						<a _ngcontent-utm-3="">Handel, George Frideric For unto us a Child is Born 'Messiah' (Michael Petri).mid</a>
+					</li><li _ngcontent-utm-3="" class="list-group-item">
+						<a _ngcontent-utm-3="">Handel, George Frideric Hallehujah 'Messiah' (Michael Petri).mid</a>
+					</li><li _ngcontent-utm-3="" class="list-group-item">
+						<a _ngcontent-utm-3="">Handel, George Frideric He trusted in God 'Messiah' (Michael Petri).mid</a>
+					</li><li _ngcontent-utm-3="" class="list-group-item">
+						<a _ngcontent-utm-3="">Handel, George Frideric He was Despised 'Messiah' (Michael Petri).mid</a>
+					</li><li _ngcontent-utm-3="" class="list-group-item">
+						<a _ngcontent-utm-3="">Handel, George Frideric His Yoke is easy 'Messiah' (Michael Petri).mid</a>
+					</li><li _ngcontent-utm-3="" class="list-group-item">
+						<a _ngcontent-utm-3="">Handel, George Frideric Lift up your Heads 'Messiah' (Michael Petri).mid</a>
+					</li><li _ngcontent-utm-3="" class="list-group-item">
+						<a _ngcontent-utm-3="">Handel, George Frideric O thon that tellest good tidings 'Messiah' (Michael Petri).mid</a>
+					</li><li _ngcontent-utm-3="" class="list-group-item">
+						<a _ngcontent-utm-3="">Handel, George Frideric Op.04 No.5 'Organ Concerto' (Lloyd Thompkins &amp; Randy Reid).mid</a>
+					</li><li _ngcontent-utm-3="" class="list-group-item">
+						<a _ngcontent-utm-3="">Handel, George Frideric Op.04 No.5 mov.1 'Concerto in F' (unknown).mid</a>
+					</li><li _ngcontent-utm-3="" class="list-group-item">
+						<a _ngcontent-utm-3="">Handel, George Frideric Op.04 No.5 mov.2 'Concerto in F' (unknown).mid</a>
+					</li><li _ngcontent-utm-3="" class="list-group-item">
+						<a _ngcontent-utm-3="">Handel, George Frideric Op.04 No.5 mov.3 'Concerto in F' (unknown).mid</a>
+					</li><li _ngcontent-utm-3="" class="list-group-item">
+						<a _ngcontent-utm-3="">Handel, George Frideric Op.04 No.5 mov.4 'Concerto in F' (unknown).mid</a>
+					</li><li _ngcontent-utm-3="" class="list-group-item">
+						<a _ngcontent-utm-3="">Handel, George Frideric Since by Man came Death 'Messiah' (Michael Petri).mid</a>
+					</li><li _ngcontent-utm-3="" class="list-group-item">
+						<a _ngcontent-utm-3="">Handel, George Frideric Worthy - Blessing and Honour - Amen 'Messiah' (Michael Petri).mid</a>
+					</li><li _ngcontent-utm-3="" class="list-group-item">
+						<a _ngcontent-utm-3="">Handel, George Frideric mov.0 overture lentement 'The Music for the Royal Fireworks' (Martin White).mid</a>
+					</li><li _ngcontent-utm-3="" class="list-group-item">
+						<a _ngcontent-utm-3="">Handel, George Frideric mov.1 'Violin Sonata No.3 in F' (Marty Weimar).mid</a>
+					</li><li _ngcontent-utm-3="" class="list-group-item">
+						<a _ngcontent-utm-3="">Handel, George Frideric mov.1 Adagio 'Violin Sonata No.6 in F' (Marty Weimar).mid</a>
+					</li><li _ngcontent-utm-3="" class="list-group-item">
+						<a _ngcontent-utm-3="">Handel, George Frideric mov.1 Allegro 'The Music for the Royal Fireworks' (Martin White).mid</a>
+					</li><li _ngcontent-utm-3="" class="list-group-item">
+						<a _ngcontent-utm-3="">Handel, George Frideric mov.2 'Violin Sonata No.3 in F' (Marty Weimar).mid</a>
+					</li><li _ngcontent-utm-3="" class="list-group-item">
+						<a _ngcontent-utm-3="">Handel, George Frideric mov.2 Allegro 'Violin Sonata No.6 in F' (Marty Weimar).mid</a>
+					</li><li _ngcontent-utm-3="" class="list-group-item">
+						<a _ngcontent-utm-3="">Handel, George Frideric mov.2 Bourree 'The Music for the Royal Fireworks' (Martin White).mid</a>
+					</li><li _ngcontent-utm-3="" class="list-group-item">
+						<a _ngcontent-utm-3="">Handel, George Frideric mov.3 'Violin Sonata No.3 in F' (Marty Weimar).mid</a>
+					</li><li _ngcontent-utm-3="" class="list-group-item">
+						<a _ngcontent-utm-3="">Handel, George Frideric mov.3 La Paix 'The Music for the Royal Fireworks' (Martin White).mid</a>
+					</li><li _ngcontent-utm-3="" class="list-group-item">
+						<a _ngcontent-utm-3="">Handel, George Frideric mov.3 Largo 'Violin Sonata No.6 in F' (Marty Weimar).mid</a>
+					</li><li _ngcontent-utm-3="" class="list-group-item">
+						<a _ngcontent-utm-3="">Handel, George Frideric mov.4 'Violin Sonata No.3 in F' (Marty Weimar).mid</a>
+					</li><li _ngcontent-utm-3="" class="list-group-item">
+						<a _ngcontent-utm-3="">Handel, George Frideric mov.4 Allegro non troppo 'Violin Sonata No.6 in F' (Marty Weimar).mid</a>
+					</li><li _ngcontent-utm-3="" class="list-group-item">
+						<a _ngcontent-utm-3="">Handel, George Frideric mov.4 La Rejouissance 'The Music for the Royal Fireworks' (Martin White).mid</a>
+					</li><li _ngcontent-utm-3="" class="list-group-item">
+						<a _ngcontent-utm-3="">Handel, George Frideric mov.5 Menuet I &amp; II 'The Music for the Royal Fireworks' (Martin White).mid</a>
+					</li><li _ngcontent-utm-3="" class="list-group-item">
+						<a _ngcontent-utm-3="">Haydn, Franz Joseph Op.064 mov.1 Allegro spirituoso 'String Quartet No.2 in B minor'' (Vincent H. Phillips).mid</a>
+					</li><li _ngcontent-utm-3="" class="list-group-item">
+						<a _ngcontent-utm-3="">Haydn, Franz Joseph Op.101 mov.2 Adagio 'Cello Concerto in D' (Martin Weimer).mid</a>
+					</li><li _ngcontent-utm-3="" class="list-group-item">
+						<a _ngcontent-utm-3="">Haydn, Franz Joseph Op.~~~ 'Gypsy Rondo' (Tony D Matthews).mid</a>
+					</li><li _ngcontent-utm-3="" class="list-group-item">
+						<a _ngcontent-utm-3="">Haydn, Franz Joseph Op.~~~ 'Miniature Piano Concerto' (E.W. Cox).mid</a>
+					</li><li _ngcontent-utm-3="" class="list-group-item">
+						<a _ngcontent-utm-3="">Haydn, Franz Joseph Op.~~~ 'Minuet in Eb' (Rob Dwyer).mid</a>
+					</li><li _ngcontent-utm-3="" class="list-group-item">
+						<a _ngcontent-utm-3="">Haydn, Franz Joseph Op.~~~ Awake the Harp chorus 'THe Creation's Oratorio' (Martin Weimer).mid</a>
+					</li><li _ngcontent-utm-3="" class="list-group-item">
+						<a _ngcontent-utm-3="">Haydn, Franz Joseph Op.~~~ No.1 in D 'German Dance' (Rob Dwyer).mid</a>
+					</li><li _ngcontent-utm-3="" class="list-group-item">
+						<a _ngcontent-utm-3="">Haydn, Franz Joseph Op.~~~ No.5 in D 'German Dance' (Rob Dwyer).mid</a>
+					</li><li _ngcontent-utm-3="" class="list-group-item">
+						<a _ngcontent-utm-3="">Haydn, Franz Joseph Op.~~~ No.6 in E 'German Dance' (Rob Dwyer).mid</a>
+					</li><li _ngcontent-utm-3="" class="list-group-item">
+						<a _ngcontent-utm-3="">Haydn, Franz Joseph Op.~~~ Schertzo in F 'Sonatina No.4' (Rob Dwyer).mid</a>
+					</li><li _ngcontent-utm-3="" class="list-group-item">
+						<a _ngcontent-utm-3="">Haydn, Franz Joseph Op.~~~ mov.1 'Piano Sonata No.37 in D' (Martin Weimer).mid</a>
+					</li><li _ngcontent-utm-3="" class="list-group-item">
+						<a _ngcontent-utm-3="">Haydn, Franz Joseph Op.~~~ mov.1 'Piano Sonata No.52 in Eb' (Martin Weimer).mid</a>
+					</li><li _ngcontent-utm-3="" class="list-group-item">
+						<a _ngcontent-utm-3="">Haydn, Franz Joseph Op.~~~ mov.1 'Symphony No.007' (Faren E. Raborn).mid</a>
+					</li><li _ngcontent-utm-3="" class="list-group-item">
+						<a _ngcontent-utm-3="">Haydn, Franz Joseph Op.~~~ mov.1 'Symphony No.045 in F# [Farewell]' (Mike Abelson).mid</a>
+					</li><li _ngcontent-utm-3="" class="list-group-item">
+						<a _ngcontent-utm-3="">Haydn, Franz Joseph Op.~~~ mov.1 'Symphony No.095' (Dan Szymborski).mid</a>
+					</li><li _ngcontent-utm-3="" class="list-group-item">
+						<a _ngcontent-utm-3="">Haydn, Franz Joseph Op.~~~ mov.1 'Symphony No.104 in D' (Sharon Zurflieh).mid</a>
+					</li><li _ngcontent-utm-3="" class="list-group-item">
+						<a _ngcontent-utm-3="">Haydn, Franz Joseph Op.~~~ mov.1 Adagio - Allegro 'Symphony No.096 in D' (Dan Szymborski).mid</a>
+					</li><li _ngcontent-utm-3="" class="list-group-item">
+						<a _ngcontent-utm-3="">Haydn, Franz Joseph Op.~~~ mov.1 Allegro 'Guitar Quartet in D' (Vince Phillips).mid</a>
+					</li><li _ngcontent-utm-3="" class="list-group-item">
+						<a _ngcontent-utm-3="">Haydn, Franz Joseph Op.~~~ mov.2 'Symphony No.104 in D' (Sharon Zurflieh).mid</a>
+					</li><li _ngcontent-utm-3="" class="list-group-item">
+						<a _ngcontent-utm-3="">Haydn, Franz Joseph Op.~~~ mov.2 Minuetto 'Guitar Quartet in D' (Vince Phillips).mid</a>
+					</li><li _ngcontent-utm-3="" class="list-group-item">
+						<a _ngcontent-utm-3="">Haydn, Franz Joseph Op.~~~ mov.3 'Symphony No.104 in D' (Sharon Zurflieh).mid</a>
+					</li><li _ngcontent-utm-3="" class="list-group-item">
+						<a _ngcontent-utm-3="">Haydn, Franz Joseph Op.~~~ mov.3 Adagio 'Guitar Quartet in D' (Vince Phillips).mid</a>
+					</li><li _ngcontent-utm-3="" class="list-group-item">
+						<a _ngcontent-utm-3="">Haydn, Franz Joseph Op.~~~ mov.3 Presto 'Piano Sonata No.52 in Eb' (Martin Weimer).mid</a>
+					</li><li _ngcontent-utm-3="" class="list-group-item">
+						<a _ngcontent-utm-3="">Haydn, Franz Joseph Op.~~~ mov.4 'Symphony No.073 in D [La Chasse]' (Mike Abelson).mid</a>
+					</li><li _ngcontent-utm-3="" class="list-group-item">
+						<a _ngcontent-utm-3="">Haydn, Franz Joseph Op.~~~ mov.4 'Symphony No.077' (Faren E. Raborn &amp; Martin Weimer).mid</a>
+					</li><li _ngcontent-utm-3="" class="list-group-item">
+						<a _ngcontent-utm-3="">Haydn, Franz Joseph Op.~~~ mov.4 'Symphony No.104 in D' (Sharon Zurflieh).mid</a>
+					</li><li _ngcontent-utm-3="" class="list-group-item">
+						<a _ngcontent-utm-3="">Haydn, Franz Joseph Op.~~~ mov.4 Minuetto 'Guitar Quartet in D' (Vince Phillips).mid</a>
+					</li><li _ngcontent-utm-3="" class="list-group-item">
+						<a _ngcontent-utm-3="">Haydn, Franz Joseph Op.~~~ mov.5 Presto 'Guitar Quartet in D' (Vince Phillips).mid</a>
+					</li><li _ngcontent-utm-3="" class="list-group-item">
+						<a _ngcontent-utm-3="">Hungry Like A Wolf.mid</a>
+					</li><li _ngcontent-utm-3="" class="list-group-item">
+						<a _ngcontent-utm-3="">Liszt, Franz  Canzone 'Venezia e Napoli' (Robert Finley).mid</a>
+					</li><li _ngcontent-utm-3="" class="list-group-item">
+						<a _ngcontent-utm-3="">Liszt, Franz  Gondoliera 'Venezia e Napoli' (Robert Finley).mid</a>
+					</li><li _ngcontent-utm-3="" class="list-group-item">
+						<a _ngcontent-utm-3="">Liszt, Franz  Impromptu 'Venezia e Napoli' (Robert Finley).mid</a>
+					</li><li _ngcontent-utm-3="" class="list-group-item">
+						<a _ngcontent-utm-3="">Liszt, Franz  no.1 'Valse Oubliee' (Robert Finley).mid</a>
+					</li><li _ngcontent-utm-3="" class="list-group-item">
+						<a _ngcontent-utm-3="">Liszt, Franz  no.2 'Valse Oubliee' (Robert Finley).mid</a>
+					</li><li _ngcontent-utm-3="" class="list-group-item">
+						<a _ngcontent-utm-3="">Liszt, Franz 'Liebestraume No.3' (Robert Finley).mid</a>
+					</li><li _ngcontent-utm-3="" class="list-group-item">
+						<a _ngcontent-utm-3="">Liszt, Franz 'Petrarch Sonnet' (Robert Finley).mid</a>
+					</li><li _ngcontent-utm-3="" class="list-group-item">
+						<a _ngcontent-utm-3="">Liszt, Franz 'Polonaise in E no.2' (~~M. Salvi).mid</a>
+					</li><li _ngcontent-utm-3="" class="list-group-item">
+						<a _ngcontent-utm-3="">Liszt, Franz 'Sonata in B minor' (Robert Finley).mid</a>
+					</li><li _ngcontent-utm-3="" class="list-group-item">
+						<a _ngcontent-utm-3="">Liszt, Franz Eroica 'Etude Transcendentale' (Robert Finley).mid</a>
+					</li><li _ngcontent-utm-3="" class="list-group-item">
+						<a _ngcontent-utm-3="">Liszt, Franz Feux Follets 'Etude Transcendentale' (Robert Finley).mid</a>
+					</li><li _ngcontent-utm-3="" class="list-group-item">
+						<a _ngcontent-utm-3="">Liszt, Franz Mazeppa 'Etude Transcendentale' (Robert Finley).mid</a>
+					</li><li _ngcontent-utm-3="" class="list-group-item">
+						<a _ngcontent-utm-3="">Liszt, Franz mov.3 'Concerto in Eb' (Robert Finley).mid</a>
+					</li><li _ngcontent-utm-3="" class="list-group-item">
+						<a _ngcontent-utm-3="">Liszt, Franz mov.4 'Concerto in Eb' (Robert Finley).mid</a>
+					</li><li _ngcontent-utm-3="" class="list-group-item">
+						<a _ngcontent-utm-3="">Liszt, Franz no.1 'Mephisto Waltz' (Robert Finley).mid</a>
+					</li><li _ngcontent-utm-3="" class="list-group-item">
+						<a _ngcontent-utm-3="">Liszt, Franz no.13 'Hungarian Raphsody' (~~Z. Janosy).mid</a>
+					</li><li _ngcontent-utm-3="" class="list-group-item">
+						<a _ngcontent-utm-3="">Liszt, Franz no.2 'Hungarian Raphsody' (~~D. Buczynski).mid</a>
+					</li><li _ngcontent-utm-3="" class="list-group-item">
+						<a _ngcontent-utm-3="">Liszt, Franz no.3 'Mephisto Waltz' (Peter R. Wolfe).mid</a>
+					</li><li _ngcontent-utm-3="" class="list-group-item">
+						<a _ngcontent-utm-3="">One Of These Nights.mid</a>
+					</li><li _ngcontent-utm-3="" class="list-group-item">
+						<a _ngcontent-utm-3="">PRETTY_WOMAN.mid</a>
+					</li><li _ngcontent-utm-3="" class="list-group-item">
+						<a _ngcontent-utm-3="">SPANISH_FLY.mid</a>
+					</li><li _ngcontent-utm-3="" class="list-group-item">
+						<a _ngcontent-utm-3="">Save A Prayer.mid</a>
+					</li><li _ngcontent-utm-3="" class="list-group-item">
+						<a _ngcontent-utm-3="">Schubert-SonataOp120.mid</a>
+					</li><li _ngcontent-utm-3="" class="list-group-item">
+						<a _ngcontent-utm-3="">Schubert_Ave_Maria.mid</a>
+					</li><li _ngcontent-utm-3="" class="list-group-item">
+						<a _ngcontent-utm-3="">Schubert_Fantaisie_Op78_D894_Menuet.mid</a>
+					</li><li _ngcontent-utm-3="" class="list-group-item">
+						<a _ngcontent-utm-3="">Schubert_Serenade.mid</a>
+					</li><li _ngcontent-utm-3="" class="list-group-item">
+						<a _ngcontent-utm-3="">Somebody Get Me A Doctor.mid</a>
+					</li><li _ngcontent-utm-3="" class="list-group-item">
+						<a _ngcontent-utm-3="">U2_Desire.mid</a>
+					</li><li _ngcontent-utm-3="" class="list-group-item">
+						<a _ngcontent-utm-3="">U2_New Years Day.mid</a>
+					</li><li _ngcontent-utm-3="" class="list-group-item">
+						<a _ngcontent-utm-3="">U2_One.mid</a>
+					</li><li _ngcontent-utm-3="" class="list-group-item">
+						<a _ngcontent-utm-3="">U2_Sunday_bloody_sunday.mid</a>
+					</li><li _ngcontent-utm-3="" class="list-group-item">
+						<a _ngcontent-utm-3="">U2_Sweetest_thing.mid</a>
+					</li><li _ngcontent-utm-3="" class="list-group-item">
+						<a _ngcontent-utm-3="">U2_The_fly.mid</a>
+					</li><li _ngcontent-utm-3="" class="list-group-item">
+						<a _ngcontent-utm-3="">U2_With_or_without_you.mid</a>
+					</li><li _ngcontent-utm-3="" class="list-group-item">
+						<a _ngcontent-utm-3="">U2_angelofharlem.mid</a>
+					</li><li _ngcontent-utm-3="" class="list-group-item">
+						<a _ngcontent-utm-3="">U2_hold_me_thrill_me_kiss_me.mid</a>
+					</li><li _ngcontent-utm-3="" class="list-group-item">
+						<a _ngcontent-utm-3="">U2_wherethestreetshavenoname.mid</a>
+					</li><li _ngcontent-utm-3="" class="list-group-item">
+						<a _ngcontent-utm-3="">VanHalen-Aint_Talkin_Bout_Love.mid</a>
+					</li><li _ngcontent-utm-3="" class="list-group-item">
+						<a _ngcontent-utm-3="">VanHalen-Why_Cant_This_Be_Love.mid</a>
+					</li><li _ngcontent-utm-3="" class="list-group-item">
+						<a _ngcontent-utm-3="">VanHalen-You_Really_Got_Me.mid</a>
+					</li><li _ngcontent-utm-3="" class="list-group-item">
+						<a _ngcontent-utm-3="">VanHalen_Eruption.mid</a>
+					</li><li _ngcontent-utm-3="" class="list-group-item">
+						<a _ngcontent-utm-3="">VanHalen_Jump.mid</a>
+					</li><li _ngcontent-utm-3="" class="list-group-item">
+						<a _ngcontent-utm-3="">VanHalen_Right_now.mid</a>
+					</li><li _ngcontent-utm-3="" class="list-group-item">
+						<a _ngcontent-utm-3="">Vivaldi Op03 - No11 Concerto Grosso (Michael J. Starke).mid</a>
+					</li><li _ngcontent-utm-3="" class="list-group-item">
+						<a _ngcontent-utm-3="">Vivaldi Op08 - No1 mov1 La Primavera in E (Martin Reyto).mid</a>
+					</li><li _ngcontent-utm-3="" class="list-group-item">
+						<a _ngcontent-utm-3="">Vivaldi Op08 - No1 mov2 La Primavera in E (Martin Reyto).mid</a>
+					</li><li _ngcontent-utm-3="" class="list-group-item">
+						<a _ngcontent-utm-3="">Vivaldi Op08 - No1 mov3 La Primavera in E (Martin Reyto).mid</a>
+					</li><li _ngcontent-utm-3="" class="list-group-item">
+						<a _ngcontent-utm-3="">Vivaldi Op08 - No2 mov1 L'Estate in G minor (Martin Reyto).mid</a>
+					</li><li _ngcontent-utm-3="" class="list-group-item">
+						<a _ngcontent-utm-3="">Vivaldi Op08 - No2 mov2 L'Estate in G minor (Martin Reyto).mid</a>
+					</li><li _ngcontent-utm-3="" class="list-group-item">
+						<a _ngcontent-utm-3="">Vivaldi Op08 - No2 mov3 L'Estate in G minor (Martin Reyto).mid</a>
+					</li><li _ngcontent-utm-3="" class="list-group-item">
+						<a _ngcontent-utm-3="">Vivaldi Op08 - No3 mov1 L'Autunno in F (Martin Reyto).mid</a>
+					</li><li _ngcontent-utm-3="" class="list-group-item">
+						<a _ngcontent-utm-3="">Vivaldi Op08 - No3 mov2 L'Autunno in F (Martin Reyto).mid</a>
+					</li><li _ngcontent-utm-3="" class="list-group-item">
+						<a _ngcontent-utm-3="">Vivaldi Op08 - No4 mov1 L'Inverno in F minor (Martin Reyto).mid</a>
+					</li><li _ngcontent-utm-3="" class="list-group-item">
+						<a _ngcontent-utm-3="">Vivaldi Op08 - No4 mov2 L'Inverno in F minor (Martin Reyto).mid</a>
+					</li><li _ngcontent-utm-3="" class="list-group-item">
+						<a _ngcontent-utm-3="">Vivaldi Op08 - No4 mov3 L'Inverno in F minor (Martin Reyto).mid</a>
+					</li><li _ngcontent-utm-3="" class="list-group-item">
+						<a _ngcontent-utm-3="">Vivaldi WoOp - Concerto No.6 in A (John Cowles).mid</a>
+					</li><li _ngcontent-utm-3="" class="list-group-item">
+						<a _ngcontent-utm-3="">Vivaldi WoOp - mov1 Mandolin Concerto in C (Vince H. Phillips).mid</a>
+					</li><li _ngcontent-utm-3="" class="list-group-item">
+						<a _ngcontent-utm-3="">Vivaldi WoOp - mov2 Mandolin Concerto in C (Vince H. Phillips).mid</a>
+					</li><li _ngcontent-utm-3="" class="list-group-item">
+						<a _ngcontent-utm-3="">Vivaldi WoOp - mov3 Mandolin Concerto in C (Vince H. Phillips).mid</a>
+					</li><li _ngcontent-utm-3="" class="list-group-item">
+						<a _ngcontent-utm-3="">Wagner - Die Walkure (L. Roberts).mid</a>
+					</li><li _ngcontent-utm-3="" class="list-group-item">
+						<a _ngcontent-utm-3="">Wagner - Idyll Sigfried (Sharon Zurflieh).mid</a>
+					</li><li _ngcontent-utm-3="" class="list-group-item">
+						<a _ngcontent-utm-3="">Wagner - Tannhauser Overture (Robert Finley).mid</a>
+					</li><li _ngcontent-utm-3="" class="list-group-item">
+						<a _ngcontent-utm-3="">Wagner - Traume (Ken Gilliland).mid</a>
+					</li><li _ngcontent-utm-3="" class="list-group-item">
+						<a _ngcontent-utm-3="">Wild Boys.mid</a>
+					</li><li _ngcontent-utm-3="" class="list-group-item">
+						<a _ngcontent-utm-3="">Witchy Woman.mid</a>
+					</li><li _ngcontent-utm-3="" class="list-group-item">
+						<a _ngcontent-utm-3="">You Could Be Mine.mid</a>
+					</li><li _ngcontent-utm-3="" class="list-group-item">
+						<a _ngcontent-utm-3="">deepPurple_Bad_attitude.mid</a>
+					</li><li _ngcontent-utm-3="" class="list-group-item">
+						<a _ngcontent-utm-3="">deepPurple_Black_night.mid</a>
+					</li><li _ngcontent-utm-3="" class="list-group-item">
+						<a _ngcontent-utm-3="">deepPurple_Burn.mid</a>
+					</li><li _ngcontent-utm-3="" class="list-group-item">
+						<a _ngcontent-utm-3="">deepPurple_Child_in_time.mid</a>
+					</li><li _ngcontent-utm-3="" class="list-group-item">
+						<a _ngcontent-utm-3="">deepPurple_Highway_star.mid</a>
+					</li><li _ngcontent-utm-3="" class="list-group-item">
+						<a _ngcontent-utm-3="">deepPurple_Hush.mid</a>
+					</li><li _ngcontent-utm-3="" class="list-group-item">
+						<a _ngcontent-utm-3="">deepPurple_Lazy.mid</a>
+					</li><li _ngcontent-utm-3="" class="list-group-item">
+						<a _ngcontent-utm-3="">deepPurple_Perfect_strangers.mid</a>
+					</li><li _ngcontent-utm-3="" class="list-group-item">
+						<a _ngcontent-utm-3="">deepPurple_Pictures_of_home.mid</a>
+					</li><li _ngcontent-utm-3="" class="list-group-item">
+						<a _ngcontent-utm-3="">deepPurple_Rat_bat_blue.mid</a>
+					</li><li _ngcontent-utm-3="" class="list-group-item">
+						<a _ngcontent-utm-3="">dire straits - brothers in arms.mid</a>
+					</li><li _ngcontent-utm-3="" class="list-group-item">
+						<a _ngcontent-utm-3="">dire straits - money for nothing.mid</a>
+					</li><li _ngcontent-utm-3="" class="list-group-item">
+						<a _ngcontent-utm-3="">dire straits - private investigations.mid</a>
+					</li><li _ngcontent-utm-3="" class="list-group-item">
+						<a _ngcontent-utm-3="">eagles- Victim Of Love.mid</a>
+					</li><li _ngcontent-utm-3="" class="list-group-item">
+						<a _ngcontent-utm-3="">elton_john_benny_and_the_jets.mid</a>
+					</li><li _ngcontent-utm-3="" class="list-group-item">
+						<a _ngcontent-utm-3="">elton_john_dont_go_breaking_my_heart.mid</a>
+					</li><li _ngcontent-utm-3="" class="list-group-item">
+						<a _ngcontent-utm-3="">gnr-liveandletdie.mid</a>
+					</li><li _ngcontent-utm-3="" class="list-group-item">
+						<a _ngcontent-utm-3="">gnr-paradise_city.mid</a>
+					</li><li _ngcontent-utm-3="" class="list-group-item">
+						<a _ngcontent-utm-3="">great_symphony_schubert.mid</a>
+					</li><li _ngcontent-utm-3="" class="list-group-item">
+						<a _ngcontent-utm-3="">piano_fantasy_in_c_1st_movement_schubert.mid</a>
+					</li><li _ngcontent-utm-3="" class="list-group-item">
+						<a _ngcontent-utm-3="">rainbow - since you've been gone.mid</a>
+					</li><li _ngcontent-utm-3="" class="list-group-item">
+						<a _ngcontent-utm-3="">rocketman.mid</a>
+					</li><li _ngcontent-utm-3="" class="list-group-item">
+						<a _ngcontent-utm-3="">schubert_opus143_1.mid</a>
+					</li><li _ngcontent-utm-3="" class="list-group-item">
+						<a _ngcontent-utm-3="">schubert_opus143_2.mid</a>
+					</li><li _ngcontent-utm-3="" class="list-group-item">
+						<a _ngcontent-utm-3="">schubert_opus143_3.mid</a>
+					</li><li _ngcontent-utm-3="" class="list-group-item">
+						<a _ngcontent-utm-3="">schubert_opus_d960_1.mid</a>
+					</li><li _ngcontent-utm-3="" class="list-group-item">
+						<a _ngcontent-utm-3="">schubert_opus_d960_2.mid</a>
+					</li><li _ngcontent-utm-3="" class="list-group-item">
+						<a _ngcontent-utm-3="">schubert_opus_d960_3.mid</a>
+					</li><li _ngcontent-utm-3="" class="list-group-item">
+						<a _ngcontent-utm-3="">schubert_opus_d960_4.mid</a>
+					</li><li _ngcontent-utm-3="" class="list-group-item">
+						<a _ngcontent-utm-3="">van halen - runnin' with the devil.mid</a>
+					</li><li _ngcontent-utm-3="" class="list-group-item">
+						<a _ngcontent-utm-3="">waltz_in_Ab.mid</a>
+					</li>
+				</ul>
+			</div>
+		</div>
+	</div>
+</div>
+<div _ngcontent-utm-3="" class="row">
+	<div _ngcontent-utm-3="" class="col-xs-12 col-sm-12 col-md-8 col-lg-8">
+		<form _ngcontent-utm-3="" action="http://localhost:4200/localhost:3000/songsLibrary" class="form-horizontal ng-untouched ng-pristine ng-valid" enctype="multipart/form-data" id="formSongUpload" method="post">
+			<div _ngcontent-utm-3="" class="form-group">
+				<label _ngcontent-utm-3="" class="col-sm-3 control-label" for="songName">Upload file</label>
+				<label _ngcontent-utm-3="" class="btn btn-default btn-file">Browse          
+					<input _ngcontent-utm-3="" name="musicFile" style="display: none;" type="file">
+					</label>
+				<label _ngcontent-utm-3="" id="fileSelected"></label>
+				<!--template bindings={
+  "ng-reflect-ng-if": null
+}-->				
+			</div>
+		</form>
+	</div>
+</div>
+<div _ngcontent-utm-3="" class="row">
+	<song-details _ngcontent-utm-3="" ng-reflect-selected-song-id="58e56cf7d8667c1460223901"><!--template bindings={
+  "ng-reflect-ng-if": "[object Object]"
+}--><div>
+    <span>3p_Invention_11.mid - 58e56cf7d8667c1460223901</span>
+   
+    <!--template bindings={
+  "ng-reflect-ng-if": "[object Object]"
+}--><div>
+    <audio-controls ng-reflect-song="[object Object]"><div id="audioPlayControls">
+    <audio-buttons _nghost-utm-6="" ng-reflect-song="[object Object]"><div _ngcontent-utm-6="">
+    <button _ngcontent-utm-6="" class="btn btn-danger" type="button">
+            <span _ngcontent-utm-6="" class="glyphicon glyphicon-backward"></span>&nbsp;
+        </button>
+    <button _ngcontent-utm-6="" class="btn btn-danger" type="button">
+            <span _ngcontent-utm-6="" class="glyphicon glyphicon-play"></span>&nbsp;
+        </button>
+    <button _ngcontent-utm-6="" class="btn btn-danger" type="button">
+            <span _ngcontent-utm-6="" class="glyphicon glyphicon-pause"></span>&nbsp;
+        </button>
+    <button _ngcontent-utm-6="" class="btn btn-danger" type="button">
+            <span _ngcontent-utm-6="" class="glyphicon glyphicon-stop"></span>&nbsp;
+        </button>
+    <button _ngcontent-utm-6="" class="btn btn-danger" type="button">
+            <span _ngcontent-utm-6="" class="glyphicon glyphicon-forward"></span>&nbsp;
+        </button>
+
+    <span _ngcontent-utm-6="">&nbsp;&nbsp;&nbsp;</span>
+    <button _ngcontent-utm-6="" class="btn btn-danger" type="button">
+            <span _ngcontent-utm-6="" class="glyphicon glyphicon-zoom-in"></span>&nbsp;
+        </button>
+    <button _ngcontent-utm-6="" class="btn btn-danger" type="button">
+            <span _ngcontent-utm-6="" class="glyphicon glyphicon-zoom-out"></span>
+        </button>
+    <span _ngcontent-utm-6="">&nbsp;&nbsp;&nbsp;</span>
+    <button _ngcontent-utm-6="" class="btn btn-danger" type="button">
+            <span _ngcontent-utm-6="" class="glyphicon glyphicon-arrow-left"></span>
+        </button>
+    <button _ngcontent-utm-6="" class="btn btn-danger" type="button">
+            <span _ngcontent-utm-6="" class="glyphicon glyphicon-arrow-right"></span>
+        </button>
+    <button _ngcontent-utm-6="" class="btn btn-danger" type="button">
+            <span _ngcontent-utm-6="" class="glyphicon glyphicon-arrow-down"></span>
+        </button>
+    <button _ngcontent-utm-6="" class="btn btn-danger" type="button">
+            <span _ngcontent-utm-6="" class="glyphicon glyphicon-arrow-up"></span>
+        </button>
+</div></audio-buttons>
+</div>
+<div>
+    <audio-control-bar _nghost-utm-7="" ng-reflect-song="[object Object]"><div _ngcontent-utm-7="" style="width:100%">
+    <div _ngcontent-utm-7="" class="col-md-1 col-lg-1"></div>
+    <div _ngcontent-utm-7="" class="col-md-11 col-lg-11">
+        <slider-soret _ngcontent-utm-7="" barheight="6" boxheight="30" enabled="true" radius="12" sliderid="sliderAudioControl" _nghost-utm-8="" ng-reflect-slider-id="sliderAudioControl" ng-reflect-box-height="30" ng-reflect-bar-height="6" ng-reflect-radius="12" ng-reflect-enabled="true"><svg _ngcontent-utm-8="" style="background-color:#272b30" width="100%" xmlns="http://www.w3.org/2000/svg" ng-reflect-id="sliderAudioControl" id="sliderAudioControl" height="30">
+    <rect _ngcontent-utm-8="" fill="url(#GradientSoret1)" width="100%" ng-reflect-id="sliderAudioControlrectangle" id="sliderAudioControlrectangle" height="6" y="12"></rect>
+    <circle _ngcontent-utm-8="" class="draggable" fill="url(#GradientSoret2)" ng-reflect-id="sliderAudioControlcircle" id="sliderAudioControlcircle" cx="12" cy="15" r="12"></circle>
+    <defs _ngcontent-utm-8="">
+        <lineargradient _ngcontent-utm-8="" id="GradientSoret1" x1="0" x2="0" y1="0" y2="1">
+            <stop _ngcontent-utm-8="" offset="0%" stop-color="#20A"></stop>
+            <stop _ngcontent-utm-8="" offset="100%" stop-color="#83D"></stop>
+        </lineargradient>
+        <radialgradient _ngcontent-utm-8="" id="GradientSoret2">
+            <stop _ngcontent-utm-8="" offset="0%" stop-color="#83D"></stop>
+            <stop _ngcontent-utm-8="" offset="100%" stop-color="#20A"></stop>
+        </radialgradient>
+    </defs>
+    </svg></slider-soret>
+    </div>
+</div>
+</audio-control-bar>
+</div></audio-controls>
+    <song-display ng-reflect-song="[object Object]"><!--template bindings={
+  "ng-reflect-ng-if": "[object Object]"
+}--><div>
+    <!--template bindings={
+  "ng-reflect-ng-for-of": "[object Object]"
+}--><div>
+        <track-display _nghost-utm-10="" ng-reflect-song="[object Object]"><div _ngcontent-utm-10="">
+    <div _ngcontent-utm-10="" class="col-md-1 col-lg-1">
+        <div _ngcontent-utm-10=""><small _ngcontent-utm-10="">Invalid instrument code</small></div>
+        <div _ngcontent-utm-10="">
+            <img _ngcontent-utm-10="" width="25" ng-reflect-src="./app/assets/images/speakerOn.png" src="./BethovzartClient_files/speakerOn.png">
+            <a _ngcontent-utm-10=""><small _ngcontent-utm-10=""></small></a>
+        </div>
+        <div _ngcontent-utm-10="" style="width:100%;height:26">
+            <slider-soret _ngcontent-utm-10="" barheight="5" boxheight="26" enabled="true" radius="7" _nghost-utm-8="" ng-reflect-slider-id="sliderVol0" ng-reflect-box-height="26" ng-reflect-bar-height="5" ng-reflect-radius="7" ng-reflect-enabled="true" ng-reflect-initial-value="0.5"><svg _ngcontent-utm-8="" style="background-color:#272b30" width="100%" xmlns="http://www.w3.org/2000/svg" ng-reflect-id="sliderVol0" id="sliderVol0" height="26">
+    <rect _ngcontent-utm-8="" fill="url(#GradientSoret1)" width="100%" ng-reflect-id="sliderVol0rectangle" id="sliderVol0rectangle" height="5" y="10.5"></rect>
+    <circle _ngcontent-utm-8="" class="draggable" fill="url(#GradientSoret2)" ng-reflect-id="sliderVol0circle" id="sliderVol0circle" cx="38" cy="13" r="7"></circle>
+    <defs _ngcontent-utm-8="">
+        <lineargradient _ngcontent-utm-8="" id="GradientSoret1" x1="0" x2="0" y1="0" y2="1">
+            <stop _ngcontent-utm-8="" offset="0%" stop-color="#20A"></stop>
+            <stop _ngcontent-utm-8="" offset="100%" stop-color="#83D"></stop>
+        </lineargradient>
+        <radialgradient _ngcontent-utm-8="" id="GradientSoret2">
+            <stop _ngcontent-utm-8="" offset="0%" stop-color="#83D"></stop>
+            <stop _ngcontent-utm-8="" offset="100%" stop-color="#20A"></stop>
+        </radialgradient>
+    </defs>
+    </svg></slider-soret>
+        </div>
+    </div>
+    <div _ngcontent-utm-10="" class="col-md-11 col-lg-11">
+        
+    <svg _ngcontent-utm-10="" height="150" style="border: 1px solid black; background-color:white" width="100%" xmlns="http://www.w3.org/2000/svg" ng-reflect-id="svgBox0" id="svgBox0"><circle cx="2.6332488228902573" cy="32.17391304347825" r="1" fill="black"></circle><circle cx="5.019630568634553" cy="32.17391304347825" r="1" fill="black"></circle><circle cx="5.266497645780515" cy="45.04347826086956" r="1" fill="black"></circle><circle cx="7.65287939152481" cy="45.04347826086956" r="1" fill="black"></circle><circle cx="7.899746468670772" cy="54.69565217391305" r="1" fill="black"></circle><circle cx="9.504382470119522" cy="93.30434782608695" r="1" fill="black"></circle><circle cx="10.286128214415067" cy="54.69565217391305" r="1" fill="black"></circle><circle cx="10.53299529156103" cy="16.086956521739125" r="1" fill="black"></circle><circle cx="10.53299529156103" cy="106.17391304347825" r="1" fill="black"></circle><circle cx="15.30575878304962" cy="16.086956521739125" r="1" fill="black"></circle><circle cx="15.30575878304962" cy="106.17391304347825" r="1" fill="black"></circle><circle cx="15.799492937341544" cy="22.52173913043478" r="1" fill="black"></circle><circle cx="15.799492937341544" cy="109.3913043478261" r="1" fill="black"></circle><circle cx="18.4327417602318" cy="48.26086956521739" r="1" fill="black"></circle><circle cx="20.819123505976098" cy="48.26086956521739" r="1" fill="black"></circle><circle cx="21.06599058312206" cy="61.13043478260869" r="1" fill="black"></circle><circle cx="23.452372328866353" cy="61.13043478260869" r="1" fill="black"></circle><circle cx="23.699239406012317" cy="70.78260869565217" r="1" fill="black"></circle><circle cx="25.303875407461067" cy="109.3913043478261" r="1" fill="black"></circle><circle cx="26.085621151756612" cy="70.78260869565217" r="1" fill="black"></circle><circle cx="26.332488228902573" cy="32.17391304347825" r="1" fill="black"></circle><circle cx="26.332488228902573" cy="83.65217391304347" r="1" fill="black"></circle><circle cx="30.035494386091997" cy="22.52173913043478" r="1" fill="black"></circle><circle cx="31.105251720391163" cy="83.65217391304347" r="1" fill="black"></circle><circle cx="31.598985874683088" cy="28.956521739130437" r="1" fill="black"></circle><circle cx="31.598985874683088" cy="93.30434782608695" r="1" fill="black"></circle><circle cx="38.716986599058316" cy="32.17391304347825" r="1" fill="black"></circle><circle cx="39.49873234335386" cy="45.04347826086956" r="1" fill="black"></circle><circle cx="41.10336834480261" cy="93.30434782608695" r="1" fill="black"></circle><circle cx="41.88511408909815" cy="45.04347826086956" r="1" fill="black"></circle><circle cx="42.13198116624412" cy="38.60869565217391" r="1" fill="black"></circle><circle cx="42.13198116624412" cy="86.86956521739131" r="1" fill="black"></circle><circle cx="45.83498732343354" cy="28.956521739130437" r="1" fill="black"></circle><circle cx="46.90474465773271" cy="86.86956521739131" r="1" fill="black"></circle><circle cx="47.398478812024635" cy="32.17391304347825" r="1" fill="black"></circle><circle cx="47.398478812024635" cy="83.65217391304347" r="1" fill="black"></circle><circle cx="49.78486055776893" cy="83.65217391304347" r="1" fill="black"></circle><circle cx="50.03172763491489" cy="70.78260869565217" r="1" fill="black"></circle><circle cx="52.41810938065918" cy="70.78260869565217" r="1" fill="black"></circle><circle cx="52.664976457805146" cy="83.65217391304347" r="1" fill="black"></circle><circle cx="54.516479536399856" cy="38.60869565217391" r="1" fill="black"></circle><circle cx="55.05135820354944" cy="83.65217391304347" r="1" fill="black"></circle><circle cx="55.298225280695405" cy="48.26086956521739" r="1" fill="black"></circle><circle cx="55.298225280695405" cy="93.30434782608695" r="1" fill="black"></circle><circle cx="57.6846070264397" cy="48.26086956521739" r="1" fill="black"></circle><circle cx="57.6846070264397" cy="93.30434782608695" r="1" fill="black"></circle><circle cx="57.93147410358566" cy="45.04347826086956" r="1" fill="black"></circle><circle cx="57.93147410358566" cy="54.69565217391305" r="1" fill="black"></circle><circle cx="61.634480260775085" cy="32.17391304347825" r="1" fill="black"></circle><circle cx="62.704237595074254" cy="45.04347826086956" r="1" fill="black"></circle><circle cx="63.197971749366175" cy="38.60869565217391" r="1" fill="black"></circle><circle cx="63.197971749366175" cy="48.26086956521739" r="1" fill="black"></circle><circle cx="70.3159724737414" cy="54.69565217391305" r="1" fill="black"></circle><circle cx="71.09771821803695" cy="64.34782608695652" r="1" fill="black"></circle><circle cx="72.7023542194857" cy="38.60869565217391" r="1" fill="black"></circle><circle cx="73.48409996378125" cy="64.34782608695652" r="1" fill="black"></circle><circle cx="73.7309670409272" cy="32.17391304347825" r="1" fill="black"></circle><circle cx="73.7309670409272" cy="57.913043478260875" r="1" fill="black"></circle><circle cx="78.5037305324158" cy="32.17391304347825" r="1" fill="black"></circle><circle cx="78.5037305324158" cy="57.913043478260875" r="1" fill="black"></circle><circle cx="78.99746468670772" cy="45.04347826086956" r="1" fill="black"></circle><circle cx="78.99746468670772" cy="54.69565217391305" r="1" fill="black"></circle><circle cx="81.38384643245202" cy="48.26086956521739" r="1" fill="black"></circle><circle cx="81.63071350959798" cy="57.913043478260875" r="1" fill="black"></circle><circle cx="84.01709525534227" cy="57.913043478260875" r="1" fill="black"></circle><circle cx="84.26396233248823" cy="54.69565217391305" r="1" fill="black"></circle><circle cx="86.11546541108295" cy="45.04347826086956" r="1" fill="black"></circle><circle cx="86.89721115537849" cy="45.04347826086956" r="1" fill="black"></circle><circle cx="88.50184715682724" cy="54.69565217391305" r="1" fill="black"></circle><circle cx="89.28359290112279" cy="45.04347826086956" r="1" fill="black"></circle><circle cx="89.53045997826875" cy="28.956521739130437" r="1" fill="black"></circle><circle cx="89.53045997826875" cy="77.21739130434783" r="1" fill="black"></circle><circle cx="94.30322346975734" cy="28.956521739130437" r="1" fill="black"></circle><circle cx="94.30322346975734" cy="77.21739130434783" r="1" fill="black"></circle><circle cx="94.79695762404927" cy="48.26086956521739" r="1" fill="black"></circle><circle cx="94.79695762404927" cy="70.78260869565217" r="1" fill="black"></circle><circle cx="101.91495834842449" cy="48.26086956521739" r="1" fill="black"></circle><circle cx="102.69670409272004" cy="45.04347826086956" r="1" fill="black"></circle><circle cx="104.30134009416878" cy="54.69565217391305" r="1" fill="black"></circle><circle cx="104.30134009416878" cy="70.78260869565217" r="1" fill="black"></circle><circle cx="105.08308583846433" cy="45.04347826086956" r="1" fill="black"></circle><circle cx="105.32995291561029" cy="38.60869565217391" r="1" fill="black"></circle><circle cx="105.32995291561029" cy="57.913043478260875" r="1" fill="black"></circle><circle cx="105.32995291561029" cy="109.3913043478261" r="1" fill="black"></circle><circle cx="110.10271640709888" cy="38.60869565217391" r="1" fill="black"></circle><circle cx="110.10271640709888" cy="57.913043478260875" r="1" fill="black"></circle><circle cx="110.10271640709888" cy="109.3913043478261" r="1" fill="black"></circle><circle cx="110.59645056139081" cy="45.04347826086956" r="1" fill="black"></circle><circle cx="110.59645056139081" cy="54.69565217391305" r="1" fill="black"></circle><circle cx="110.59645056139081" cy="93.30434782608695" r="1" fill="black"></circle><circle cx="112.9828323071351" cy="93.30434782608695" r="1" fill="black"></circle><circle cx="113.22969938428106" cy="109.3913043478261" r="1" fill="black"></circle><circle cx="115.61608113002536" cy="109.3913043478261" r="1" fill="black"></circle><circle cx="115.86294820717131" cy="122.26086956521739" r="1" fill="black"></circle><circle cx="118.24932995291562" cy="122.26086956521739" r="1" fill="black"></circle><circle cx="118.49619703006158" cy="131.91304347826087" r="1" fill="black"></circle><circle cx="120.88257877580587" cy="131.91304347826087" r="1" fill="black"></circle><circle cx="121.12944585295183" cy="93.30434782608695" r="1" fill="black"></circle><circle cx="124.83245201014125" cy="45.04347826086956" r="1" fill="black"></circle><circle cx="124.83245201014125" cy="54.69565217391305" r="1" fill="black"></circle><circle cx="125.90220934444042" cy="93.30434782608695" r="1" fill="black"></circle><circle cx="126.39594349873235" cy="41.826086956521735" r="1" fill="black"></circle><circle cx="126.39594349873235" cy="99.73913043478261" r="1" fill="black"></circle><circle cx="127.5891343716045" cy="41.826086956521735" r="1" fill="black"></circle><circle cx="127.71256791017748" cy="38.60869565217391" r="1" fill="black"></circle><circle cx="128.90575878304963" cy="38.60869565217391" r="1" fill="black"></circle><circle cx="129.02919232162262" cy="41.826086956521735" r="1" fill="black"></circle><circle cx="129.02919232162262" cy="70.78260869565217" r="1" fill="black"></circle><circle cx="131.4155740673669" cy="70.78260869565217" r="1" fill="black"></circle><circle cx="131.66244114451285" cy="80.43478260869566" r="1" fill="black"></circle><circle cx="134.04882289025716" cy="80.43478260869566" r="1" fill="black"></circle><circle cx="134.29568996740312" cy="93.30434782608695" r="1" fill="black"></circle><circle cx="136.68207171314742" cy="93.30434782608695" r="1" fill="black"></circle><circle cx="136.9289387902934" cy="54.69565217391305" r="1" fill="black"></circle><circle cx="139.3153205360377" cy="41.826086956521735" r="1" fill="black"></circle><circle cx="139.56218761318362" cy="48.26086956521739" r="1" fill="black"></circle><circle cx="140.6319449474828" cy="99.73913043478261" r="1" fill="black"></circle><circle cx="140.75537848605578" cy="48.26086956521739" r="1" fill="black"></circle><circle cx="140.87881202462876" cy="41.826086956521735" r="1" fill="black"></circle><circle cx="142.0720028975009" cy="41.826086956521735" r="1" fill="black"></circle><circle cx="142.1954364360739" cy="38.60869565217391" r="1" fill="black"></circle><circle cx="142.1954364360739" cy="106.17391304347825" r="1" fill="black"></circle><circle cx="144.5818181818182" cy="106.17391304347825" r="1" fill="black"></circle><circle cx="144.82868525896416" cy="93.30434782608695" r="1" fill="black"></circle><circle cx="147.21506700470846" cy="93.30434782608695" r="1" fill="black"></circle><circle cx="147.4619340818544" cy="106.17391304347825" r="1" fill="black"></circle><circle cx="149.31343716044913" cy="38.60869565217391" r="1" fill="black"></circle><circle cx="149.8483158275987" cy="106.17391304347825" r="1" fill="black"></circle><circle cx="150.09518290474466" cy="32.17391304347825" r="1" fill="black"></circle><circle cx="150.09518290474466" cy="115.82608695652173" r="1" fill="black"></circle><circle cx="152.48156465048896" cy="32.17391304347825" r="1" fill="black"></circle><circle cx="152.48156465048896" cy="115.82608695652173" r="1" fill="black"></circle><circle cx="152.72843172763493" cy="28.956521739130437" r="1" fill="black"></circle><circle cx="152.72843172763493" cy="77.21739130434783" r="1" fill="black"></circle><circle cx="156.43143788482433" cy="54.69565217391305" r="1" fill="black"></circle><circle cx="157.99492937341543" cy="61.13043478260869" r="1" fill="black"></circle><circle cx="160.38131111915973" cy="28.956521739130437" r="1" fill="black"></circle><circle cx="160.6281781963057" cy="32.17391304347825" r="1" fill="black"></circle><circle cx="163.01455994205" cy="32.17391304347825" r="1" fill="black"></circle><circle cx="163.26142701919596" cy="41.826086956521735" r="1" fill="black"></circle><circle cx="165.64780876494024" cy="41.826086956521735" r="1" fill="black"></circle><circle cx="165.8946758420862" cy="54.69565217391305" r="1" fill="black"></circle><circle cx="167.49931184353497" cy="61.13043478260869" r="1" fill="black"></circle><circle cx="167.49931184353497" cy="77.21739130434783" r="1" fill="black"></circle><circle cx="168.2810575878305" cy="54.69565217391305" r="1" fill="black"></circle><circle cx="168.52792466497647" cy="22.52173913043478" r="1" fill="black"></circle><circle cx="168.52792466497647" cy="70.78260869565217" r="1" fill="black"></circle><circle cx="168.52792466497647" cy="80.43478260869566" r="1" fill="black"></circle><circle cx="173.30068815646507" cy="22.52173913043478" r="1" fill="black"></circle><circle cx="173.30068815646507" cy="70.78260869565217" r="1" fill="black"></circle><circle cx="173.30068815646507" cy="80.43478260869566" r="1" fill="black"></circle><circle cx="173.79442231075697" cy="28.956521739130437" r="1" fill="black"></circle><circle cx="173.79442231075697" cy="77.21739130434783" r="1" fill="black"></circle><circle cx="176.42767113364724" cy="54.69565217391305" r="1" fill="black"></circle><circle cx="178.81405287939154" cy="54.69565217391305" r="1" fill="black"></circle><circle cx="179.0609199565375" cy="67.56521739130434" r="1" fill="black"></circle><circle cx="181.4473017022818" cy="67.56521739130434" r="1" fill="black"></circle><circle cx="181.69416877942774" cy="77.21739130434783" r="1" fill="black"></circle><circle cx="184.08055052517204" cy="77.21739130434783" r="1" fill="black"></circle><circle cx="184.327417602318" cy="45.04347826086956" r="1" fill="black"></circle><circle cx="189.1001810938066" cy="45.04347826086956" r="1" fill="black"></circle><circle cx="189.59391524809854" cy="48.26086956521739" r="1" fill="black"></circle><circle cx="191.9802969938428" cy="77.21739130434783" r="1" fill="black"></circle><circle cx="192.22716407098878" cy="77.21739130434783" r="1" fill="black"></circle><circle cx="194.61354581673308" cy="77.21739130434783" r="1" fill="black"></circle><circle cx="194.86041289387904" cy="86.86956521739131" r="1" fill="black"></circle><circle cx="196.71191597247375" cy="28.956521739130437" r="1" fill="black"></circle><circle cx="197.24679463962335" cy="86.86956521739131" r="1" fill="black"></circle><circle cx="197.4936617167693" cy="32.17391304347825" r="1" fill="black"></circle><circle cx="197.4936617167693" cy="99.73913043478261" r="1" fill="black"></circle><circle cx="199.88004346251358" cy="32.17391304347825" r="1" fill="black"></circle><circle cx="199.88004346251358" cy="99.73913043478261" r="1" fill="black"></circle><circle cx="200.12691053965955" cy="38.60869565217391" r="1" fill="black"></circle><circle cx="200.12691053965955" cy="67.56521739130434" r="1" fill="black"></circle><circle cx="203.82991669684898" cy="48.26086956521739" r="1" fill="black"></circle><circle cx="204.89967403114815" cy="67.56521739130434" r="1" fill="black"></circle><circle cx="205.39340818544008" cy="61.13043478260869" r="1" fill="black"></circle><circle cx="205.39340818544008" cy="70.78260869565217" r="1" fill="black"></circle><circle cx="207.77978993118435" cy="38.60869565217391" r="1" fill="black"></circle><circle cx="208.02665700833032" cy="22.52173913043478" r="1" fill="black"></circle><circle cx="210.41303875407462" cy="22.52173913043478" r="1" fill="black"></circle><circle cx="210.65990583122058" cy="32.17391304347825" r="1" fill="black"></circle><circle cx="212.5114089098153" cy="61.13043478260869" r="1" fill="black"></circle><circle cx="212.5114089098153" cy="70.78260869565217" r="1" fill="black"></circle><circle cx="213.0462875769649" cy="32.17391304347825" r="1" fill="black"></circle><circle cx="213.29315465411085" cy="45.04347826086956" r="1" fill="black"></circle><circle cx="213.29315465411085" cy="45.04347826086956" r="1" fill="black"></circle><circle cx="213.29315465411085" cy="54.69565217391305" r="1" fill="black"></circle><circle cx="215.67953639985512" cy="45.04347826086956" r="1" fill="black"></circle><circle cx="215.67953639985512" cy="54.69565217391305" r="1" fill="black"></circle><circle cx="215.9264034770011" cy="6.434782608695656" r="1" fill="black"></circle><circle cx="215.9264034770011" cy="67.56521739130434" r="1" fill="black"></circle><circle cx="220.6991669684897" cy="6.434782608695656" r="1" fill="black"></circle><circle cx="220.6991669684897" cy="67.56521739130434" r="1" fill="black"></circle><circle cx="221.19290112278162" cy="32.17391304347825" r="1" fill="black"></circle><circle cx="221.19290112278162" cy="61.13043478260869" r="1" fill="black"></circle><circle cx="228.31090184715683" cy="32.17391304347825" r="1" fill="black"></circle><circle cx="229.0926475914524" cy="28.956521739130437" r="1" fill="black"></circle><circle cx="230.69728359290113" cy="45.04347826086956" r="1" fill="black"></circle><circle cx="230.69728359290113" cy="61.13043478260869" r="1" fill="black"></circle><circle cx="231.4790293371967" cy="28.956521739130437" r="1" fill="black"></circle><circle cx="231.72589641434263" cy="38.60869565217391" r="1" fill="black"></circle><circle cx="231.72589641434263" cy="48.26086956521739" r="1" fill="black"></circle><circle cx="231.72589641434263" cy="99.73913043478261" r="1" fill="black"></circle><circle cx="236.49865990583123" cy="38.60869565217391" r="1" fill="black"></circle><circle cx="236.49865990583123" cy="48.26086956521739" r="1" fill="black"></circle><circle cx="236.49865990583123" cy="99.73913043478261" r="1" fill="black"></circle><circle cx="236.99239406012316" cy="45.04347826086956" r="1" fill="black"></circle><circle cx="236.99239406012316" cy="45.04347826086956" r="1" fill="black"></circle><circle cx="236.99239406012316" cy="83.65217391304347" r="1" fill="black"></circle><circle cx="239.37877580586746" cy="83.65217391304347" r="1" fill="black"></circle><circle cx="239.62564288301343" cy="99.73913043478261" r="1" fill="black"></circle><circle cx="242.0120246287577" cy="99.73913043478261" r="1" fill="black"></circle><circle cx="242.25889170590366" cy="109.3913043478261" r="1" fill="black"></circle><circle cx="244.64527345164797" cy="109.3913043478261" r="1" fill="black"></circle><circle cx="244.89214052879393" cy="122.26086956521739" r="1" fill="black"></circle><circle cx="247.27852227453823" cy="122.26086956521739" r="1" fill="black"></circle><circle cx="247.5253893516842" cy="86.86956521739131" r="1" fill="black"></circle><circle cx="251.2283955088736" cy="45.04347826086956" r="1" fill="black"></circle><circle cx="251.2283955088736" cy="45.04347826086956" r="1" fill="black"></circle><circle cx="252.29815284317277" cy="86.86956521739131" r="1" fill="black"></circle><circle cx="252.7918869974647" cy="6.434782608695656" r="1" fill="black"></circle><circle cx="252.7918869974647" cy="93.30434782608695" r="1" fill="black"></circle><circle cx="255.42513582035497" cy="70.78260869565217" r="1" fill="black"></circle><circle cx="257.81151756609927" cy="70.78260869565217" r="1" fill="black"></circle><circle cx="258.05838464324523" cy="83.65217391304347" r="1" fill="black"></circle><circle cx="260.44476638898954" cy="83.65217391304347" r="1" fill="black"></circle><circle cx="260.6916334661355" cy="93.30434782608695" r="1" fill="black"></circle><circle cx="263.07801521187974" cy="93.30434782608695" r="1" fill="black"></circle><circle cx="263.3248822890257" cy="61.13043478260869" r="1" fill="black"></circle><circle cx="267.0278884462152" cy="93.30434782608695" r="1" fill="black"></circle><circle cx="268.0976457805143" cy="61.13043478260869" r="1" fill="black"></circle><circle cx="268.59137993480624" cy="67.56521739130434" r="1" fill="black"></circle><circle cx="268.59137993480624" cy="77.21739130434783" r="1" fill="black"></circle><circle cx="270.97776168055054" cy="6.434782608695656" r="1" fill="black"></circle><circle cx="271.2246287576965" cy="16.086956521739125" r="1" fill="black"></circle><circle cx="273.36414342629485" cy="77.21739130434783" r="1" fill="black"></circle><circle cx="273.6110105034408" cy="16.086956521739125" r="1" fill="black"></circle><circle cx="273.8578775805868" cy="28.956521739130437" r="1" fill="black"></circle><circle cx="273.8578775805868" cy="83.65217391304347" r="1" fill="black"></circle><circle cx="276.2442593263311" cy="28.956521739130437" r="1" fill="black"></circle><circle cx="276.49112640347704" cy="38.60869565217391" r="1" fill="black"></circle><circle cx="278.6306410720754" cy="83.65217391304347" r="1" fill="black"></circle><circle cx="278.8775081492213" cy="38.60869565217391" r="1" fill="black"></circle><circle cx="279.12437522636725" cy="6.434782608695656" r="1" fill="black"></circle><circle cx="279.12437522636725" cy="77.21739130434783" r="1" fill="black"></circle><circle cx="283.89713871785585" cy="6.434782608695656" r="1" fill="black"></circle><circle cx="283.89713871785585" cy="77.21739130434783" r="1" fill="black"></circle><circle cx="284.3908728721478" cy="9.65217391304347" r="1" fill="black"></circle><circle cx="284.3908728721478" cy="99.73913043478261" r="1" fill="black"></circle><circle cx="286.7772546178921" cy="67.56521739130434" r="1" fill="black"></circle><circle cx="287.02412169503805" cy="67.56521739130434" r="1" fill="black"></circle><circle cx="289.41050344078235" cy="67.56521739130434" r="1" fill="black"></circle><circle cx="289.6573705179283" cy="77.21739130434783" r="1" fill="black"></circle><circle cx="292.0437522636726" cy="77.21739130434783" r="1" fill="black"></circle><circle cx="292.2906193408186" cy="86.86956521739131" r="1" fill="black"></circle><circle cx="294.6770010865629" cy="86.86956521739131" r="1" fill="black"></circle><circle cx="294.9238681637088" cy="61.13043478260869" r="1" fill="black"></circle><circle cx="298.62687432089825" cy="99.73913043478261" r="1" fill="black"></circle><circle cx="299.6966316551974" cy="61.13043478260869" r="1" fill="black"></circle><circle cx="300.1903658094893" cy="70.78260869565217" r="1" fill="black"></circle><circle cx="300.1903658094893" cy="83.65217391304347" r="1" fill="black"></circle><circle cx="302.5767475552336" cy="9.65217391304347" r="1" fill="black"></circle><circle cx="302.8236146323796" cy="22.52173913043478" r="1" fill="black"></circle><circle cx="304.9631293009779" cy="83.65217391304347" r="1" fill="black"></circle><circle cx="305.2099963781239" cy="22.52173913043478" r="1" fill="black"></circle><circle cx="305.45686345526985" cy="32.17391304347825" r="1" fill="black"></circle><circle cx="305.45686345526985" cy="86.86956521739131" r="1" fill="black"></circle><circle cx="307.84324520101416" cy="32.17391304347825" r="1" fill="black"></circle><circle cx="308.0901122781601" cy="45.04347826086956" r="1" fill="black"></circle><circle cx="310.22962694675846" cy="86.86956521739131" r="1" fill="black"></circle><circle cx="310.4764940239044" cy="45.04347826086956" r="1" fill="black"></circle><circle cx="310.7233611010504" cy="6.434782608695656" r="1" fill="black"></circle><circle cx="310.7233611010504" cy="83.65217391304347" r="1" fill="black"></circle><circle cx="315.49612459253893" cy="6.434782608695656" r="1" fill="black"></circle><circle cx="315.49612459253893" cy="83.65217391304347" r="1" fill="black"></circle><circle cx="315.98985874683086" cy="16.086956521739125" r="1" fill="black"></circle><circle cx="315.98985874683086" cy="102.95652173913044" r="1" fill="black"></circle><circle cx="318.37624049257516" cy="70.78260869565217" r="1" fill="black"></circle><circle cx="318.6231075697211" cy="70.78260869565217" r="1" fill="black"></circle><circle cx="321.00948931546543" cy="70.78260869565217" r="1" fill="black"></circle><circle cx="321.2563563926114" cy="83.65217391304347" r="1" fill="black"></circle><circle cx="323.6427381383557" cy="83.65217391304347" r="1" fill="black"></circle><circle cx="323.88960521550166" cy="93.30434782608695" r="1" fill="black"></circle><circle cx="326.27598696124596" cy="93.30434782608695" r="1" fill="black"></circle><circle cx="326.5228540383919" cy="64.34782608695652" r="1" fill="black"></circle><circle cx="330.22586019558133" cy="102.95652173913044" r="1" fill="black"></circle><circle cx="331.2956175298805" cy="64.34782608695652" r="1" fill="black"></circle><circle cx="331.7893516841724" cy="74" r="1" fill="black"></circle><circle cx="331.7893516841724" cy="99.73913043478261" r="1" fill="black"></circle><circle cx="334.1757334299167" cy="16.086956521739125" r="1" fill="black"></circle><circle cx="334.42260050706267" cy="25.73913043478261" r="1" fill="black"></circle><circle cx="336.562115175661" cy="74" r="1" fill="black"></circle><circle cx="336.80898225280697" cy="25.73913043478261" r="1" fill="black"></circle><circle cx="337.05584932995293" cy="35.39130434782608" r="1" fill="black"></circle><circle cx="337.05584932995293" cy="86.86956521739131" r="1" fill="black"></circle><circle cx="339.44223107569724" cy="35.39130434782608" r="1" fill="black"></circle><circle cx="339.6890981528432" cy="48.26086956521739" r="1" fill="black"></circle><circle cx="341.82861282144154" cy="86.86956521739131" r="1" fill="black"></circle><circle cx="342.0754798985875" cy="48.26086956521739" r="1" fill="black"></circle><circle cx="342.32234697573347" cy="22.52173913043478" r="1" fill="black"></circle><circle cx="342.32234697573347" cy="70.78260869565217" r="1" fill="black"></circle><circle cx="346.0253531329229" cy="99.73913043478261" r="1" fill="black"></circle><circle cx="347.58884462151394" cy="93.30434782608695" r="1" fill="black"></circle><circle cx="349.97522636725824" cy="22.52173913043478" r="1" fill="black"></circle><circle cx="350.2220934444042" cy="32.17391304347825" r="1" fill="black"></circle><circle cx="352.36160811300255" cy="70.78260869565217" r="1" fill="black"></circle><circle cx="352.36160811300255" cy="93.30434782608695" r="1" fill="black"></circle><circle cx="352.6084751901485" cy="32.17391304347825" r="1" fill="black"></circle><circle cx="352.8553422672945" cy="45.04347826086956" r="1" fill="black"></circle><circle cx="352.8553422672945" cy="74" r="1" fill="black"></circle><circle cx="352.8553422672945" cy="86.86956521739131" r="1" fill="black"></circle><circle cx="355.2417240130388" cy="45.04347826086956" r="1" fill="black"></circle><circle cx="355.48859109018474" cy="54.69565217391305" r="1" fill="black"></circle><circle cx="357.6281057587831" cy="74" r="1" fill="black"></circle><circle cx="357.6281057587831" cy="86.86956521739131" r="1" fill="black"></circle><circle cx="357.87497283592904" cy="54.69565217391305" r="1" fill="black"></circle><circle cx="358.121839913075" cy="25.73913043478261" r="1" fill="black"></circle><circle cx="358.121839913075" cy="70.78260869565217" r="1" fill="black"></circle><circle cx="358.121839913075" cy="83.65217391304347" r="1" fill="black"></circle><circle cx="362.8946034045636" cy="70.78260869565217" r="1" fill="black"></circle><circle cx="362.8946034045636" cy="83.65217391304347" r="1" fill="black"></circle><circle cx="363.3883375588555" cy="74" r="1" fill="black"></circle><circle cx="363.3883375588555" cy="86.86956521739131" r="1" fill="black"></circle><circle cx="364.58152843172763" cy="74" r="1" fill="black"></circle><circle cx="364.70496197030064" cy="70.78260869565217" r="1" fill="black"></circle><circle cx="365.7747193045998" cy="25.73913043478261" r="1" fill="black"></circle><circle cx="365.8981528431728" cy="70.78260869565217" r="1" fill="black"></circle><circle cx="366.02158638174575" cy="54.69565217391305" r="1" fill="black"></circle><circle cx="366.02158638174575" cy="74" r="1" fill="black"></circle><circle cx="368.40796812749005" cy="54.69565217391305" r="1" fill="black"></circle><circle cx="368.654835204636" cy="45.04347826086956" r="1" fill="black"></circle><circle cx="371.0412169503803" cy="45.04347826086956" r="1" fill="black"></circle><circle cx="371.2880840275263" cy="25.73913043478261" r="1" fill="black"></circle><circle cx="373.139587106121" cy="74" r="1" fill="black"></circle><circle cx="373.6744657732706" cy="25.73913043478261" r="1" fill="black"></circle><circle cx="373.92133285041655" cy="61.13043478260869" r="1" fill="black"></circle><circle cx="373.92133285041655" cy="70.78260869565217" r="1" fill="black"></circle><circle cx="376.30771459616085" cy="61.13043478260869" r="1" fill="black"></circle><circle cx="376.5545816733068" cy="32.17391304347825" r="1" fill="black"></circle><circle cx="378.69409634190515" cy="70.78260869565217" r="1" fill="black"></circle><circle cx="379.1878304961971" cy="64.34782608695652" r="1" fill="black"></circle><circle cx="381.5742122419413" cy="32.17391304347825" r="1" fill="black"></circle><circle cx="381.8210793190873" cy="35.39130434782608" r="1" fill="black"></circle><circle cx="384.2074610648316" cy="35.39130434782608" r="1" fill="black"></circle><circle cx="384.45432814197756" cy="25.73913043478261" r="1" fill="black"></circle><circle cx="386.84070988772186" cy="25.73913043478261" r="1" fill="black"></circle><circle cx="387.0875769648678" cy="16.086956521739125" r="1" fill="black"></circle><circle cx="388.69221296631656" cy="64.34782608695652" r="1" fill="black"></circle><circle cx="389.4739587106121" cy="16.086956521739125" r="1" fill="black"></circle><circle cx="389.7208257877581" cy="32.17391304347825" r="1" fill="black"></circle><circle cx="389.7208257877581" cy="61.13043478260869" r="1" fill="black"></circle><circle cx="392.1072075335024" cy="32.17391304347825" r="1" fill="black"></circle><circle cx="392.35407461064835" cy="22.52173913043478" r="1" fill="black"></circle><circle cx="394.4935892792467" cy="61.13043478260869" r="1" fill="black"></circle><circle cx="394.9873234335386" cy="54.69565217391305" r="1" fill="black"></circle><circle cx="397.37370517928287" cy="22.52173913043478" r="1" fill="black"></circle><circle cx="397.62057225642883" cy="25.73913043478261" r="1" fill="black"></circle><circle cx="400.00695400217313" cy="25.73913043478261" r="1" fill="black"></circle><circle cx="400.2538210793191" cy="16.086956521739125" r="1" fill="black"></circle><circle cx="402.6402028250634" cy="16.086956521739125" r="1" fill="black"></circle><circle cx="402.88706990220936" cy="6.434782608695656" r="1" fill="black"></circle><circle cx="404.4917059036581" cy="54.69565217391305" r="1" fill="black"></circle><circle cx="405.27345164795366" cy="6.434782608695656" r="1" fill="black"></circle><circle cx="405.5203187250996" cy="32.17391304347825" r="1" fill="black"></circle><circle cx="405.5203187250996" cy="61.13043478260869" r="1" fill="black"></circle><circle cx="407.90670047084393" cy="32.17391304347825" r="1" fill="black"></circle><circle cx="408.1535675479899" cy="9.65217391304347" r="1" fill="black"></circle><circle cx="410.29308221658823" cy="61.13043478260869" r="1" fill="black"></circle><circle cx="410.78681637088016" cy="64.34782608695652" r="1" fill="black"></circle><circle cx="413.17319811662446" cy="9.65217391304347" r="1" fill="black"></circle><circle cx="413.42006519377037" cy="35.39130434782608" r="1" fill="black"></circle><circle cx="415.8064469395147" cy="35.39130434782608" r="1" fill="black"></circle><circle cx="416.05331401666064" cy="25.73913043478261" r="1" fill="black"></circle><circle cx="418.43969576240494" cy="25.73913043478261" r="1" fill="black"></circle><circle cx="418.6865628395509" cy="16.086956521739125" r="1" fill="black"></circle><circle cx="420.29119884099964" cy="64.34782608695652" r="1" fill="black"></circle><circle cx="421.0729445852952" cy="16.086956521739125" r="1" fill="black"></circle><circle cx="421.31981166244117" cy="41.826086956521735" r="1" fill="black"></circle><circle cx="421.31981166244117" cy="70.78260869565217" r="1" fill="black"></circle><circle cx="423.70619340818547" cy="41.826086956521735" r="1" fill="black"></circle><circle cx="423.95306048533143" cy="22.52173913043478" r="1" fill="black"></circle><circle cx="426.0925751539298" cy="70.78260869565217" r="1" fill="black"></circle><circle cx="426.5863093082217" cy="74" r="1" fill="black"></circle><circle cx="427.77950018109385" cy="74" r="1" fill="black"></circle><circle cx="427.9029337196668" cy="70.78260869565217" r="1" fill="black"></circle><circle cx="428.972691053966" cy="22.52173913043478" r="1" fill="black"></circle><circle cx="429.09612459253896" cy="70.78260869565217" r="1" fill="black"></circle><circle cx="429.21955813111197" cy="48.26086956521739" r="1" fill="black"></circle><circle cx="429.21955813111197" cy="74" r="1" fill="black"></circle><circle cx="431.6059398768562" cy="48.26086956521739" r="1" fill="black"></circle><circle cx="431.8528069540022" cy="35.39130434782608" r="1" fill="black"></circle><circle cx="434.2391886997465" cy="35.39130434782608" r="1" fill="black"></circle><circle cx="434.48605577689244" cy="25.73913043478261" r="1" fill="black"></circle><circle cx="436.33755885548715" cy="74" r="1" fill="black"></circle><circle cx="436.87243752263674" cy="25.73913043478261" r="1" fill="black"></circle><circle cx="437.1193045997827" cy="51.47826086956522" r="1" fill="black"></circle><circle cx="437.1193045997827" cy="80.43478260869566" r="1" fill="black"></circle><circle cx="439.505686345527" cy="51.47826086956522" r="1" fill="black"></circle><circle cx="439.752553422673" cy="32.17391304347825" r="1" fill="black"></circle><circle cx="442.1389351684173" cy="32.17391304347825" r="1" fill="black"></circle><circle cx="442.38580224556324" cy="35.39130434782608" r="1" fill="black"></circle><circle cx="442.38580224556324" cy="86.86956521739131" r="1" fill="black"></circle><circle cx="442.38580224556324" cy="86.86956521739131" r="1" fill="black"></circle><circle cx="444.77218399130754" cy="35.39130434782608" r="1" fill="black"></circle><circle cx="445.0190510684535" cy="25.73913043478261" r="1" fill="black"></circle><circle cx="447.40543281419775" cy="25.73913043478261" r="1" fill="black"></circle><circle cx="447.6522998913437" cy="35.39130434782608" r="1" fill="black"></circle><circle cx="449.5038029699385" cy="86.86956521739131" r="1" fill="black"></circle><circle cx="450.038681637088" cy="35.39130434782608" r="1" fill="black"></circle><circle cx="450.285548714234" cy="48.26086956521739" r="1" fill="black"></circle><circle cx="450.285548714234" cy="93.30434782608695" r="1" fill="black"></circle><circle cx="452.6719304599783" cy="48.26086956521739" r="1" fill="black"></circle><circle cx="452.6719304599783" cy="93.30434782608695" r="1" fill="black"></circle><circle cx="452.91879753712425" cy="16.086956521739125" r="1" fill="black"></circle><circle cx="452.91879753712425" cy="99.73913043478261" r="1" fill="black"></circle><circle cx="455.30517928286855" cy="99.73913043478261" r="1" fill="black"></circle><circle cx="455.5520463600145" cy="102.95652173913044" r="1" fill="black"></circle><circle cx="457.69156102861285" cy="16.086956521739125" r="1" fill="black"></circle><circle cx="457.9384281057588" cy="102.95652173913044" r="1" fill="black"></circle><circle cx="458.1852951829048" cy="22.52173913043478" r="1" fill="black"></circle><circle cx="458.1852951829048" cy="86.86956521739131" r="1" fill="black"></circle><circle cx="458.1852951829048" cy="109.3913043478261" r="1" fill="black"></circle><circle cx="460.5716769286491" cy="86.86956521739131" r="1" fill="black"></circle><circle cx="460.81854400579505" cy="48.26086956521739" r="1" fill="black"></circle><circle cx="463.20492575153935" cy="48.26086956521739" r="1" fill="black"></circle><circle cx="463.45179282868526" cy="61.13043478260869" r="1" fill="black"></circle><circle cx="465.83817457442956" cy="61.13043478260869" r="1" fill="black"></circle><circle cx="466.0850416515755" cy="70.78260869565217" r="1" fill="black"></circle><circle cx="467.6896776530243" cy="109.3913043478261" r="1" fill="black"></circle><circle cx="468.4714233973198" cy="70.78260869565217" r="1" fill="black"></circle><circle cx="468.7182904744658" cy="32.17391304347825" r="1" fill="black"></circle><circle cx="468.7182904744658" cy="122.26086956521739" r="1" fill="black"></circle><circle cx="472.4212966316552" cy="22.52173913043478" r="1" fill="black"></circle><circle cx="473.4910539659544" cy="122.26086956521739" r="1" fill="black"></circle><circle cx="473.9847881202463" cy="28.956521739130437" r="1" fill="black"></circle><circle cx="473.9847881202463" cy="131.91304347826087" r="1" fill="black"></circle><circle cx="481.10278884462156" cy="32.17391304347825" r="1" fill="black"></circle><circle cx="481.88453458891706" cy="45.04347826086956" r="1" fill="black"></circle><circle cx="483.48917059036586" cy="131.91304347826087" r="1" fill="black"></circle><circle cx="484.27091633466136" cy="45.04347826086956" r="1" fill="black"></circle><circle cx="484.51778341180733" cy="38.60869565217391" r="1" fill="black"></circle><circle cx="484.51778341180733" cy="125.47826086956522" r="1" fill="black"></circle><circle cx="488.2207895689968" cy="28.956521739130437" r="1" fill="black"></circle><circle cx="489.29054690329593" cy="125.47826086956522" r="1" fill="black"></circle><circle cx="489.78428105758786" cy="32.17391304347825" r="1" fill="black"></circle><circle cx="489.78428105758786" cy="122.26086956521739" r="1" fill="black"></circle><circle cx="492.17066280333216" cy="122.26086956521739" r="1" fill="black"></circle><circle cx="492.4175298804781" cy="109.3913043478261" r="1" fill="black"></circle><circle cx="494.80391162622243" cy="109.3913043478261" r="1" fill="black"></circle><circle cx="495.0507787033684" cy="122.26086956521739" r="1" fill="black"></circle><circle cx="496.9022817819631" cy="38.60869565217391" r="1" fill="black"></circle><circle cx="497.4371604491127" cy="122.26086956521739" r="1" fill="black"></circle><circle cx="497.6840275262586" cy="48.26086956521739" r="1" fill="black"></circle><circle cx="497.6840275262586" cy="131.91304347826087" r="1" fill="black"></circle><circle cx="500.0704092720029" cy="48.26086956521739" r="1" fill="black"></circle><circle cx="500.0704092720029" cy="131.91304347826087" r="1" fill="black"></circle><circle cx="500.31727634914887" cy="45.04347826086956" r="1" fill="black"></circle><circle cx="500.31727634914887" cy="93.30434782608695" r="1" fill="black"></circle><circle cx="505.0900398406375" cy="45.04347826086956" r="1" fill="black"></circle><circle cx="505.0900398406375" cy="93.30434782608695" r="1" fill="black"></circle><circle cx="505.5837739949294" cy="54.69565217391305" r="1" fill="black"></circle><circle cx="505.5837739949294" cy="102.95652173913044" r="1" fill="black"></circle><circle cx="507.9701557406737" cy="32.17391304347825" r="1" fill="black"></circle><circle cx="508.21702281781967" cy="35.39130434782608" r="1" fill="black"></circle><circle cx="510.60340456356397" cy="35.39130434782608" r="1" fill="black"></circle><circle cx="510.85027164070993" cy="25.73913043478261" r="1" fill="black"></circle><circle cx="512.7017747193046" cy="102.95652173913044" r="1" fill="black"></circle><circle cx="513.2366533864542" cy="25.73913043478261" r="1" fill="black"></circle><circle cx="513.4835204636001" cy="16.086956521739125" r="1" fill="black"></circle><circle cx="513.4835204636001" cy="64.34782608695652" r="1" fill="black"></circle><circle cx="515.0881564650489" cy="54.69565217391305" r="1" fill="black"></circle><circle cx="515.8699022093444" cy="16.086956521739125" r="1" fill="black"></circle><circle cx="515.8699022093444" cy="64.34782608695652" r="1" fill="black"></circle><circle cx="516.1167692864905" cy="6.434782608695656" r="1" fill="black"></circle><circle cx="516.1167692864905" cy="61.13043478260869" r="1" fill="black"></circle><circle cx="516.1167692864905" cy="70.78260869565217" r="1" fill="black"></circle><circle cx="520.8895327779791" cy="6.434782608695656" r="1" fill="black"></circle><circle cx="520.8895327779791" cy="70.78260869565217" r="1" fill="black"></circle><circle cx="521.383266932271" cy="9.65217391304347" r="1" fill="black"></circle><circle cx="521.383266932271" cy="74" r="1" fill="black"></circle><circle cx="523.7696486780152" cy="61.13043478260869" r="1" fill="black"></circle><circle cx="524.0165157551612" cy="64.34782608695652" r="1" fill="black"></circle><circle cx="526.4028975009055" cy="64.34782608695652" r="1" fill="black"></circle><circle cx="526.6497645780514" cy="74" r="1" fill="black"></circle><circle cx="528.5012676566462" cy="9.65217391304347" r="1" fill="black"></circle><circle cx="529.0361463237957" cy="74" r="1" fill="black"></circle><circle cx="529.2830134009417" cy="25.73913043478261" r="1" fill="black"></circle><circle cx="529.2830134009417" cy="86.86956521739131" r="1" fill="black"></circle><circle cx="530.8876494023905" cy="74" r="1" fill="black"></circle><circle cx="531.669395146686" cy="25.73913043478261" r="1" fill="black"></circle><circle cx="531.669395146686" cy="86.86956521739131" r="1" fill="black"></circle><circle cx="531.916262223832" cy="22.52173913043478" r="1" fill="black"></circle><circle cx="531.916262223832" cy="70.78260869565217" r="1" fill="black"></circle><circle cx="531.916262223832" cy="70.78260869565217" r="1" fill="black"></circle><circle cx="536.6890257153206" cy="22.52173913043478" r="1" fill="black"></circle><circle cx="536.6890257153206" cy="70.78260869565217" r="1" fill="black"></circle><circle cx="536.6890257153206" cy="70.78260869565217" r="1" fill="black"></circle><circle cx="537.1827598696125" cy="32.17391304347825" r="1" fill="black"></circle><circle cx="537.1827598696125" cy="61.13043478260869" r="1" fill="black"></circle><circle cx="537.1827598696125" cy="83.65217391304347" r="1" fill="black"></circle><circle cx="541.9555233611011" cy="83.65217391304347" r="1" fill="black"></circle><circle cx="542.449257515393" cy="93.30434782608695" r="1" fill="black"></circle><circle cx="544.3007605939877" cy="32.17391304347825" r="1" fill="black"></circle><circle cx="544.3007605939877" cy="61.13043478260869" r="1" fill="black"></circle><circle cx="545.0825063382832" cy="25.73913043478261" r="1" fill="black"></circle><circle cx="545.0825063382832" cy="54.69565217391305" r="1" fill="black"></circle><circle cx="547.2220210068816" cy="93.30434782608695" r="1" fill="black"></circle><circle cx="547.4688880840275" cy="54.69565217391305" r="1" fill="black"></circle><circle cx="547.7157551611735" cy="35.39130434782608" r="1" fill="black"></circle><circle cx="547.7157551611735" cy="64.34782608695652" r="1" fill="black"></circle><circle cx="552.4885186526622" cy="64.34782608695652" r="1" fill="black"></circle><circle cx="552.4885186526622" cy="86.86956521739131" r="1" fill="black"></circle><circle cx="552.9822528069541" cy="32.17391304347825" r="1" fill="black"></circle><circle cx="552.9822528069541" cy="70.78260869565217" r="1" fill="black"></circle><circle cx="552.9822528069541" cy="109.3913043478261" r="1" fill="black"></circle><circle cx="555.3686345526984" cy="109.3913043478261" r="1" fill="black"></circle><circle cx="558.2487504527345" cy="138.34782608695653" r="1" fill="black"></circle><circle cx="560.6351321984788" cy="138.34782608695653" r="1" fill="black"></circle><circle cx="560.8819992756248" cy="125.47826086956522" r="1" fill="black"></circle><circle cx="562.4866352770736" cy="32.17391304347825" r="1" fill="black"></circle><circle cx="562.4866352770736" cy="70.78260869565217" r="1" fill="black"></circle><circle cx="563.2683810213691" cy="125.47826086956522" r="1" fill="black"></circle><circle cx="563.515248098515" cy="22.52173913043478" r="1" fill="black"></circle><circle cx="563.515248098515" cy="109.3913043478261" r="1" fill="black"></circle><circle cx="565.9016298442593" cy="109.3913043478261" r="1" fill="black"></circle><circle cx="566.1484969214054" cy="115.82608695652173" r="1" fill="black"></circle><circle cx="568.2880115900036" cy="22.52173913043478" r="1" fill="black"></circle><circle cx="568.5348786671497" cy="115.82608695652173" r="1" fill="black"></circle><circle cx="568.7817457442956" cy="22.52173913043478" r="1" fill="black"></circle><circle cx="568.7817457442956" cy="119.04347826086956" r="1" fill="black"></circle><circle cx="571.1681274900399" cy="119.04347826086956" r="1" fill="black"></circle><circle cx="571.4149945671859" cy="131.91304347826087" r="1" fill="black"></circle><circle cx="573.8013763129301" cy="131.91304347826087" r="1" fill="black"></circle><circle cx="574.0482433900761" cy="119.04347826086956" r="1" fill="black"></circle><circle cx="576.6814922129663" cy="32.17391304347825" r="1" fill="black"></circle><circle cx="576.6814922129663" cy="109.3913043478261" r="1" fill="black"></circle><circle cx="579.0678739587106" cy="32.17391304347825" r="1" fill="black"></circle><circle cx="579.0678739587106" cy="109.3913043478261" r="1" fill="black"></circle><circle cx="579.3147410358566" cy="41.826086956521735" r="1" fill="black"></circle><circle cx="579.3147410358566" cy="93.30434782608695" r="1" fill="black"></circle><circle cx="581.7011227816009" cy="93.30434782608695" r="1" fill="black"></circle><circle cx="581.9479898587468" cy="99.73913043478261" r="1" fill="black"></circle><circle cx="584.0875045273452" cy="41.826086956521735" r="1" fill="black"></circle><circle cx="584.3343716044911" cy="99.73913043478261" r="1" fill="black"></circle><circle cx="584.5812386816372" cy="54.69565217391305" r="1" fill="black"></circle><circle cx="584.5812386816372" cy="106.17391304347825" r="1" fill="black"></circle><circle cx="586.9676204273815" cy="106.17391304347825" r="1" fill="black"></circle><circle cx="587.2144875045274" cy="115.82608695652173" r="1" fill="black"></circle><circle cx="589.6008692502717" cy="115.82608695652173" r="1" fill="black"></circle><circle cx="589.8477363274176" cy="106.17391304347825" r="1" fill="black"></circle><circle cx="591.6992394060123" cy="22.52173913043478" r="1" fill="black"></circle><circle cx="591.6992394060123" cy="54.69565217391305" r="1" fill="black"></circle><circle cx="592.2341180731619" cy="106.17391304347825" r="1" fill="black"></circle><circle cx="592.4809851503079" cy="32.17391304347825" r="1" fill="black"></circle><circle cx="592.4809851503079" cy="41.826086956521735" r="1" fill="black"></circle><circle cx="592.4809851503079" cy="93.30434782608695" r="1" fill="black"></circle><circle cx="594.8673668960522" cy="32.17391304347825" r="1" fill="black"></circle><circle cx="594.8673668960522" cy="93.30434782608695" r="1" fill="black"></circle><circle cx="595.1142339731981" cy="28.956521739130437" r="1" fill="black"></circle><circle cx="595.1142339731981" cy="38.60869565217391" r="1" fill="black"></circle><circle cx="595.1142339731981" cy="77.21739130434783" r="1" fill="black"></circle><circle cx="597.5006157189424" cy="77.21739130434783" r="1" fill="black"></circle><circle cx="597.7474827960884" cy="83.65217391304347" r="1" fill="black"></circle><circle cx="599.8869974646867" cy="28.956521739130437" r="1" fill="black"></circle><circle cx="599.8869974646867" cy="38.60869565217391" r="1" fill="black"></circle><circle cx="600.1338645418327" cy="83.65217391304347" r="1" fill="black"></circle><circle cx="600.3807316189786" cy="28.956521739130437" r="1" fill="black"></circle><circle cx="600.3807316189786" cy="38.60869565217391" r="1" fill="black"></circle><circle cx="600.3807316189786" cy="86.86956521739131" r="1" fill="black"></circle><circle cx="602.767113364723" cy="86.86956521739131" r="1" fill="black"></circle><circle cx="603.013980441869" cy="99.73913043478261" r="1" fill="black"></circle><circle cx="605.4003621876133" cy="99.73913043478261" r="1" fill="black"></circle><circle cx="605.6472292647592" cy="86.86956521739131" r="1" fill="black"></circle><circle cx="608.0336110105035" cy="86.86956521739131" r="1" fill="black"></circle><circle cx="608.2804780876494" cy="77.21739130434783" r="1" fill="black"></circle><circle cx="610.6668598333937" cy="77.21739130434783" r="1" fill="black"></circle><circle cx="610.9137269105397" cy="61.13043478260869" r="1" fill="black"></circle><circle cx="613.300108656284" cy="61.13043478260869" r="1" fill="black"></circle><circle cx="613.5469757334299" cy="67.56521739130434" r="1" fill="black"></circle><circle cx="615.9333574791742" cy="67.56521739130434" r="1" fill="black"></circle><circle cx="616.1802245563202" cy="70.78260869565217" r="1" fill="black"></circle><circle cx="618.5666063020645" cy="70.78260869565217" r="1" fill="black"></circle><circle cx="618.8134733792104" cy="83.65217391304347" r="1" fill="black"></circle><circle cx="621.1998551249548" cy="83.65217391304347" r="1" fill="black"></circle><circle cx="621.4467222021008" cy="70.78260869565217" r="1" fill="black"></circle><circle cx="623.2982252806954" cy="28.956521739130437" r="1" fill="black"></circle><circle cx="623.2982252806954" cy="38.60869565217391" r="1" fill="black"></circle><circle cx="623.8331039478451" cy="70.78260869565217" r="1" fill="black"></circle><circle cx="624.079971024991" cy="38.60869565217391" r="1" fill="black"></circle><circle cx="624.079971024991" cy="48.26086956521739" r="1" fill="black"></circle><circle cx="624.079971024991" cy="61.13043478260869" r="1" fill="black"></circle><circle cx="626.4663527707353" cy="38.60869565217391" r="1" fill="black"></circle><circle cx="626.4663527707353" cy="48.26086956521739" r="1" fill="black"></circle><circle cx="626.4663527707353" cy="61.13043478260869" r="1" fill="black"></circle><circle cx="626.7132198478812" cy="32.17391304347825" r="1" fill="black"></circle><circle cx="626.7132198478812" cy="45.04347826086956" r="1" fill="black"></circle><circle cx="626.7132198478812" cy="45.04347826086956" r="1" fill="black"></circle><circle cx="629.0996015936255" cy="45.04347826086956" r="1" fill="black"></circle><circle cx="629.3464686707715" cy="48.26086956521739" r="1" fill="black"></circle><circle cx="631.4859833393698" cy="45.04347826086956" r="1" fill="black"></circle><circle cx="631.7328504165158" cy="48.26086956521739" r="1" fill="black"></circle><circle cx="631.9797174936617" cy="32.17391304347825" r="1" fill="black"></circle><circle cx="631.9797174936617" cy="45.04347826086956" r="1" fill="black"></circle><circle cx="631.9797174936617" cy="54.69565217391305" r="1" fill="black"></circle><circle cx="634.366099239406" cy="32.17391304347825" r="1" fill="black"></circle><circle cx="634.612966316552" cy="6.434782608695656" r="1" fill="black"></circle><circle cx="636.9993480622963" cy="6.434782608695656" r="1" fill="black"></circle><circle cx="637.2462151394423" cy="16.086956521739125" r="1" fill="black"></circle><circle cx="639.097718218037" cy="45.04347826086956" r="1" fill="black"></circle><circle cx="639.6325968851866" cy="16.086956521739125" r="1" fill="black"></circle><circle cx="639.8794639623326" cy="28.956521739130437" r="1" fill="black"></circle><circle cx="639.8794639623326" cy="45.04347826086956" r="1" fill="black"></circle><circle cx="642.2658457080768" cy="28.956521739130437" r="1" fill="black"></circle><circle cx="642.2658457080768" cy="45.04347826086956" r="1" fill="black"></circle><circle cx="642.5127127852228" cy="28.956521739130437" r="1" fill="black"></circle><circle cx="646.2157189424122" cy="54.69565217391305" r="1" fill="black"></circle><circle cx="647.7792104310033" cy="61.13043478260869" r="1" fill="black"></circle><circle cx="650.4124592538935" cy="9.65217391304347" r="1" fill="black"></circle><circle cx="652.7988409996378" cy="9.65217391304347" r="1" fill="black"></circle><circle cx="653.0457080767839" cy="22.52173913043478" r="1" fill="black"></circle><circle cx="654.8972111553785" cy="28.956521739130437" r="1" fill="black"></circle><circle cx="655.4320898225282" cy="22.52173913043478" r="1" fill="black"></circle><circle cx="655.6789568996741" cy="32.17391304347825" r="1" fill="black"></circle><circle cx="655.6789568996741" cy="48.26086956521739" r="1" fill="black"></circle><circle cx="658.0653386454184" cy="32.17391304347825" r="1" fill="black"></circle><circle cx="658.0653386454184" cy="48.26086956521739" r="1" fill="black"></circle><circle cx="658.3122057225643" cy="6.434782608695656" r="1" fill="black"></circle><circle cx="658.3122057225643" cy="32.17391304347825" r="1" fill="black"></circle><circle cx="662.0152118797538" cy="61.13043478260869" r="1" fill="black"></circle><circle cx="663.5787033683448" cy="67.56521739130434" r="1" fill="black"></circle><circle cx="666.2119521912351" cy="16.086956521739125" r="1" fill="black"></circle><circle cx="668.5983339369794" cy="16.086956521739125" r="1" fill="black"></circle><circle cx="668.8452010141253" cy="28.956521739130437" r="1" fill="black"></circle><circle cx="670.6967040927201" cy="32.17391304347825" r="1" fill="black"></circle><circle cx="671.2315827598696" cy="28.956521739130437" r="1" fill="black"></circle><circle cx="671.4784498370157" cy="38.60869565217391" r="1" fill="black"></circle><circle cx="671.4784498370157" cy="54.69565217391305" r="1" fill="black"></circle><circle cx="673.86483158276" cy="38.60869565217391" r="1" fill="black"></circle><circle cx="673.86483158276" cy="54.69565217391305" r="1" fill="black"></circle><circle cx="674.1116986599059" cy="9.65217391304347" r="1" fill="black"></circle><circle cx="674.1116986599059" cy="38.60869565217391" r="1" fill="black"></circle><circle cx="677.8147048170953" cy="67.56521739130434" r="1" fill="black"></circle><circle cx="678.8844621513945" cy="9.65217391304347" r="1" fill="black"></circle><circle cx="679.3781963056864" cy="19.30434782608694" r="1" fill="black"></circle><circle cx="679.3781963056864" cy="70.78260869565217" r="1" fill="black"></circle><circle cx="681.7645780514307" cy="38.60869565217391" r="1" fill="black"></circle><circle cx="682.0114451285766" cy="57.913043478260875" r="1" fill="black"></circle><circle cx="684.3978268743209" cy="57.913043478260875" r="1" fill="black"></circle><circle cx="684.6446939514669" cy="48.26086956521739" r="1" fill="black"></circle><circle cx="687.0310756972112" cy="48.26086956521739" r="1" fill="black"></circle><circle cx="687.2779427743571" cy="38.60869565217391" r="1" fill="black"></circle><circle cx="689.6643245201014" cy="38.60869565217391" r="1" fill="black"></circle><circle cx="689.9111915972475" cy="16.086956521739125" r="1" fill="black"></circle><circle cx="689.9111915972475" cy="45.04347826086956" r="1" fill="black"></circle><circle cx="693.6141977544369" cy="70.78260869565217" r="1" fill="black"></circle><circle cx="694.683955088736" cy="16.086956521739125" r="1" fill="black"></circle><circle cx="695.1776892430279" cy="28.956521739130437" r="1" fill="black"></circle><circle cx="695.1776892430279" cy="77.21739130434783" r="1" fill="black"></circle><circle cx="697.5640709887722" cy="45.04347826086956" r="1" fill="black"></circle><circle cx="697.8109380659182" cy="67.56521739130434" r="1" fill="black"></circle><circle cx="700.1973198116625" cy="67.56521739130434" r="1" fill="black"></circle><circle cx="700.4441868888084" cy="54.69565217391305" r="1" fill="black"></circle><circle cx="702.2956899674032" cy="28.956521739130437" r="1" fill="black"></circle><circle cx="702.8305686345527" cy="54.69565217391305" r="1" fill="black"></circle><circle cx="703.0774357116987" cy="45.04347826086956" r="1" fill="black"></circle><circle cx="705.463817457443" cy="32.17391304347825" r="1" fill="black"></circle><circle cx="705.463817457443" cy="45.04347826086956" r="1" fill="black"></circle><circle cx="705.710684534589" cy="38.60869565217391" r="1" fill="black"></circle><circle cx="705.710684534589" cy="51.47826086956522" r="1" fill="black"></circle><circle cx="709.4136906917784" cy="77.21739130434783" r="1" fill="black"></circle><circle cx="710.4834480260776" cy="38.60869565217391" r="1" fill="black"></circle><circle cx="710.9771821803695" cy="32.17391304347825" r="1" fill="black"></circle><circle cx="710.9771821803695" cy="83.65217391304347" r="1" fill="black"></circle><circle cx="713.3635639261138" cy="51.47826086956522" r="1" fill="black"></circle><circle cx="713.6104310032597" cy="57.913043478260875" r="1" fill="black"></circle><circle cx="715.996812749004" cy="57.913043478260875" r="1" fill="black"></circle><circle cx="716.24367982615" cy="54.69565217391305" r="1" fill="black"></circle><circle cx="718.0951829047447" cy="32.17391304347825" r="1" fill="black"></circle><circle cx="718.0951829047447" cy="83.65217391304347" r="1" fill="black"></circle><circle cx="718.8769286490402" cy="45.04347826086956" r="1" fill="black"></circle><circle cx="718.8769286490402" cy="70.78260869565217" r="1" fill="black"></circle><circle cx="721.2633103947845" cy="45.04347826086956" r="1" fill="black"></circle><circle cx="721.2633103947845" cy="70.78260869565217" r="1" fill="black"></circle><circle cx="721.5101774719305" cy="48.26086956521739" r="1" fill="black"></circle><circle cx="721.5101774719305" cy="77.21739130434783" r="1" fill="black"></circle><circle cx="723.8965592176748" cy="48.26086956521739" r="1" fill="black"></circle><circle cx="724.1434262948208" cy="38.60869565217391" r="1" fill="black"></circle><circle cx="726.282940963419" cy="77.21739130434783" r="1" fill="black"></circle><circle cx="726.5298080405651" cy="38.60869565217391" r="1" fill="black"></circle><circle cx="726.776675117711" cy="45.04347826086956" r="1" fill="black"></circle><circle cx="726.776675117711" cy="70.78260869565217" r="1" fill="black"></circle><circle cx="729.1630568634553" cy="45.04347826086956" r="1" fill="black"></circle><circle cx="729.4099239406013" cy="32.17391304347825" r="1" fill="black"></circle><circle cx="731.7963056863456" cy="32.17391304347825" r="1" fill="black"></circle><circle cx="732.0431727634915" cy="38.60869565217391" r="1" fill="black"></circle><circle cx="733.8946758420863" cy="70.78260869565217" r="1" fill="black"></circle><circle cx="734.4295545092358" cy="38.60869565217391" r="1" fill="black"></circle><circle cx="734.6764215863818" cy="28.956521739130437" r="1" fill="black"></circle><circle cx="734.6764215863818" cy="77.21739130434783" r="1" fill="black"></circle><circle cx="736.2810575878306" cy="54.69565217391305" r="1" fill="black"></circle><circle cx="737.0628033321261" cy="28.956521739130437" r="1" fill="black"></circle><circle cx="737.0628033321261" cy="77.21739130434783" r="1" fill="black"></circle><circle cx="737.309670409272" cy="32.17391304347825" r="1" fill="black"></circle><circle cx="737.309670409272" cy="57.913043478260875" r="1" fill="black"></circle><circle cx="737.309670409272" cy="70.78260869565217" r="1" fill="black"></circle><circle cx="739.6960521550163" cy="32.17391304347825" r="1" fill="black"></circle><circle cx="739.9429192321624" cy="9.65217391304347" r="1" fill="black"></circle><circle cx="742.0824339007606" cy="57.913043478260875" r="1" fill="black"></circle><circle cx="742.0824339007606" cy="70.78260869565217" r="1" fill="black"></circle><circle cx="742.5761680550526" cy="45.04347826086956" r="1" fill="black"></circle><circle cx="742.5761680550526" cy="54.69565217391305" r="1" fill="black"></circle><circle cx="742.5761680550526" cy="93.30434782608695" r="1" fill="black"></circle><circle cx="744.9625498007969" cy="93.30434782608695" r="1" fill="black"></circle><circle cx="745.2094168779428" cy="109.3913043478261" r="1" fill="black"></circle><circle cx="747.5957986236871" cy="109.3913043478261" r="1" fill="black"></circle><circle cx="747.8426657008331" cy="122.26086956521739" r="1" fill="black"></circle><circle cx="750.2290474465774" cy="122.26086956521739" r="1" fill="black"></circle><circle cx="750.4759145237233" cy="131.91304347826087" r="1" fill="black"></circle><circle cx="752.8622962694676" cy="131.91304347826087" r="1" fill="black"></circle><circle cx="753.1091633466136" cy="99.73913043478261" r="1" fill="black"></circle><circle cx="756.812169503803" cy="54.69565217391305" r="1" fill="black"></circle><circle cx="757.8819268381022" cy="99.73913043478261" r="1" fill="black"></circle><circle cx="758.3756609923942" cy="77.21739130434783" r="1" fill="black"></circle><circle cx="758.3756609923942" cy="106.17391304347825" r="1" fill="black"></circle><circle cx="760.7620427381383" cy="45.04347826086956" r="1" fill="black"></circle><circle cx="761.0089098152844" cy="54.69565217391305" r="1" fill="black"></circle><circle cx="763.1484244838826" cy="77.21739130434783" r="1" fill="black"></circle><circle cx="763.3952915610287" cy="54.69565217391305" r="1" fill="black"></circle><circle cx="763.6421586381746" cy="67.56521739130434" r="1" fill="black"></circle><circle cx="763.6421586381746" cy="83.65217391304347" r="1" fill="black"></circle><circle cx="766.0285403839189" cy="67.56521739130434" r="1" fill="black"></circle><circle cx="766.2754074610649" cy="77.21739130434783" r="1" fill="black"></circle><circle cx="768.4149221296632" cy="83.65217391304347" r="1" fill="black"></circle><circle cx="768.6617892068092" cy="77.21739130434783" r="1" fill="black"></circle><circle cx="768.9086562839551" cy="45.04347826086956" r="1" fill="black"></circle><circle cx="768.9086562839551" cy="77.21739130434783" r="1" fill="black"></circle><circle cx="773.6814197754437" cy="45.04347826086956" r="1" fill="black"></circle><circle cx="773.6814197754437" cy="77.21739130434783" r="1" fill="black"></circle><circle cx="774.1751539297356" cy="48.26086956521739" r="1" fill="black"></circle><circle cx="774.1751539297356" cy="61.13043478260869" r="1" fill="black"></circle><circle cx="776.56153567548" cy="106.17391304347825" r="1" fill="black"></circle><circle cx="776.8084027526259" cy="115.82608695652173" r="1" fill="black"></circle><circle cx="779.1947844983702" cy="115.82608695652173" r="1" fill="black"></circle><circle cx="779.4416515755162" cy="125.47826086956522" r="1" fill="black"></circle><circle cx="781.8280333212605" cy="125.47826086956522" r="1" fill="black"></circle><circle cx="782.0749003984064" cy="138.34782608695653" r="1" fill="black"></circle><circle cx="784.7081492212967" cy="99.73913043478261" r="1" fill="black"></circle><circle cx="788.4111553784861" cy="61.13043478260869" r="1" fill="black"></circle><circle cx="789.9746468670772" cy="83.65217391304347" r="1" fill="black"></circle><circle cx="789.9746468670772" cy="109.3913043478261" r="1" fill="black"></circle><circle cx="792.3610286128215" cy="48.26086956521739" r="1" fill="black"></circle><circle cx="792.6078956899674" cy="61.13043478260869" r="1" fill="black"></circle><circle cx="794.7474103585657" cy="83.65217391304347" r="1" fill="black"></circle><circle cx="794.9942774357118" cy="61.13043478260869" r="1" fill="black"></circle><circle cx="795.2411445128577" cy="70.78260869565217" r="1" fill="black"></circle><circle cx="795.2411445128577" cy="86.86956521739131" r="1" fill="black"></circle><circle cx="797.627526258602" cy="70.78260869565217" r="1" fill="black"></circle><circle cx="797.874393335748" cy="83.65217391304347" r="1" fill="black"></circle><circle cx="800.0139080043463" cy="86.86956521739131" r="1" fill="black"></circle><circle cx="800.2607750814923" cy="83.65217391304347" r="1" fill="black"></circle><circle cx="800.5076421586382" cy="51.47826086956522" r="1" fill="black"></circle><circle cx="800.5076421586382" cy="83.65217391304347" r="1" fill="black"></circle><circle cx="805.2804056501268" cy="83.65217391304347" r="1" fill="black"></circle><circle cx="805.7741398044187" cy="54.69565217391305" r="1" fill="black"></circle><circle cx="805.7741398044187" cy="67.56521739130434" r="1" fill="black"></circle><circle cx="808.160521550163" cy="109.3913043478261" r="1" fill="black"></circle><circle cx="808.407388627309" cy="122.26086956521739" r="1" fill="black"></circle><circle cx="810.7937703730532" cy="122.26086956521739" r="1" fill="black"></circle><circle cx="811.0406374501993" cy="131.91304347826087" r="1" fill="black"></circle><circle cx="813.4270191959436" cy="131.91304347826087" r="1" fill="black"></circle><circle cx="813.6738862730895" cy="144.7826086956522" r="1" fill="black"></circle><circle cx="816.3071350959798" cy="131.91304347826087" r="1" fill="black"></circle><circle cx="818.6935168417241" cy="131.91304347826087" r="1" fill="black"></circle><circle cx="818.94038391887" cy="122.26086956521739" r="1" fill="black"></circle><circle cx="821.3267656646143" cy="122.26086956521739" r="1" fill="black"></circle><circle cx="821.5736327417603" cy="115.82608695652173" r="1" fill="black"></circle><circle cx="823.9600144875046" cy="54.69565217391305" r="1" fill="black"></circle><circle cx="824.2068815646505" cy="45.04347826086956" r="1" fill="black"></circle><circle cx="826.5932633103948" cy="45.04347826086956" r="1" fill="black"></circle><circle cx="826.8401303875407" cy="48.26086956521739" r="1" fill="black"></circle><circle cx="829.226512133285" cy="48.26086956521739" r="1" fill="black"></circle><circle cx="829.4733792104311" cy="38.60869565217391" r="1" fill="black"></circle><circle cx="831.8597609561754" cy="38.60869565217391" r="1" fill="black"></circle><circle cx="832.1066280333213" cy="57.913043478260875" r="1" fill="black"></circle><circle cx="834.4930097790656" cy="57.913043478260875" r="1" fill="black"></circle><circle cx="834.7398768562116" cy="48.26086956521739" r="1" fill="black"></circle><circle cx="835.8096341905107" cy="115.82608695652173" r="1" fill="black"></circle><circle cx="837.3731256791018" cy="70.78260869565217" r="1" fill="black"></circle><circle cx="837.3731256791018" cy="122.26086956521739" r="1" fill="black"></circle><circle cx="839.7595074248461" cy="48.26086956521739" r="1" fill="black"></circle><circle cx="840.0063745019921" cy="48.26086956521739" r="1" fill="black"></circle><circle cx="842.3927562477364" cy="48.26086956521739" r="1" fill="black"></circle><circle cx="842.6396233248823" cy="54.69565217391305" r="1" fill="black"></circle><circle cx="845.0260050706266" cy="54.69565217391305" r="1" fill="black"></circle><circle cx="845.2728721477725" cy="45.04347826086956" r="1" fill="black"></circle><circle cx="847.6592538935168" cy="45.04347826086956" r="1" fill="black"></circle><circle cx="847.9061209706629" cy="64.34782608695652" r="1" fill="black"></circle><circle cx="850.2925027164072" cy="64.34782608695652" r="1" fill="black"></circle><circle cx="850.5393697935531" cy="54.69565217391305" r="1" fill="black"></circle><circle cx="851.6091271278523" cy="70.78260869565217" r="1" fill="black"></circle><circle cx="853.1726186164434" cy="77.21739130434783" r="1" fill="black"></circle><circle cx="853.1726186164434" cy="125.47826086956522" r="1" fill="black"></circle><circle cx="855.5590003621877" cy="54.69565217391305" r="1" fill="black"></circle><circle cx="855.8058674393336" cy="54.69565217391305" r="1" fill="black"></circle><circle cx="858.1922491850779" cy="54.69565217391305" r="1" fill="black"></circle><circle cx="858.4391162622239" cy="57.913043478260875" r="1" fill="black"></circle><circle cx="860.2906193408186" cy="125.47826086956522" r="1" fill="black"></circle><circle cx="860.8254980079681" cy="57.913043478260875" r="1" fill="black"></circle><circle cx="861.0723650851141" cy="48.26086956521739" r="1" fill="black"></circle><circle cx="861.0723650851141" cy="135.1304347826087" r="1" fill="black"></circle><circle cx="862.6770010865629" cy="77.21739130434783" r="1" fill="black"></circle><circle cx="863.4587468308584" cy="48.26086956521739" r="1" fill="black"></circle><circle cx="863.4587468308584" cy="135.1304347826087" r="1" fill="black"></circle><circle cx="863.7056139080044" cy="38.60869565217391" r="1" fill="black"></circle><circle cx="863.7056139080044" cy="131.91304347826087" r="1" fill="black"></circle><circle cx="868.478377399493" cy="131.91304347826087" r="1" fill="black"></circle><circle cx="868.9721115537849" cy="135.1304347826087" r="1" fill="black"></circle><circle cx="871.3584932995292" cy="38.60869565217391" r="1" fill="black"></circle><circle cx="871.6053603766752" cy="45.04347826086956" r="1" fill="black"></circle><circle cx="873.9917421224195" cy="45.04347826086956" r="1" fill="black"></circle><circle cx="874.2386091995654" cy="48.26086956521739" r="1" fill="black"></circle><circle cx="876.6249909453097" cy="48.26086956521739" r="1" fill="black"></circle><circle cx="876.8718580224556" cy="38.60869565217391" r="1" fill="black"></circle><circle cx="876.8718580224556" cy="125.47826086956522" r="1" fill="black"></circle><circle cx="879.2582397681999" cy="38.60869565217391" r="1" fill="black"></circle><circle cx="879.505106845346" cy="28.956521739130437" r="1" fill="black"></circle><circle cx="879.505106845346" cy="115.82608695652173" r="1" fill="black"></circle><circle cx="887.1579862368708" cy="28.956521739130437" r="1" fill="black"></circle><circle cx="887.4048533140167" cy="32.17391304347825" r="1" fill="black"></circle><circle cx="889.791235059761" cy="32.17391304347825" r="1" fill="black"></circle><circle cx="890.038102136907" cy="38.60869565217391" r="1" fill="black"></circle><circle cx="890.038102136907" cy="109.3913043478261" r="1" fill="black"></circle><circle cx="890.038102136907" cy="109.3913043478261" r="1" fill="black"></circle><circle cx="892.4244838826513" cy="38.60869565217391" r="1" fill="black"></circle><circle cx="892.6713509597972" cy="45.04347826086956" r="1" fill="black"></circle><circle cx="894.8108656283955" cy="109.3913043478261" r="1" fill="black"></circle><circle cx="895.0577327055415" cy="45.04347826086956" r="1" fill="black"></circle><circle cx="895.3045997826874" cy="48.26086956521739" r="1" fill="black"></circle><circle cx="895.3045997826874" cy="102.95652173913044" r="1" fill="black"></circle><circle cx="897.6909815284317" cy="48.26086956521739" r="1" fill="black"></circle><circle cx="897.9378486055778" cy="54.69565217391305" r="1" fill="black"></circle><circle cx="900.077363274176" cy="102.95652173913044" r="1" fill="black"></circle><circle cx="900.3242303513221" cy="54.69565217391305" r="1" fill="black"></circle><circle cx="900.571097428468" cy="38.60869565217391" r="1" fill="black"></circle><circle cx="900.571097428468" cy="96.52173913043478" r="1" fill="black"></circle><circle cx="902.9574791742123" cy="38.60869565217391" r="1" fill="black"></circle><circle cx="903.2043462513583" cy="45.04347826086956" r="1" fill="black"></circle><circle cx="905.5907279971026" cy="45.04347826086956" r="1" fill="black"></circle><circle cx="905.8375950742485" cy="48.26086956521739" r="1" fill="black"></circle><circle cx="908.2239768199928" cy="48.26086956521739" r="1" fill="black"></circle><circle cx="908.4708438971388" cy="54.69565217391305" r="1" fill="black"></circle><circle cx="910.0754798985876" cy="96.52173913043478" r="1" fill="black"></circle><circle cx="910.857225642883" cy="54.69565217391305" r="1" fill="black"></circle><circle cx="911.104092720029" cy="57.913043478260875" r="1" fill="black"></circle><circle cx="911.104092720029" cy="93.30434782608695" r="1" fill="black"></circle><circle cx="913.4904744657733" cy="57.913043478260875" r="1" fill="black"></circle><circle cx="913.7373415429192" cy="64.34782608695652" r="1" fill="black"></circle><circle cx="915.8768562115176" cy="93.30434782608695" r="1" fill="black"></circle><circle cx="916.1237232886635" cy="64.34782608695652" r="1" fill="black"></circle><circle cx="916.3705903658096" cy="70.78260869565217" r="1" fill="black"></circle><circle cx="916.3705903658096" cy="86.86956521739131" r="1" fill="black"></circle><circle cx="918.7569721115539" cy="70.78260869565217" r="1" fill="black"></circle><circle cx="919.0038391886998" cy="57.913043478260875" r="1" fill="black"></circle><circle cx="921.3902209344441" cy="57.913043478260875" r="1" fill="black"></circle><circle cx="921.6370880115901" cy="48.26086956521739" r="1" fill="black"></circle><circle cx="924.0234697573344" cy="48.26086956521739" r="1" fill="black"></circle><circle cx="924.2703368344803" cy="38.60869565217391" r="1" fill="black"></circle><circle cx="925.874972835929" cy="86.86956521739131" r="1" fill="black"></circle><circle cx="926.6567185802246" cy="38.60869565217391" r="1" fill="black"></circle><circle cx="926.9035856573705" cy="54.69565217391305" r="1" fill="black"></circle><circle cx="926.9035856573705" cy="83.65217391304347" r="1" fill="black"></circle><circle cx="929.2899674031148" cy="54.69565217391305" r="1" fill="black"></circle><circle cx="929.5368344802608" cy="45.04347826086956" r="1" fill="black"></circle><circle cx="931.6763491488591" cy="83.65217391304347" r="1" fill="black"></circle><circle cx="932.170083303151" cy="77.21739130434783" r="1" fill="black"></circle><circle cx="934.5564650488953" cy="45.04347826086956" r="1" fill="black"></circle><circle cx="934.8033321260414" cy="48.26086956521739" r="1" fill="black"></circle><circle cx="937.1897138717857" cy="48.26086956521739" r="1" fill="black"></circle><circle cx="937.4365809489316" cy="38.60869565217391" r="1" fill="black"></circle><circle cx="939.8229626946759" cy="38.60869565217391" r="1" fill="black"></circle><circle cx="940.0698297718219" cy="28.956521739130437" r="1" fill="black"></circle><circle cx="941.6744657732706" cy="77.21739130434783" r="1" fill="black"></circle><circle cx="942.4562115175662" cy="28.956521739130437" r="1" fill="black"></circle><circle cx="942.7030785947121" cy="54.69565217391305" r="1" fill="black"></circle><circle cx="942.7030785947121" cy="83.65217391304347" r="1" fill="black"></circle><circle cx="945.0894603404564" cy="54.69565217391305" r="1" fill="black"></circle><circle cx="945.3363274176023" cy="32.17391304347825" r="1" fill="black"></circle><circle cx="947.4758420862007" cy="83.65217391304347" r="1" fill="black"></circle><circle cx="947.9695762404926" cy="86.86956521739131" r="1" fill="black"></circle><circle cx="950.355957986237" cy="32.17391304347825" r="1" fill="black"></circle><circle cx="950.6028250633829" cy="57.913043478260875" r="1" fill="black"></circle><circle cx="952.9892068091272" cy="57.913043478260875" r="1" fill="black"></circle><circle cx="953.2360738862732" cy="48.26086956521739" r="1" fill="black"></circle><circle cx="955.6224556320175" cy="48.26086956521739" r="1" fill="black"></circle><circle cx="955.8693227091634" cy="38.60869565217391" r="1" fill="black"></circle><circle cx="957.4739587106121" cy="86.86956521739131" r="1" fill="black"></circle><circle cx="958.2557044549077" cy="38.60869565217391" r="1" fill="black"></circle><circle cx="958.5025715320537" cy="64.34782608695652" r="1" fill="black"></circle><circle cx="958.5025715320537" cy="93.30434782608695" r="1" fill="black"></circle><circle cx="960.888953277798" cy="64.34782608695652" r="1" fill="black"></circle><circle cx="961.1358203549439" cy="45.04347826086956" r="1" fill="black"></circle><circle cx="963.2753350235422" cy="93.30434782608695" r="1" fill="black"></circle><circle cx="963.7690691778341" cy="96.52173913043478" r="1" fill="black"></circle><circle cx="966.1554509235784" cy="45.04347826086956" r="1" fill="black"></circle><circle cx="966.4023180007244" cy="70.78260869565217" r="1" fill="black"></circle><circle cx="968.7886997464688" cy="70.78260869565217" r="1" fill="black"></circle><circle cx="969.0355668236147" cy="57.913043478260875" r="1" fill="black"></circle><circle cx="971.421948569359" cy="57.913043478260875" r="1" fill="black"></circle><circle cx="971.668815646505" cy="48.26086956521739" r="1" fill="black"></circle><circle cx="973.2734516479537" cy="96.52173913043478" r="1" fill="black"></circle><circle cx="974.0551973922493" cy="48.26086956521739" r="1" fill="black"></circle><circle cx="974.3020644693952" cy="74" r="1" fill="black"></circle><circle cx="974.3020644693952" cy="102.95652173913044" r="1" fill="black"></circle><circle cx="976.9353132922855" cy="54.69565217391305" r="1" fill="black"></circle><circle cx="978.0050706265846" cy="109.3913043478261" r="1" fill="black"></circle><circle cx="979.3216950380297" cy="54.69565217391305" r="1" fill="black"></circle><circle cx="979.5685621151757" cy="57.913043478260875" r="1" fill="black"></circle><circle cx="979.5685621151757" cy="109.3913043478261" r="1" fill="black"></circle><circle cx="982.2018109380659" cy="109.3913043478261" r="1" fill="black"></circle><circle cx="984.5881926838102" cy="109.3913043478261" r="1" fill="black"></circle><circle cx="984.8350597609563" cy="96.52173913043478" r="1" fill="black"></circle><circle cx="987.4683085838465" cy="86.86956521739131" r="1" fill="black"></circle><circle cx="989.8546903295908" cy="86.86956521739131" r="1" fill="black"></circle><circle cx="990.1015574067368" cy="70.78260869565217" r="1" fill="black"></circle><circle cx="992.4879391524811" cy="57.913043478260875" r="1" fill="black"></circle><circle cx="992.734806229627" cy="57.913043478260875" r="1" fill="black"></circle><circle cx="995.1211879753713" cy="57.913043478260875" r="1" fill="black"></circle><circle cx="995.3680550525172" cy="48.26086956521739" r="1" fill="black"></circle><circle cx="997.7544367982615" cy="48.26086956521739" r="1" fill="black"></circle><circle cx="998.0013038754075" cy="38.60869565217391" r="1" fill="black"></circle><circle cx="1000.3876856211518" cy="38.60869565217391" r="1" fill="black"></circle><circle cx="1000.6345526982977" cy="28.956521739130437" r="1" fill="black"></circle><circle cx="1002.4860557768925" cy="70.78260869565217" r="1" fill="black"></circle><circle cx="1002.4860557768925" cy="109.3913043478261" r="1" fill="black"></circle><circle cx="1003.2678015211881" cy="77.21739130434783" r="1" fill="black"></circle><circle cx="1005.6541832669324" cy="77.21739130434783" r="1" fill="black"></circle><circle cx="1005.9010503440783" cy="83.65217391304347" r="1" fill="black"></circle><circle cx="1008.2874320898226" cy="83.65217391304347" r="1" fill="black"></circle><circle cx="1010.9206809127129" cy="86.86956521739131" r="1" fill="black"></circle><circle cx="1011.1675479898588" cy="93.30434782608695" r="1" fill="black"></circle><circle cx="1013.5539297356031" cy="28.956521739130437" r="1" fill="black"></circle><circle cx="1013.800796812749" cy="32.17391304347825" r="1" fill="black"></circle><circle cx="1016.1871785584933" cy="32.17391304347825" r="1" fill="black"></circle><circle cx="1016.4340456356393" cy="45.04347826086956" r="1" fill="black"></circle><circle cx="1018.8204273813836" cy="45.04347826086956" r="1" fill="black"></circle><circle cx="1019.0672944585295" cy="54.69565217391305" r="1" fill="black"></circle><circle cx="1020.6719304599783" cy="93.30434782608695" r="1" fill="black"></circle><circle cx="1021.4536762042738" cy="54.69565217391305" r="1" fill="black"></circle><circle cx="1021.7005432814199" cy="16.086956521739125" r="1" fill="black"></circle><circle cx="1021.7005432814199" cy="106.17391304347825" r="1" fill="black"></circle><circle cx="1026.9670409272003" cy="22.52173913043478" r="1" fill="black"></circle><circle cx="1026.9670409272003" cy="109.3913043478261" r="1" fill="black"></circle><circle cx="1029.6002897500905" cy="48.26086956521739" r="1" fill="black"></circle><circle cx="1031.9866714958348" cy="48.26086956521739" r="1" fill="black"></circle><circle cx="1032.233538572981" cy="61.13043478260869" r="1" fill="black"></circle><circle cx="1034.8667873958711" cy="70.78260869565217" r="1" fill="black"></circle><circle cx="1036.4714233973198" cy="109.3913043478261" r="1" fill="black"></circle><circle cx="1037.2531691416154" cy="70.78260869565217" r="1" fill="black"></circle><circle cx="1037.5000362187614" cy="32.17391304347825" r="1" fill="black"></circle><circle cx="1037.5000362187614" cy="83.65217391304347" r="1" fill="black"></circle><circle cx="1042.27279971025" cy="83.65217391304347" r="1" fill="black"></circle><circle cx="1042.766533864542" cy="28.956521739130437" r="1" fill="black"></circle><circle cx="1042.766533864542" cy="93.30434782608695" r="1" fill="black"></circle><circle cx="1049.8845345889172" cy="32.17391304347825" r="1" fill="black"></circle><circle cx="1050.6662803332126" cy="45.04347826086956" r="1" fill="black"></circle><circle cx="1052.2709163346615" cy="93.30434782608695" r="1" fill="black"></circle><circle cx="1053.052662078957" cy="45.04347826086956" r="1" fill="black"></circle><circle cx="1053.2995291561028" cy="38.60869565217391" r="1" fill="black"></circle><circle cx="1053.2995291561028" cy="86.86956521739131" r="1" fill="black"></circle><circle cx="1057.0025353132924" cy="28.956521739130437" r="1" fill="black"></circle><circle cx="1058.5660268018835" cy="32.17391304347825" r="1" fill="black"></circle><circle cx="1058.5660268018835" cy="83.65217391304347" r="1" fill="black"></circle><circle cx="1060.9524085476278" cy="83.65217391304347" r="1" fill="black"></circle><circle cx="1061.1992756247737" cy="70.78260869565217" r="1" fill="black"></circle><circle cx="1063.585657370518" cy="70.78260869565217" r="1" fill="black"></circle><circle cx="1063.832524447664" cy="83.65217391304347" r="1" fill="black"></circle><circle cx="1065.6840275262587" cy="38.60869565217391" r="1" fill="black"></circle><circle cx="1066.465773270554" cy="48.26086956521739" r="1" fill="black"></circle><circle cx="1066.465773270554" cy="93.30434782608695" r="1" fill="black"></circle><circle cx="1068.8521550162984" cy="48.26086956521739" r="1" fill="black"></circle><circle cx="1069.0990220934445" cy="45.04347826086956" r="1" fill="black"></circle><circle cx="1069.0990220934445" cy="54.69565217391305" r="1" fill="black"></circle><circle cx="1072.8020282506338" cy="32.17391304347825" r="1" fill="black"></circle><circle cx="1073.8717855849331" cy="45.04347826086956" r="1" fill="black"></circle><circle cx="1074.365519739225" cy="38.60869565217391" r="1" fill="black"></circle><circle cx="1074.365519739225" cy="48.26086956521739" r="1" fill="black"></circle><circle cx="1081.4835204636001" cy="54.69565217391305" r="1" fill="black"></circle><circle cx="1082.2652662078958" cy="64.34782608695652" r="1" fill="black"></circle><circle cx="1083.8699022093444" cy="38.60869565217391" r="1" fill="black"></circle><circle cx="1084.898515030786" cy="32.17391304347825" r="1" fill="black"></circle><circle cx="1084.898515030786" cy="57.913043478260875" r="1" fill="black"></circle><circle cx="1089.6712785222746" cy="57.913043478260875" r="1" fill="black"></circle><circle cx="1090.1650126765664" cy="45.04347826086956" r="1" fill="black"></circle><circle cx="1090.1650126765664" cy="54.69565217391305" r="1" fill="black"></circle><circle cx="1092.5513944223108" cy="48.26086956521739" r="1" fill="black"></circle><circle cx="1092.7982614994569" cy="57.913043478260875" r="1" fill="black"></circle><circle cx="1095.1846432452012" cy="57.913043478260875" r="1" fill="black"></circle><circle cx="1095.431510322347" cy="54.69565217391305" r="1" fill="black"></circle><circle cx="1097.2830134009419" cy="45.04347826086956" r="1" fill="black"></circle><circle cx="1098.0647591452373" cy="45.04347826086956" r="1" fill="black"></circle><circle cx="1099.6693951466862" cy="54.69565217391305" r="1" fill="black"></circle><circle cx="1100.4511408909816" cy="45.04347826086956" r="1" fill="black"></circle><circle cx="1100.6980079681275" cy="28.956521739130437" r="1" fill="black"></circle><circle cx="1100.6980079681275" cy="77.21739130434783" r="1" fill="black"></circle><circle cx="1105.9645056139082" cy="45.04347826086956" r="1" fill="black"></circle><circle cx="1105.9645056139082" cy="70.78260869565217" r="1" fill="black"></circle><circle cx="1113.8642520825788" cy="38.60869565217391" r="1" fill="black"></circle><circle cx="1115.4688880840276" cy="54.69565217391305" r="1" fill="black"></circle><circle cx="1116.497500905469" cy="48.26086956521739" r="1" fill="black"></circle><circle cx="1116.497500905469" cy="57.913043478260875" r="1" fill="black"></circle><circle cx="1116.497500905469" cy="109.3913043478261" r="1" fill="black"></circle><circle cx="1121.7639985512496" cy="54.69565217391305" r="1" fill="black"></circle><circle cx="1121.7639985512496" cy="54.69565217391305" r="1" fill="black"></circle><circle cx="1121.7639985512496" cy="131.91304347826087" r="1" fill="black"></circle><line width="1" x1="0" x2="0" y1="0" y2="148" style="stroke:rgb(200,180,170)"></line><line width="1" x1="42.13198116624412" x2="42.13198116624412" y1="0" y2="148" style="stroke:rgb(200,180,170)"></line><line width="1" x1="84.26396233248823" x2="84.26396233248823" y1="0" y2="148" style="stroke:rgb(200,180,170)"></line><line width="1" x1="126.39594349873235" x2="126.39594349873235" y1="0" y2="148" style="stroke:rgb(200,180,170)"></line><line width="1" x1="168.52792466497647" x2="168.52792466497647" y1="0" y2="148" style="stroke:rgb(200,180,170)"></line><line width="1" x1="210.65990583122058" x2="210.65990583122058" y1="0" y2="148" style="stroke:rgb(200,180,170)"></line><line width="1" x1="252.7918869974647" x2="252.7918869974647" y1="0" y2="148" style="stroke:rgb(200,180,170)"></line><line width="1" x1="294.9238681637088" x2="294.9238681637088" y1="0" y2="148" style="stroke:rgb(200,180,170)"></line><line width="1" x1="337.05584932995293" x2="337.05584932995293" y1="0" y2="148" style="stroke:rgb(200,180,170)"></line><line width="1" x1="379.1878304961971" x2="379.1878304961971" y1="0" y2="148" style="stroke:rgb(200,180,170)"></line><line width="1" x1="421.3198116624412" x2="421.3198116624412" y1="0" y2="148" style="stroke:rgb(200,180,170)"></line><line width="1" x1="463.45179282868537" x2="463.45179282868537" y1="0" y2="148" style="stroke:rgb(200,180,170)"></line><line width="1" x1="505.5837739949295" x2="505.5837739949295" y1="0" y2="148" style="stroke:rgb(200,180,170)"></line><line width="1" x1="547.7157551611737" x2="547.7157551611737" y1="0" y2="148" style="stroke:rgb(200,180,170)"></line><line width="1" x1="589.8477363274178" x2="589.8477363274178" y1="0" y2="148" style="stroke:rgb(200,180,170)"></line><line width="1" x1="631.979717493662" x2="631.979717493662" y1="0" y2="148" style="stroke:rgb(200,180,170)"></line><line width="1" x1="674.1116986599061" x2="674.1116986599061" y1="0" y2="148" style="stroke:rgb(200,180,170)"></line><line width="1" x1="716.2436798261502" x2="716.2436798261502" y1="0" y2="148" style="stroke:rgb(200,180,170)"></line><line width="1" x1="758.3756609923944" x2="758.3756609923944" y1="0" y2="148" style="stroke:rgb(200,180,170)"></line><line width="1" x1="800.5076421586385" x2="800.5076421586385" y1="0" y2="148" style="stroke:rgb(200,180,170)"></line><line width="1" x1="842.6396233248827" x2="842.6396233248827" y1="0" y2="148" style="stroke:rgb(200,180,170)"></line><line width="1" x1="884.7716044911268" x2="884.7716044911268" y1="0" y2="148" style="stroke:rgb(200,180,170)"></line><line width="1" x1="926.903585657371" x2="926.903585657371" y1="0" y2="148" style="stroke:rgb(200,180,170)"></line><line width="1" x1="969.0355668236151" x2="969.0355668236151" y1="0" y2="148" style="stroke:rgb(200,180,170)"></line><line width="1" x1="1011.1675479898593" x2="1011.1675479898593" y1="0" y2="148" style="stroke:rgb(200,180,170)"></line><line width="1" x1="1053.2995291561033" x2="1053.2995291561033" y1="0" y2="148" style="stroke:rgb(200,180,170)"></line><line width="1" x1="1095.4315103223473" x2="1095.4315103223473" y1="0" y2="148" style="stroke:rgb(200,180,170)"></line></svg></div>
+</div></track-display>
+    </div>
+</div></song-display>   
+   
+</div>
+</div>
+
+</song-details>
+</div>
+</ng-component>
+    </div>
+</div></pm-app>
+<script type="text/javascript" src="./BethovzartClient_files/inline.js"></script><script type="text/javascript" src="./BethovzartClient_files/styles.bundle.js"></script><script type="text/javascript" src="./BethovzartClient_files/scripts.bundle.js"></script><script type="text/javascript" src="./BethovzartClient_files/main.bundle.js"></script>
+
+</body></html>

@@ -24,7 +24,6 @@ export class AudioControlBarComponent implements OnChanges {
     mouseDown: boolean = false;
     sliderPositionAtStart: number = 0;
     sliderLastReportedPosition: number = 0;
-    isPlaying: boolean = false;
 
     constructor(
         private _midi2JsonService: Midi2JsonService,
@@ -53,37 +52,23 @@ export class AudioControlBarComponent implements OnChanges {
                 this.musicProgress(event.data);
                 break;
             case AudioControlsEventTypes.goToEnd:
-                this.handleGoToEnd();
+                this.audioControlBarSlider.setValue(1);
+                this.sliderLastReportedPosition = 1;
                 break;
-            case AudioControlsEventTypes.musicStopped:
-                this.isPlaying = false;
-                break;
-            case AudioControlsEventTypes.volumeChange:
-            case AudioControlsEventTypes.trackSolo:
-            case AudioControlsEventTypes.trackUnsolo:
-            case AudioControlsEventTypes.trackMuted:
-            case AudioControlsEventTypes.trackUnmuted:
-                if (this.isPlaying) {
-                    this.restartSong()
-                }
+            case AudioControlsEventTypes.goToBeginning:
+                this.audioControlBarSlider.setValue(0);
+                this.sliderLastReportedPosition = 0;
                 break;
         }
     }
 
-    private handleGoToEnd() {
-        this.isPlaying = false;
-        this.audioControlBarSlider.setValue(1);
-        this.sliderLastReportedPosition = 1;
-    }
     private handlePlayEvent() {
-        this.isPlaying = true;
         this.sliderPositionAtStart = this.sliderLastReportedPosition;
         let eventData = this.sliderPositionAtStart;
         this._audioControlsEventsService.raiseEvent(AudioControlsEventTypes.playStartPositionCalculated, eventData);
     }
 
     private handleStopEvent() {
-        this.isPlaying = false;
         this.audioControlBarSlider.setValue(0);
         this.sliderLastReportedPosition = 0;
     }
@@ -100,7 +85,6 @@ export class AudioControlBarComponent implements OnChanges {
             return;
         }
         if (elapsedTimeInSeconds >= this.song.durationInSeconds) {
-            this.isPlaying = false;
             this._audioControlsEventsService.raiseEvent(AudioControlsEventTypes.endTimeReached);
         }
         let newSliderPosition = elapsedTimeInSeconds / durationFromStartingPosition + this.sliderPositionAtStart;
@@ -111,23 +95,10 @@ export class AudioControlBarComponent implements OnChanges {
     // value is a number between 0 and 1
     // this method is called when the user moves the slide
     public sliderMoved(value) {
-        if (this.isPlaying) {
-            this.restartSong()
-        }
         this.sliderLastReportedPosition = value;
+        // if the song is currently playing, it will be restarted, so it starts from the new slide position
+        this._audioControlsEventsService.raiseEvent(AudioControlsEventTypes.restart);
     }
 
 
-    private restartSong() {
-        this.isPlaying = false;
-        let self = this;
-        setTimeout(function () {
-            self.isPlaying = true;
-            self._audioControlsEventsService.raiseEvent(AudioControlsEventTypes.pause);
-        }, 300);
-        setTimeout(function () {
-            self.isPlaying = true;
-            self._audioControlsEventsService.raiseEvent(AudioControlsEventTypes.play);
-        }, 1500);
-    }
 }

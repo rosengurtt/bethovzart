@@ -1,5 +1,5 @@
 import { Band } from './band';
-import {SongJson} from '../midi/song-json'
+import {SongJson} from '../midi/song-json/song-json';
 
 export class Song {
     _id: string;

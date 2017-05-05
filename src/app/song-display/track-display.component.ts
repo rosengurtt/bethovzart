@@ -144,6 +144,6 @@ export class TrackDisplayComponent implements AfterViewChecked, OnInit {
 
     public volumeChange(vol) {
         let eventData: any = { trackNumber: this.trackNumber, volume: vol };
-            this._audioControlsEventsService.raiseEvent(AudioControlsEventTypes.volumeChange,eventData);
+        this._audioControlsEventsService.raiseEvent(AudioControlsEventTypes.volumeChange, eventData);
     }
 }

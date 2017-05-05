@@ -1,7 +1,7 @@
-import { Component, Input, OnChanges, SimpleChange, HostListener } from '@angular/core';
+import { Component, Input, OnChanges } from '@angular/core';
 import { Subscription } from 'rxjs/Subscription';
 
-import { Song } from '../songs/song';
+import { SongJson } from '../midi/song-json/song-json';
 import { AudioControlsEventsService } from '../shared/audio-controls-events.service';
 import { AudioControlsService } from './audio-controls.service';
 import { AudioControlsEventTypes } from '../shared/audio-controls-event-types.enum';
@@ -16,13 +16,13 @@ declare var MIDIjs: any;
     templateUrl: './audio-buttons.component.html',
     styles: ['.draggable {cursor: move; }']
 })
-export class AudioButtonsComponent {
-    song: Song;
+export class AudioButtonsComponent implements OnChanges {
+    @Input() song: SongJson;
     @Input() selectedSongId: string;
     subscriptionAudioEvents: Subscription;
     mouseDown: boolean = false;
-    isPlaying: boolean = false;
     loadFinished: boolean;
+    bpm: string;
 
     constructor(
         private _audioControlsService: AudioControlsService,
@@ -34,50 +34,49 @@ export class AudioButtonsComponent {
             });
     }
 
+    ngOnChanges() {
+        this.resetTempo();
+    }
+    resetTempo() {
+        let tempo = this.song.tempoEvents[0].tempoBPM;
+        tempo = tempo ? tempo : 120;
+        this.bpm = tempo.toFixed(0);
+        this._audioControlsEventsService.raiseEvent(AudioControlsEventTypes.tempoChange, this.bpm);
+
+    }
+    tempoChange(newValue) {
+        this.bpm = newValue;
+        this._audioControlsEventsService.raiseEvent(AudioControlsEventTypes.tempoChange, this.bpm);
+    }
+
     private handleEvent(event: AudioControlEvent) {
         switch (event.type) {
             case AudioControlsEventTypes.musicStarted:
-                this.isPlaying = true;
-               // this.downloadeame("midifile.txt", this._audioControlsService.songPartToPlay);
-            // let check = this._midiFileCheckerService.check(new Uint8Array(this._audioControlsService.songPartToPlay));
-                break;
-            case AudioControlsEventTypes.musicStopped:
-            case AudioControlsEventTypes.endTimeReached:
-                this.isPlaying = false;
+                // this.downloadeame("midifile.txt", this._audioControlsService.songPartToPlay);
+                // let check = this._midiFileCheckerService.check(new Uint8Array(this._audioControlsService.songPartToPlay));
                 break;
         }
     }
 
     playSong() {
-        this.isPlaying = true;
         this._audioControlsEventsService.raiseEvent(AudioControlsEventTypes.play);
 
     }
 
     pauseSong() {
-        this.isPlaying = false;
         this._audioControlsEventsService.raiseEvent(AudioControlsEventTypes.pause);
     }
     stopSong() {
-        this.isPlaying = false;
         this._audioControlsEventsService.raiseEvent(AudioControlsEventTypes.stop);
     }
 
     goToBeginning() {
-        if (this.isPlaying) {
-            this._audioControlsEventsService.raiseEvent(AudioControlsEventTypes.stop);
-        }
         this._audioControlsEventsService.raiseEvent(AudioControlsEventTypes.goToBeginning);
-        if (this.isPlaying) {
-            this._audioControlsEventsService.raiseEvent(AudioControlsEventTypes.play);
-        }
+        this._audioControlsEventsService.raiseEvent(AudioControlsEventTypes.restart);
     }
     goToEnd() {
-        if (this.isPlaying) {
-            this._audioControlsEventsService.raiseEvent(AudioControlsEventTypes.stop);
-            this.isPlaying = false;
-        }
         this._audioControlsEventsService.raiseEvent(AudioControlsEventTypes.goToEnd);
+        this._audioControlsEventsService.raiseEvent(AudioControlsEventTypes.restart);
     }
     zoomIn() {
         this._audioControlsEventsService.raiseEvent(AudioControlsEventTypes.zoomIn);

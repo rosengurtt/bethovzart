@@ -2,6 +2,7 @@ export enum AudioControlsEventTypes {
     play,
     playStartPositionCalculated,
     stop,
+    restart,
     zoomIn,
     zoomOut,
     pause,
@@ -19,5 +20,7 @@ export enum AudioControlsEventTypes {
     trackUnmuted,
     trackSolo,
     trackUnsolo,
-    volumeChange
+    volumeChange,
+    tempoChange,
+    goToPoint
 }
