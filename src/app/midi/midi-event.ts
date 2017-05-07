@@ -157,4 +157,10 @@ export class MidiEvent {
     public isTrackName(): boolean {
         return this.isOfType(MidiEventType.TrackName);
     }
+    public isChannelIndependent(): boolean {
+        if (this.isTempo() || this.isTimeSignature() || this.isKeySignature() || this.isResetAllControllers()){
+            return true;
+        }
+        return false;
+    }
 }

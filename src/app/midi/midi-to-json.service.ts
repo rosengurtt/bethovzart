@@ -26,7 +26,8 @@ export class Midi2JsonService {
             // since the beginning of the song
             returnObject.tracks[i] = this.addTimeSinceBeginningField(midiFile.getTrackEvents(i));
         }
-        return returnObject;
+        console.log(returnObject)
+        return this.normalizeSongJson(returnObject);
     };
 
     private addTimeSinceBeginningField(track: any): Track {
@@ -54,8 +55,133 @@ export class Midi2JsonService {
             midiEventItem.scale = event.scale;
             returnValue.events.push(midiEventItem);
         }
-        returnValue.reset();
         return returnValue;
+    }
+
+    // Creates a new array of tracks with the following properties:
+    // The track 0 has all the events that are channel independent, like time signature, tempo changes, etc.
+    // The rest of the tracks have channel dependent data, with events of only one channel in each track
+    // If a channel is used for different instruments (in other words, there are patch change events),
+    // each instrument has its own track.
+    // If there are no patch change events, it would default to instrument 1 (piano). But we add a
+    // patch change event so we make the assignment to the piano explicit
+    private normalizeSongJson(song: SongJson): SongJson {
+        let returnObject = new SongJson(song.format, song.ticksPerBeat, []);
+
+        returnObject.tracks.push(this.getTrackWithChannelSpecificEvents(song));
+
+        for (let i = 0; i < 16; i++) {
+            let tracks = this.getTracksWithEventsOfChannel(i, song);
+            for (let j = 0; j < tracks.length; j++) {
+                returnObject.tracks.push(tracks[j]);
+            }
+        }
+        console.log(returnObject)
+        return returnObject;
+    }
+
+    // Returns an array of tracks that has all the events corresponding to a specific channel, from any of the original tracks
+    // When there are no events for the channel, it returns an empty array
+    // When there are events for this channel, but no patch change events, it returns an array with one track
+    // Otherwise returns an array of tracks with as many tracks as different instruments
+    private getTracksWithEventsOfChannel(channel: number, song: SongJson): Track[] {
+        let returnObject: Track[] = [];
+        // First look for all events of this channel and put them on an array
+        let channelEvents: MidiEvent[] = [];
+        for (let i = 0; i < song.tracksCount; i++) {
+            for (let j = 0; j < song.tracks[i].events.length; j++) {
+                let event = song.tracks[i].events[j];
+                if (event.channel === channel && !event.isChannelIndependent()) {
+                    let clonedEvent = new MidiEvent(event);
+                    channelEvents.push(clonedEvent);
+                }
+            }
+        }
+        if (channelEvents.length === 0) {
+            return returnObject;
+        }
+        // Now we sort the events
+        channelEvents = this.sortAndFixDeltasOfTrack(channelEvents);
+
+        // We split now in different tracks if there are patch change events
+        returnObject.push(new Track([]));
+        let currentTrack: Track = returnObject[returnObject.length - 1];
+        // We need this variable because there may be no patch changes events, and the instrument default to the piano
+        let patchChangesEventsSoFar = 0;
+        for (let i = 0; i < channelEvents.length; i++) {
+            let event = new MidiEvent(channelEvents[i]);
+            if (event.isPatchChange()) {
+                if (patchChangesEventsSoFar > 0) {
+                    // Terminate this track
+                    currentTrack.addEndOfTrackEvent();
+                    // Add new track
+                    returnObject.push(new Track([]));
+                    currentTrack = returnObject[returnObject.length - 1];
+                    // We have to update the delta because this will be the first event of the new track
+                    event.delta = event.ticksSinceStart;
+                } else {
+                    patchChangesEventsSoFar++;
+                }
+            }
+            // Add event to the end of last track of the returnObject array
+            currentTrack.events.push(event);
+        }
+        // If there aren't any patch events, it means it will default to a piano (instrument 1)
+        // We add a patch event at the beginning, to make this explicit
+        if (patchChangesEventsSoFar === 0) {
+            currentTrack.events.unshift(new MidiEvent({
+                delta: 0, type: 8, subtype: 12, ticksSinceStart: 0, param1: 1
+            }));
+        }
+        // Terminate the last track
+        currentTrack.addEndOfTrackEvent();
+        return returnObject;
+    }
+    private getTrackWithChannelSpecificEvents(song: SongJson): Track {
+        // First look for all events not channel specific and put them on a single track
+        // Initially the events may be out of order, because they may come from different tracks
+        let returnTrack = new Track([]);
+        for (let i = 0; i < song.tracksCount; i++) {
+            for (let j = 0; j < song.tracks[i].events.length; j++) {
+                let event = song.tracks[i].events[j];
+                if (event.isChannelIndependent()) {
+                    let clonedEvent = new MidiEvent(event);
+                    returnTrack.events.push(clonedEvent);
+                }
+            }
+        }
+        returnTrack.events = this.sortAndFixDeltasOfTrack(returnTrack.events);
+        returnTrack.addEndOfTrackEvent();
+        return returnTrack;
+    }
+
+    private sortAndFixDeltasOfTrack(events: MidiEvent[]): MidiEvent[] {
+        let returnArray: MidiEvent[] = [];
+        // Sort
+        returnArray = events.sort((a: MidiEvent, b: MidiEvent) => {
+            if (a.ticksSinceStart < b.ticksSinceStart) {
+                return -1;
+            } else if (a.ticksSinceStart > b.ticksSinceStart) {
+                return 1;
+            } else {
+                return 0;
+            }
+        });
+        // Fix deltas
+        for (let i = 1; i < returnArray.length; i++) {
+            returnArray[i].delta = returnArray[i].ticksSinceStart - returnArray[i - 1].ticksSinceStart;
+        }
+
+        // // Add End of track event
+        // let ticksSinceStartOfLastEvent = 0
+        // if (returnArray.length > 0) {
+        //     ticksSinceStartOfLastEvent = returnArray[returnArray.length - 1].ticksSinceStart;
+
+        // }
+        // returnArray.push(new MidiEvent({
+        //     delta: 0, type: 0xFF, subtype: 0x2F, ticksSinceStart: ticksSinceStartOfLastEvent
+        // }));
+        return returnArray;
     }
 
     // converts from json version to binary midi

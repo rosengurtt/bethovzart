@@ -78,21 +78,12 @@ export class TrackDisplayComponent implements AfterViewChecked, OnInit {
 
     ngOnInit() {
         // Populate information section
-        this.trackInfo = '';
         this.trackNumber = this.song.notesTracks[this.trackNotesNumber].trackNumber;
-        if (this.song.notesTracks[this.trackNotesNumber].trackName) {
-            this.trackInfo = this.song.notesTracks[this.trackNotesNumber].trackName + '-';
-        }
         let thisTrackInfo = this.song.notesTracks[this.trackNotesNumber];
-        for (let i = 0; i < thisTrackInfo.instrument.length; i++) {
-            let instrumentCode: number = thisTrackInfo.instrument[i];
-            this.trackInfo += GeneralMidiInstrument.GetInstrumentName(instrumentCode) + ', ';
-        }
-        // Remove last comma
-        this.trackInfo = this.trackInfo.slice(0, -2);
-        if (this.trackInfo.length > this.maxLengthInstrumentsList) {
-            this.trackInfo = this.trackInfo.substring(0, this.maxLengthInstrumentsList);
-        }
+        let track = this.song.tracks[this.trackNumber];
+
+        this.trackInfo = GeneralMidiInstrument.GetInstrumentName(track.Instrument);
+
         if (this.song.notesTracks.length > 1) {
             this.soloUnsolo = 'Solo';
         } else {

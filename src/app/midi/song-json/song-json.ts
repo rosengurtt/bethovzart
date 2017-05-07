@@ -11,7 +11,6 @@ export class SongJson {
     format: number;
     ticksPerBeat: number;
     tracks: Track[];
-    private _trackNames: string[]; // The name of the track when defined with a FF 03 event
     private _durationInTicks: number = -1;
     private _notesTracks: NotesTrack[];
     private _durationInSeconds: number = -1;
@@ -110,11 +109,14 @@ export class SongJson {
     }
     private getTempoEvents(): MidiEvent[] {
         let returnArray: MidiEvent[] = [];
-        for (let i = 0; i < this.tracks.length; i++) {
-            returnArray = returnArray.concat(this.tracks[i].TempoEvents);
+        let channelIndependentEvents = this.tracks[0].events;
+        for (let i = 0; i < channelIndependentEvents.length; i++) {
+            let event = new MidiEvent(channelIndependentEvents[i]);
+            if (event.isTempo()) {
+                returnArray.push(event);
+            }
         }
-        let sortedArray: MidiEvent[] = returnArray.sort((e1, e2) => e1.ticksSinceStart - e2.ticksSinceStart);
-        return sortedArray;
+        return returnArray;
     }
     // Convert the midi tracks that have all sort of events, to tracks that have only notes on and notes off
     // In addition, a 'range' property provides the max and minimum pitch for each track
@@ -124,9 +126,8 @@ export class SongJson {
             let TrackNotes = this.getNotes(this.tracks[i]);
             if (TrackNotes.length > 0) {
                 let range: TrackRange = this.getTrackRange(TrackNotes);
-                let instruments = this.tracks[i].Instruments;
-                let trackName = this.tracks[i].Name;
-                musicTracks.push(new NotesTrack(TrackNotes, range, instruments, trackName, i));
+                let instrument = this.tracks[i].Instrument;
+                musicTracks.push(new NotesTrack(TrackNotes, range, instrument, i));
             }
         }
         return musicTracks;
