@@ -26,7 +26,6 @@ export class Midi2JsonService {
             // since the beginning of the song
             returnObject.tracks[i] = this.addTimeSinceBeginningField(midiFile.getTrackEvents(i));
         }
-        console.log(returnObject)
         return this.normalizeSongJson(returnObject);
     };
 
@@ -76,7 +75,6 @@ export class Midi2JsonService {
                 returnObject.tracks.push(tracks[j]);
             }
         }
-        console.log(returnObject)
         return returnObject;
     }
 

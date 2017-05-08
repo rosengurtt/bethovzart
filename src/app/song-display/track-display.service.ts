@@ -6,33 +6,28 @@ import { TrackNote } from '../midi/track-note';
 import { AudioControlsEventsService } from '../shared/audio-controls-events.service';
 import { AudioControlEvent } from '../shared/audio-control-event';
 import { AudioControlsEventTypes } from '../shared/audio-controls-event-types.enum';
+import { SvgBoxService } from '../song-display/svg-box.service';
 
-declare var MIDIjs: any;
 
 @Injectable()
 export class TrackDisplayService {
     song: SongJson;
     subscriptionAudioEvents: Subscription;
     songIsPlaying: boolean;
-    svgns: string = 'http://www.w3.org/2000/svg';
     zoomIndex: number;  // is the index inside the zoomSteps array
     zoomSteps: number[] = [1, 1.5, 2, 3, 4, 6, 8, 12, 16, 20];
     scrollDisplacementX: number; // when the user has zoomed in, and only part of the image is
     // shown, scrollDisplacement is the length from the left border
-    // shown to the beginning of the song (outside the image)
+    // to the beginning of the song (outside the image)
     scrollDisplacementY: number;
-    colorMusicBar: string = 'rgb(200,180,170)';
-    colorProgressBar: string = 'rgb(200,0,0)';
-    noteDotRadio: number = 1;
-    trackIsMuted: boolean;
     svgBoxIdPrefix = 'svgBox';
     progressBarIdPrefix = 'progressBar';
     moveStep: number = 0.7;    // How much the image move when clicking the arrow buttons. 70%
-
     sliderPositionAtStart: number = 0;
 
     constructor(
-        private _audioControlsEventsService: AudioControlsEventsService) {
+        private _audioControlsEventsService: AudioControlsEventsService,
+        private _svgBoxService: SvgBoxService) {
         this.subscriptionAudioEvents = this._audioControlsEventsService
             .getEvents().subscribe(event => {
                 this.handleEvent(event);
@@ -53,115 +48,6 @@ export class TrackDisplayService {
                 break;
         }
     }
-    // ------------------------------------------------------------------------------
-    // Utilities for drawing
-    public createProgressBar(x = 0, trackNotesNumber: number): any {
-        let progressBarId = this.progressBarIdPrefix + trackNotesNumber;
-        let progressBar = document.getElementById(progressBarId);
-        let svgBoxId = this.svgBoxIdPrefix + trackNotesNumber;
-        let svgBox = document.getElementById(svgBoxId);
-        if (progressBar) {
-            try {
-                svgBox.removeChild(progressBar);
-            } catch (error) {
-                console.log('The progressBar object is not null, but when trying to remove it an exception was raised');
-                console.log(error);
-            }
-        }
-        return this.createLine(x, x, 0, svgBox.clientHeight, 2,
-            this.colorProgressBar, progressBarId, svgBox);
-    }
-    private createLine(x1: number, x2: number, y1: number, y2: number, width: number,
-        color: string, id: string, svgBox: any): any {
-        let line: any = document.createElementNS(this.svgns, 'line');
-        line.setAttributeNS(null, 'width', width);
-        line.setAttributeNS(null, 'x1', x1);
-        line.setAttributeNS(null, 'x2', x2);
-        line.setAttributeNS(null, 'y1', y1);
-        line.setAttributeNS(null, 'y2', y2);
-        line.setAttributeNS(null, 'style', 'stroke:' + color);
-        if (id) {
-            line.setAttributeNS(null, 'id', id);
-        }
-        svgBox.appendChild(line);
-        return line;
-    }
-    // returns a reference to the dot created
-    private createDot(x: number, y: number, r: number, color: string, svgBoxId: string): any {
-        let svgBox = document.getElementById(svgBoxId);
-        let dot: any = document.createElementNS(this.svgns, 'circle');
-        dot.setAttributeNS(null, 'cx', x);
-        dot.setAttributeNS(null, 'cy', y);
-        dot.setAttributeNS(null, 'r', r);
-        dot.setAttributeNS(null, 'fill', color);
-        svgBox.appendChild(dot);
-        return dot;
-    }
-
-    // Draws everything in the svg box, given the zoom value and x/y discplacements
-    public drawGraphic(trackNotesNumber: number) {
-        let svgBoxId = this.svgBoxIdPrefix + trackNotesNumber;
-        let svgBox = document.getElementById(svgBoxId);
-        let svgBoxWidth = svgBox.clientWidth;
-        let svgBoxHeight = svgBox.clientHeight;
-        this.cleanSvg(trackNotesNumber);
-        let horizontalScale: number = svgBoxWidth / this.song.durationInTicks;
-        horizontalScale = horizontalScale * this.zoom();
-
-        let thisTrack = this.song.notesTracks[trackNotesNumber];
-        let verticalScale: number = svgBoxHeight / (thisTrack.range.maxPitch - thisTrack.range.minPitch);
-        verticalScale = verticalScale * this.zoom();
-        let noteSeq: TrackNote[] = thisTrack.notesSequence;
-
-
-
-        // Create a dot for each note in the track
-        for (let m = 0; m < noteSeq.length; m++) {
-            let note: TrackNote = noteSeq[m];
-            let cx: number = note.ticksFromStart * horizontalScale;
-            let cy: number;
-            if (thisTrack.range.maxPitch > thisTrack.range.minPitch) {
-                cy = svgBoxHeight - ((note.pitch - thisTrack.range.minPitch)) * verticalScale;
-            } else {
-                cy = svgBoxHeight / 2;
-            }
-            if (cx - this.scrollDisplacementX < svgBoxWidth &&
-                cx - this.scrollDisplacementX > 0 &&
-                cy - this.scrollDisplacementY < svgBoxHeight &&
-                cy - this.scrollDisplacementY > 0) {
-                this.createDot(cx - this.scrollDisplacementX, cy - this.scrollDisplacementY,
-                    this.noteDotRadio, 'black', svgBoxId)
-            }
-        }
-        this.createStaffBars(horizontalScale, trackNotesNumber);
-        if (this.songIsPlaying) {
-            this.createProgressBar(0, trackNotesNumber);
-        }
-    }
-    private createStaffBars(horizontalScale: number, trackNotesNumber: number) {
-        let svgBoxId = this.svgBoxIdPrefix + trackNotesNumber;
-        let svgBox = document.getElementById(svgBoxId);
-        let svgBoxWidth = svgBox.clientWidth;
-        let svgBoxHeight = svgBox.clientHeight;
-        let barx = 0;
-        while (barx < svgBoxWidth) {
-            this.createLine(barx, barx, 0, svgBoxHeight, 1, this.colorMusicBar, '',
-                svgBox)
-            barx += this.song.getTicksPerBar() * horizontalScale;
-        }
-    }
-
-    // Cleans the graphic and the information svg boxes
-    private cleanSvg(trackNotesNumber: number) {
-        let svgBoxId = this.svgBoxIdPrefix + trackNotesNumber;
-        let svgBox = document.getElementById(svgBoxId);
-        let parentElement = svgBox.parentElement;
-        let emptySvg = svgBox.cloneNode(false);
-        parentElement.removeChild(svgBox);
-        parentElement.appendChild(emptySvg);
-        svgBox = document.getElementById(svgBoxId);
-    }
-    // ----------------------------------------------------------------------------------
 
     private zoom() {
         return this.zoomSteps[this.zoomIndex];
@@ -183,15 +69,16 @@ export class TrackDisplayService {
         }
         this.scrollDisplacementX *= (this.zoom() - 1);
         this.scrollDisplacementY *= (this.zoom() - 1);
-        for (let i = 0; i < this.song.notesTracks.length; i++) {
-            this.drawGraphic(i);
-        }
+        this.scrollDisplacementX = 0;
+        this.scrollDisplacementY = 0;
+        this.drawAllTracksGraphics();
     }
     public moveWindow(directionX: number, directionY: number) {
         // when we haven't zoomed in, there is no need to move anything
         if (this.zoom() <= 1) {
             return;
         }
+        // Get the first one, just to take the size
         let svgBoxId = this.svgBoxIdPrefix + '0';
         let svgBox = document.getElementById(svgBoxId);
         let svgBoxWidth = svgBox.clientWidth;
@@ -222,63 +109,22 @@ export class TrackDisplayService {
         }
         if (initialScrollDisplacementX !== this.scrollDisplacementX ||
             initialScrollDisplacementY !== this.scrollDisplacementY) {
-            for (let i = 0; i < this.song.notesTracks.length; i++) {
-                this.drawGraphic(i);
-            }
+            this.drawAllTracksGraphics();
         }
     }
-    public songStarted(startPositionInTicks: number) {
-        this.songIsPlaying = true;
+    public drawAllTracksGraphics() {
         for (let i = 0; i < this.song.notesTracks.length; i++) {
-            this.createProgressBar(0, i);
+            this.drawTrackGraphic(i);
         }
     }
-    public songPaused() {
-        for (let i = 0; i < this.song.notesTracks.length; i++) {
-            let progressBarId = this.progressBarIdPrefix + i;
-            let svgBoxId = this.svgBoxIdPrefix + i;
-            let svgBox = document.getElementById(svgBoxId);
-            this.songIsPlaying = false;
-            try {
-                let progressBar = document.getElementById(progressBarId);
-                if (progressBar) {
-                    svgBox.removeChild(progressBar);
-                }
-            } catch (error) {
-                console.log('An exception was raised at SongDisplayService.songPaused()');
-                console.log(error);
-            }
-        }
-    }
-    public songStopped() {
-        this.songIsPlaying = false;
-        this.removeProgressBar();
+    public drawTrackGraphic(trackNumber: number) {
+        let svgBoxId = this.svgBoxIdPrefix + trackNumber;
+        let progressBarId = this.progressBarIdPrefix + trackNumber;
+        this._svgBoxService.drawTrackGraphic(trackNumber, svgBoxId, this.song, this.zoom(),
+            this.scrollDisplacementX, this.scrollDisplacementY, this.songIsPlaying, progressBarId);
     }
 
-    private removeProgressBar() {
-        for (let i = 0; i < this.song.notesTracks.length; i++) {
-            try {
-                let progressBarId = this.progressBarIdPrefix + i;
-                let svgBoxId = this.svgBoxIdPrefix + i;
-                let svgBox = document.getElementById(svgBoxId);
-                let progressBar = document.getElementById(progressBarId);
-                if (progressBar) {
-                    svgBox.removeChild(progressBar);
-                }
-            } catch (error) {
-                console.log('An exception was raised at SongDisplayService.songStopped()');
-                console.log(error);
-            }
-        }
-    }
-
-    public updateProgress(elapsedTimeInSeconds: number) {
-        let totalDuration = this.song.durationInSeconds * (1 - this.sliderPositionAtStart);
-        if (totalDuration === 0) { // check to avoid a division by 0
-            console.log('Unexpected song progress event because the total duration of the part of the song to play is 0');
-            return;
-        }
-        let progress = elapsedTimeInSeconds / totalDuration + this.sliderPositionAtStart;
+    public createProgressBar(progress: number) {
         for (let i = 0; i < this.song.notesTracks.length; i++) {
             try {
                 let progressBarId = this.progressBarIdPrefix + i;
@@ -289,7 +135,7 @@ export class TrackDisplayService {
                 let x = progress * svgBoxWidth;
                 let actualx: number = x * this.zoom() - this.scrollDisplacementX;
                 if (!progressBar) {
-                    progressBar = this.createProgressBar(0, i);
+                    progressBar = this._svgBoxService.createProgressBar(0, svgBoxId, progressBarId);
                 }
                 if (actualx > 0 && actualx < svgBoxWidth) {
                     progressBar.setAttributeNS(null, 'x1', actualx.toString());
@@ -304,5 +150,25 @@ export class TrackDisplayService {
                 console.log(error);
             }
         }
+    }
+    public songStarted(startPositionInTicks: number) {
+        this.songIsPlaying = true;
+        this.createProgressBar(0);
+    }
+    public songPausedorStopped() {
+        this.songIsPlaying = false;
+        this.drawAllTracksGraphics();
+    }
+
+   
+
+    public updateProgress(elapsedTimeInSeconds: number) {
+        let totalDuration = this.song.durationInSeconds * (1 - this.sliderPositionAtStart);
+        if (totalDuration === 0) { // check to avoid a division by 0
+            console.log('Unexpected song progress event because the total duration of the part of the song to play is 0');
+            return;
+        }
+        let progress = elapsedTimeInSeconds / totalDuration + this.sliderPositionAtStart;
+        this.createProgressBar(progress);
     }
 }

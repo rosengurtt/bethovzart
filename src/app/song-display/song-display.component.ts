@@ -18,6 +18,7 @@ declare var MIDIjs: any;
 })
 export class SongDisplayComponent implements OnChanges, OnInit {
     @Input() song: SongJson;
+    @Input() isCollapsed: boolean;
     subscriptionAudioEvents: Subscription;
     isInitialized = false;
 
@@ -45,10 +46,10 @@ export class SongDisplayComponent implements OnChanges, OnInit {
                 this._trackDisplayService.songStarted(event.data);
                 break;
             case AudioControlsEventTypes.stop:
-                this._trackDisplayService.songStopped();
+                this._trackDisplayService.songPausedorStopped();
                 break;
             case AudioControlsEventTypes.pause:
-                this._trackDisplayService.songPaused();
+                this._trackDisplayService.songPausedorStopped();
                 break;
             case AudioControlsEventTypes.zoomIn:
                 this._trackDisplayService.changeZoom(1);

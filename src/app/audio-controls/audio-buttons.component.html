@@ -1,45 +1,48 @@
-<div class="col-md-6 col-lg-6">
-    <button type="button" class="btn btn-danger" (click)="goToBeginning()">
+<div style="width:100%">
+        <div class="col-md-6 col-lg-6">
+                <button type="button" class="btn btn-danger" (click)="goToBeginning()">
             <span class="glyphicon glyphicon-backward"></span>&nbsp;
     </button>
-    <button type="button" class="btn btn-danger" (click)="playSong()">
+                <button type="button" class="btn btn-danger" (click)="playSong()">
             <span class="glyphicon glyphicon-play"></span>&nbsp;
     </button>
-    <button type="button" class="btn btn-danger" (click)="pauseSong()">
+                <button type="button" class="btn btn-danger" (click)="pauseSong()">
             <span class="glyphicon glyphicon-pause"></span>&nbsp;
     </button>
-    <button type="button" class="btn btn-danger" (click)="stopSong()">
+                <button type="button" class="btn btn-danger" (click)="stopSong()">
             <span class="glyphicon glyphicon-stop"></span>&nbsp;
     </button>
-    <button type="button" class="btn btn-danger" (click)="goToEnd()">
+                <button type="button" class="btn btn-danger" (click)="goToEnd()">
             <span class="glyphicon glyphicon-forward"></span>&nbsp;
     </button>
-    <span>&nbsp;&nbsp;&nbsp;</span>
-    <button type="button" class="btn btn-danger" (click)="zoomIn()">
+                <span>&nbsp;&nbsp;&nbsp;</span>
+                <button type="button" class="btn btn-danger" (click)="zoomIn()">
             <span class="glyphicon glyphicon-zoom-in"></span>&nbsp;
     </button>
-    <button type="button" class="btn btn-danger" (click)="zoomOut()">
+                <button type="button" class="btn btn-danger" (click)="zoomOut()">
             <span class="glyphicon glyphicon-zoom-out"></span>
     </button>
-    <span>&nbsp;&nbsp;&nbsp;</span>
-    <button type="button" class="btn btn-danger" (click)="moveLeft()">
+                <span>&nbsp;&nbsp;&nbsp;</span>
+                <button type="button" class="btn btn-danger" (click)="moveLeft()">
             <span class="glyphicon glyphicon-arrow-left"></span>
     </button>
-    <button type="button" class="btn btn-danger" (click)="moveRight()">
+                <button type="button" class="btn btn-danger" (click)="moveRight()">
             <span class="glyphicon glyphicon-arrow-right"></span>
     </button>
-    <button type="button" class="btn btn-danger" (click)="moveDown()">
+                <button type="button" class="btn btn-danger" (click)="moveDown()">
             <span class="glyphicon glyphicon-arrow-down"></span>
     </button>
-    <button type="button" class="btn btn-danger" (click)="moveUp()">
+                <button type="button" class="btn btn-danger" (click)="moveUp()">
             <span class="glyphicon glyphicon-arrow-up"></span>
     </button>
-    <span>&nbsp;&nbsp;&nbsp;</span>
-</div>
-<div class="col-md-6 col-lg-6">
-    <img src="./app/assets/images/metronome.png" style="float:left" (click)="resetTempo()">
-    
-    <input type="text" class="form-control input-sm" [ngModel]="bpm" (ngModelChange)="tempoChange($event)" 
-    style="float:left;width:50px;margin:6px" />
-                
-</div>
+                <span>&nbsp;&nbsp;&nbsp;</span>
+        </div>
+        <div class="col-md-6 col-lg-6">
+                <img src="./app/assets/images/metronome.png" style="float:left" (click)="resetTempo()">
+
+                <input type="text" class="form-control input-sm" [ngModel]="bpm" (ngModelChange)="tempoChange($event)" style="float:left;width:50px;margin:6px"
+                />
+                <button type="button" class="btn btn-danger" (click)="collapseExpand()">
+            <span [ngClass]="getCollapseButtonClass()"></span>
+    </button>
+        </div>

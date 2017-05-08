@@ -23,6 +23,7 @@ export class AudioButtonsComponent implements OnChanges {
     mouseDown: boolean = false;
     loadFinished: boolean;
     bpm: string;
+    collapsed = false;
 
     constructor(
         private _audioControlsService: AudioControlsService,
@@ -96,6 +97,21 @@ export class AudioButtonsComponent implements OnChanges {
     }
     moveDown() {
         this._audioControlsEventsService.raiseEvent(AudioControlsEventTypes.moveDown);
+    }
+
+    collapseExpand() {
+        this.collapsed = !this.collapsed;
+        if (this.collapsed) {
+            this._audioControlsEventsService.raiseEvent(AudioControlsEventTypes.collapseDisplay);
+        } else {
+            this._audioControlsEventsService.raiseEvent(AudioControlsEventTypes.expandDisplay);
+        }
+    }
+    getCollapseButtonClass(): any {
+        if (!this.collapsed) {
+            return { 'glyphicon': true, 'glyphicon-menu-up ': true, 'glyphicon-menu-down': false };
+        }
+        return { 'glyphicon': true, 'glyphicon-menu-up': false, 'glyphicon-menu-down': true };
     }
     //  used for debugging. Allows to save buffer to disk
     private downloadeame(filename, buffer) {

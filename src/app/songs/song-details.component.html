@@ -1,8 +1,7 @@
 <div *ngIf='song'>
     <div style="padding:15px">Song: {{song.name}} - {{song._id}}</div>
     <div *ngIf='songJson'>
-        <audio-controls [song]="songJson" ></audio-controls>
-        <song-display [song]="songJson" ></song-display>   
+        <audio-controls [song]="songJson"></audio-controls>
+        <song-display [song]="songJson" [isCollapsed]="isCollapsed"></song-display>
     </div>
 </div>
-

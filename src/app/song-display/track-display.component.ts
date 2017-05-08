@@ -23,20 +23,10 @@ export class TrackDisplayComponent implements AfterViewChecked, OnInit {
     subscriptionAudioEvents: Subscription;
     isInitialized = false;
     songIsPlaying: boolean;
-    svgns: string = 'http://www.w3.org/2000/svg';
     svgBoxId = 'svgBox' + this.trackNotesNumber;
     svgBox: any;  // html svg element where the music is shown graphically
     svgBoxWidth: number;
     progressBarId = 'progressBar' + this.trackNotesNumber;
-    zoomIndex: number;  // is the index inside the zoomSteps array
-    zoomSteps: number[] = [1, 1.5, 2, 3, 4, 6, 8, 12, 16, 20];
-    scrollDisplacementX: number; // when the user has zoomed in, and only part of the image is
-    // shown, scrollDisplacement is the length from the left border
-    // shown to the beginning of the song (outside the image)
-    scrollDisplacementY: number;
-    colorMusicBar: string = 'rgb(200,180,170)';
-    colorProgressBar: string = 'rgb(200,0,0)';
-    noteDotRadio: number = 1;
     trackInfo: string;
     muteButtonCurrentImage: string = './app/assets/images/speakerOn.png';
     imageSpeakerOn = './app/assets/images/speakerOn.png';
@@ -44,8 +34,6 @@ export class TrackDisplayComponent implements AfterViewChecked, OnInit {
     trackIsMuted: boolean;
     trackIsSolo: boolean;
     soloUnsolo: string; // text that shows if track is playing solo or not
-    maxLengthInstrumentsList = 50;  // if a track has too many instruments, showing them all distorts
-    // the image
     initialVolume: number;
 
     constructor(
@@ -79,7 +67,7 @@ export class TrackDisplayComponent implements AfterViewChecked, OnInit {
     ngOnInit() {
         // Populate information section
         this.trackNumber = this.song.notesTracks[this.trackNotesNumber].trackNumber;
-        let thisTrackInfo = this.song.notesTracks[this.trackNotesNumber];
+       // let thisTrackInfo = this.song.notesTracks[this.trackNotesNumber];
         let track = this.song.tracks[this.trackNumber];
 
         this.trackInfo = GeneralMidiInstrument.GetInstrumentName(track.Instrument);
@@ -97,7 +85,7 @@ export class TrackDisplayComponent implements AfterViewChecked, OnInit {
         if (!this.isInitialized) {
             this.initialize();
             this._trackDisplayService.initialize(this.song, this.trackNotesNumber);
-            this._trackDisplayService.drawGraphic(this.trackNotesNumber);
+            this._trackDisplayService.drawTrackGraphic(this.trackNotesNumber);
             this.isInitialized = true;
         }
     }

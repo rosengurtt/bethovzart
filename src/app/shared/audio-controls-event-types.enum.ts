@@ -22,5 +22,6 @@ export enum AudioControlsEventTypes {
     trackUnsolo,
     volumeChange,
     tempoChange,
-    goToPoint
+    collapseDisplay,
+    expandDisplay
 }

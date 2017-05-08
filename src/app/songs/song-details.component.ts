@@ -1,10 +1,14 @@
 import { Component, Input, OnDestroy, OnChanges, SimpleChange } from '@angular/core';
+import { Subscription } from 'rxjs/Subscription';
 
 import { Song } from './song';
 import { SongJson } from '../midi/song-json/song-json';
 import { SongRepositoryService } from './song-repository.service';
 import { Midi2JsonService } from '../midi/midi-to-json.service';
 import { Band } from './band';
+import { AudioControlsEventsService } from '../shared/audio-controls-events.service';
+import { AudioControlEvent } from '../shared/audio-control-event';
+import { AudioControlsEventTypes } from '../shared/audio-controls-event-types.enum';
 
 declare var MIDIjs: any;
 
@@ -16,12 +20,28 @@ export class SongDetailsComponent implements OnChanges {
     song: Song;
     songJson: SongJson;
     @Input() selectedSongId: string;
+    isCollapsed = false;
+    subscriptionAudioEvents: Subscription;
 
     constructor(
         private _songService: SongRepositoryService,
-        private _midi2JsonService: Midi2JsonService) {
+        private _midi2JsonService: Midi2JsonService,
+        private _audioControlsEventsService: AudioControlsEventsService) {
+        this.subscriptionAudioEvents = this._audioControlsEventsService
+            .getEvents().subscribe(event => {
+                this.handleEvent(event);
+            });
     }
-
+    private handleEvent(event: AudioControlEvent) {
+        switch (event.type) {
+            case AudioControlsEventTypes.collapseDisplay:
+                this.isCollapsed = true;
+                break;
+            case AudioControlsEventTypes.expandDisplay:
+                this.isCollapsed = false;
+                break;
+        }
+    }
 
 
     async ngOnChanges(changes: { [propKey: string]: SimpleChange }) {

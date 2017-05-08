@@ -16,6 +16,7 @@ import { SongDisplayModule } from '../song-display/song-display.module';
 import { FileUploadService } from '../shared/file-upload.service';
 import { SortPipe } from '../shared/sort-by.pipe';
 import { TrackDisplayService } from '../song-display/track-display.service';
+import { SvgBoxService } from '../song-display/svg-box.service';
 
 @NgModule({
   imports: [
@@ -37,7 +38,8 @@ import { TrackDisplayService } from '../song-display/track-display.service';
     FileUploadService,
     Midi2JsonService,
     MidiFileCheckerService,
-    TrackDisplayService
+    TrackDisplayService,
+    SvgBoxService
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
