@@ -46,10 +46,10 @@ export class SongDisplayComponent implements OnChanges, OnInit {
                 this._trackDisplayService.songStarted(event.data);
                 break;
             case AudioControlsEventTypes.stop:
-                this._trackDisplayService.songPausedorStopped();
+                this._trackDisplayService.songPausedOrStopped();
                 break;
             case AudioControlsEventTypes.pause:
-                this._trackDisplayService.songPausedorStopped();
+                this._trackDisplayService.songPausedOrStopped();
                 break;
             case AudioControlsEventTypes.zoomIn:
                 this._trackDisplayService.changeZoom(1);

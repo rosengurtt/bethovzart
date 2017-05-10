@@ -3,6 +3,7 @@ import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { SharedModule } from '../shared/shared.module';
 import { SongDisplayComponent } from './song-display.component';
 import { TrackDisplayComponent } from './track-display.component';
+import { TracksCollapsedComponent } from './tracks-collapsed.component';
 
 @NgModule({
     imports: [
@@ -10,7 +11,8 @@ import { TrackDisplayComponent } from './track-display.component';
     ],
     declarations: [
         SongDisplayComponent,
-        TrackDisplayComponent
+        TrackDisplayComponent,
+        TracksCollapsedComponent
     ],
     providers: [
     ],

@@ -84,7 +84,7 @@ export class TrackDisplayComponent implements AfterViewChecked, OnInit {
     ngAfterViewChecked() {
         if (!this.isInitialized) {
             this.initialize();
-            this._trackDisplayService.initialize(this.song, this.trackNotesNumber);
+            this._trackDisplayService.initialize(this.song);
             this._trackDisplayService.drawTrackGraphic(this.trackNotesNumber);
             this.isInitialized = true;
         }

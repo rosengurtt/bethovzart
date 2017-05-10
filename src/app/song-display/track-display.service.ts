@@ -22,6 +22,8 @@ export class TrackDisplayService {
     scrollDisplacementY: number;
     svgBoxIdPrefix = 'svgBox';
     progressBarIdPrefix = 'progressBar';
+    svgBoxCollapsedId = 'svgBoxCollapsed';
+    progressBarCollapsedId = 'progressBar';
     moveStep: number = 0.7;    // How much the image move when clicking the arrow buttons. 70%
     sliderPositionAtStart: number = 0;
 
@@ -34,7 +36,7 @@ export class TrackDisplayService {
             });
     }
 
-    public initialize(song: SongJson, trackNotesNumber: number) {
+    public initialize(song: SongJson) {
         this.song = song;
         this.zoomIndex = 0;
         this.scrollDisplacementX = 0;
@@ -71,7 +73,7 @@ export class TrackDisplayService {
         this.scrollDisplacementY *= (this.zoom() - 1);
         this.scrollDisplacementX = 0;
         this.scrollDisplacementY = 0;
-        this.drawAllTracksGraphics();
+        this.updateGraphics();
     }
     public moveWindow(directionX: number, directionY: number) {
         // when we haven't zoomed in, there is no need to move anything
@@ -81,6 +83,12 @@ export class TrackDisplayService {
         // Get the first one, just to take the size
         let svgBoxId = this.svgBoxIdPrefix + '0';
         let svgBox = document.getElementById(svgBoxId);
+        if (!svgBox) {
+            svgBox = document.getElementById(this.svgBoxCollapsedId);
+            if (!svgBox) {
+                return;
+            }
+        }
         let svgBoxWidth = svgBox.clientWidth;
         let svgBoxHeight = svgBox.clientHeight;
         let initialScrollDisplacementX = this.scrollDisplacementX;
@@ -109,13 +117,14 @@ export class TrackDisplayService {
         }
         if (initialScrollDisplacementX !== this.scrollDisplacementX ||
             initialScrollDisplacementY !== this.scrollDisplacementY) {
-            this.drawAllTracksGraphics();
+            this.updateGraphics();
         }
     }
-    public drawAllTracksGraphics() {
+    public updateGraphics() {
         for (let i = 0; i < this.song.notesTracks.length; i++) {
             this.drawTrackGraphic(i);
         }
+        this.drawTracksCollapsedGraphic();
     }
     public drawTrackGraphic(trackNumber: number) {
         let svgBoxId = this.svgBoxIdPrefix + trackNumber;
@@ -123,44 +132,31 @@ export class TrackDisplayService {
         this._svgBoxService.drawTrackGraphic(trackNumber, svgBoxId, this.song, this.zoom(),
             this.scrollDisplacementX, this.scrollDisplacementY, this.songIsPlaying, progressBarId);
     }
+    public drawTracksCollapsedGraphic() {
+        this._svgBoxService.drawTracksCollapsedGraphic(this.svgBoxCollapsedId, this.song, this.zoom(),
+            this.scrollDisplacementX, this.scrollDisplacementY, this.songIsPlaying, this.progressBarCollapsedId);
+    }
 
     public createProgressBar(progress: number) {
         for (let i = 0; i < this.song.notesTracks.length; i++) {
-            try {
-                let progressBarId = this.progressBarIdPrefix + i;
-                let progressBar = document.getElementById(progressBarId);
-                let svgBoxId = this.svgBoxIdPrefix + i;
-                let svgBox = document.getElementById(svgBoxId);
-                let svgBoxWidth = svgBox.clientWidth;
-                let x = progress * svgBoxWidth;
-                let actualx: number = x * this.zoom() - this.scrollDisplacementX;
-                if (!progressBar) {
-                    progressBar = this._svgBoxService.createProgressBar(0, svgBoxId, progressBarId);
-                }
-                if (actualx > 0 && actualx < svgBoxWidth) {
-                    progressBar.setAttributeNS(null, 'x1', actualx.toString());
-                    progressBar.setAttributeNS(null, 'x2', actualx.toString());
-                    progressBar.setAttributeNS(null, 'visibility', 'visible');
-                } else {
-                    progressBar.setAttributeNS(null, 'visibility', 'hidden');
-                }
-
-            } catch (error) {
-                console.log('An exception was raised at SongDisplayService.updateProgress()');
-                console.log(error);
-            }
+            let progressBarId = this.progressBarIdPrefix + i;
+            let svgBoxId = this.svgBoxIdPrefix + i;
+            this._svgBoxService.createProgressBar(svgBoxId, progressBarId, this.zoom(),
+                this.scrollDisplacementX, progress);
         }
+        this._svgBoxService.createProgressBar(this.svgBoxCollapsedId, this.progressBarCollapsedId,
+            this.zoom(), this.scrollDisplacementX, progress);
     }
     public songStarted(startPositionInTicks: number) {
         this.songIsPlaying = true;
         this.createProgressBar(0);
     }
-    public songPausedorStopped() {
+    public songPausedOrStopped() {
         this.songIsPlaying = false;
-        this.drawAllTracksGraphics();
+        this.updateGraphics();
     }
 
-   
+
 
     public updateProgress(elapsedTimeInSeconds: number) {
         let totalDuration = this.song.durationInSeconds * (1 - this.sliderPositionAtStart);
@@ -169,6 +165,8 @@ export class TrackDisplayService {
             return;
         }
         let progress = elapsedTimeInSeconds / totalDuration + this.sliderPositionAtStart;
-        this.createProgressBar(progress);
+        if (elapsedTimeInSeconds > 0) {
+            this.createProgressBar(progress);
+        }
     }
 }

@@ -10,7 +10,23 @@ export class SvgBoxService {
     colorProgressBar: string = 'rgb(200,0,0)';
     noteDotRadio: number = 1;
 
-    public createProgressBar(x = 0, svgBoxId: string, progressBarId: string): any {
+    public createProgressBar(svgBoxId: string, progressBarId: string, zoom: number,
+        scrollDisplacementX: number, progress: number): any {
+        let progressBar = document.getElementById(progressBarId);
+        let svgBox = document.getElementById(svgBoxId);
+        if (svgBox) {
+            let svgBoxWidth = svgBox.clientWidth;
+            let x = progress * svgBoxWidth;
+            let actualx: number = x * zoom - scrollDisplacementX;
+            this.deleteProgressBar(svgBoxId, progressBarId);
+            if (actualx > 0 && actualx < svgBoxWidth) {
+                progressBar = this.createLine(x, x, 0, svgBox.clientHeight, 2,
+                    this.colorProgressBar, progressBarId, svgBox);
+            }
+        }
+    }
+
+    public deleteProgressBar(svgBoxId: string, progressBarId: string) {
         let progressBar = document.getElementById(progressBarId);
         let svgBox = document.getElementById(svgBoxId);
         if (progressBar) {
@@ -21,8 +37,6 @@ export class SvgBoxService {
                 console.log(error);
             }
         }
-        return this.createLine(x, x, 0, svgBox.clientHeight, 2,
-            this.colorProgressBar, progressBarId, svgBox);
     }
 
     public createLine(x1: number, x2: number, y1: number, y2: number, width: number,
@@ -58,6 +72,9 @@ export class SvgBoxService {
         scrollDisplacementX: number, scrollDisplacementY: number, createProgressBar: boolean,
         progressBarId?: string): string {
         let svgBox = document.getElementById(svgBoxId);
+        if (!svgBox) {
+            return;
+        }
         let svgBoxWidth = svgBox.clientWidth;
         let svgBoxHeight = svgBox.clientHeight;
         this.cleanSvg(svgBoxId);
@@ -84,22 +101,69 @@ export class SvgBoxService {
                     this.noteDotRadio, 'black', svgBoxId)
             }
         }
-        this.createStaffBars(horizontalScale, trackNotesNumber, svgBoxId, song);
+        this.createStaffBars(horizontalScale, svgBoxId, song);
         if (createProgressBar) {
-            return this.createProgressBar(0, svgBoxId, progressBarId);
+            return this.createProgressBar(svgBoxId, progressBarId, zoom, scrollDisplacementX, 0);
         } else {
             return null;
         }
     }
-    private createStaffBars(horizontalScale: number, trackNotesNumber: number, svgBoxId: string, song: SongJson) {
+
+
+    public drawTracksCollapsedGraphic(svgBoxId: string, song: SongJson, zoom: number,
+        scrollDisplacementX: number, scrollDisplacementY: number, createProgressBar: boolean,
+        progressBarId?: string): string {
+
         let svgBox = document.getElementById(svgBoxId);
+        if (!svgBox) {
+            return;
+        }
         let svgBoxWidth = svgBox.clientWidth;
         let svgBoxHeight = svgBox.clientHeight;
-        let barx = 0;
-        while (barx < svgBoxWidth) {
-            this.createLine(barx, barx, 0, svgBoxHeight, 1, this.colorMusicBar, '',
-                svgBox)
-            barx += song.getTicksPerBar() * horizontalScale;
+        this.cleanSvg(svgBoxId);
+        let horizontalScale: number = svgBoxWidth / song.durationInTicks;
+        horizontalScale = horizontalScale * zoom;
+
+        let pitchSpaceLength = 128;
+        let verticalScale: number = svgBoxHeight / pitchSpaceLength;
+        verticalScale = verticalScale * zoom;
+        for (let i = 0; i < song.notesTracks.length; i++) {
+            let thisTrack = song.notesTracks[i];
+            let noteSeq: TrackNote[] = thisTrack.notesSequence;
+
+            // Create a dot for each note in the track
+            for (let m = 0; m < noteSeq.length; m++) {
+                let note: TrackNote = noteSeq[m];
+                let cx: number = note.ticksFromStart * horizontalScale;
+                let cy: number;
+                cy = svgBoxHeight - note.pitch * verticalScale + svgBoxHeight * (zoom - 1);
+                if (cx - scrollDisplacementX < svgBoxWidth &&
+                    cx - scrollDisplacementX > 0 &&
+                    cy - scrollDisplacementY < svgBoxHeight &&
+                    cy - scrollDisplacementY > 0) {
+                    this.createDot(cx - scrollDisplacementX, cy - scrollDisplacementY,
+                        this.noteDotRadio, 'black', svgBoxId)
+                }
+            }
+        }
+        this.createStaffBars(horizontalScale, svgBoxId, song);
+        if (createProgressBar) {
+            return this.createProgressBar(svgBoxId, progressBarId, zoom, scrollDisplacementX, 0);
+        } else {
+            return null;
+        }
+    }
+    private createStaffBars(horizontalScale: number, svgBoxId: string, song: SongJson) {
+        let svgBox = document.getElementById(svgBoxId);
+        if (svgBox) {
+            let svgBoxWidth = svgBox.clientWidth;
+            let svgBoxHeight = svgBox.clientHeight;
+            let barx = 0;
+            while (barx < svgBoxWidth) {
+                this.createLine(barx, barx, 0, svgBoxHeight, 1, this.colorMusicBar, '',
+                    svgBox)
+                barx += song.getTicksPerBar() * horizontalScale;
+            }
         }
     }
 
@@ -112,4 +176,6 @@ export class SvgBoxService {
         parentElement.appendChild(emptySvg);
         svgBox = document.getElementById(svgBoxId);
     }
+
+
 }

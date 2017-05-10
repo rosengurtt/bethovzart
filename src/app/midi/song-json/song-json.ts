@@ -111,7 +111,7 @@ export class SongJson {
         let returnArray: MidiEvent[] = [];
         let channelIndependentEvents = this.tracks[0].events;
         for (let i = 0; i < channelIndependentEvents.length; i++) {
-            let event = new MidiEvent(channelIndependentEvents[i]);
+            let event = channelIndependentEvents[i];
             if (event.isTempo()) {
                 returnArray.push(event);
             }
