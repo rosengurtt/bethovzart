@@ -33,13 +33,13 @@ export class SongRepositoryService {
         return this.getMusicItem('songs/all');
     }
     async getSongMidiById(id: string): Promise<any> {
-        let self=this;
+        let self = this;
         return new Promise(function (resolve, reject) {
-            var xhr = new XMLHttpRequest();
-            xhr.open("GET", self._songLibraryUrl + 'songs/midi/' + id, true);
+            let xhr = new XMLHttpRequest();
+            xhr.open('GET', self._songLibraryUrl + 'songs/midi/' + id, true);
 
             // Ask for the result as an ArrayBuffer.
-            xhr.responseType = "arraybuffer";
+            xhr.responseType = 'arraybuffer';
 
             xhr.onload = function (e) {
                 resolve(this.response);

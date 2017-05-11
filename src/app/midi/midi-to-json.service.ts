@@ -1,8 +1,11 @@
 import { Injectable } from '@angular/core';
+import { Md5 } from 'ts-md5/dist/md5';
+
 import { SongJson } from './song-json/song-json';
 import { MidiEvent } from './midi-event';
 import { Track } from './song-json/track';
 import { ConcatenateUint8Array } from '../shared/concatenate-uint8array';
+import { Binary2base64 } from '../shared/binary-to-base64';
 
 let MIDIFile: any = require('midifile');
 
@@ -16,7 +19,9 @@ export class Midi2JsonService {
         let midiFile = new MIDIFile(readBuffer);
         let format: number = midiFile.header.getFormat(); // 0, 1 or 2
         let ticksPerBeat: number = midiFile.header.getTicksPerBeat();
-        let returnObject = new SongJson(format, ticksPerBeat, []);
+        let base64 = Binary2base64.convert(readBuffer);
+        let hash = Md5.hashStr(base64).toString();
+        let returnObject = new SongJson(format, ticksPerBeat, [], hash);
         let tracksCount: number = midiFile.header.getTracksCount();
 
         for (let i = 0; i < tracksCount; i++) {
@@ -65,7 +70,7 @@ export class Midi2JsonService {
     // If there are no patch change events, it would default to instrument 1 (piano). But we add a
     // patch change event so we make the assignment to the piano explicit
     private normalizeSongJson(song: SongJson): SongJson {
-        let returnObject = new SongJson(song.format, song.ticksPerBeat, []);
+        let returnObject = new SongJson(song.format, song.ticksPerBeat, [], song.hash);
 
         returnObject.tracks.push(this.getTrackWithChannelSpecificEvents(song));
 

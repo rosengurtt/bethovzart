@@ -67,10 +67,16 @@ export class TrackDisplayComponent implements AfterViewChecked, OnInit {
     ngOnInit() {
         // Populate information section
         this.trackNumber = this.song.notesTracks[this.trackNotesNumber].trackNumber;
-       // let thisTrackInfo = this.song.notesTracks[this.trackNotesNumber];
+        // let thisTrackInfo = this.song.notesTracks[this.trackNotesNumber];
         let track = this.song.tracks[this.trackNumber];
 
-        this.trackInfo = GeneralMidiInstrument.GetInstrumentName(track.Instrument);
+        if (track.channel !== 9) {
+            this.trackInfo = GeneralMidiInstrument.GetInstrumentName(track.Instrument);
+        }
+        else {
+            this.trackInfo = 'Drums';
+        }
+        this.trackInfo += ' - Channel ' + (track.channel + 1);
 
         if (this.song.notesTracks.length > 1) {
             this.soloUnsolo = 'Solo';
@@ -85,7 +91,7 @@ export class TrackDisplayComponent implements AfterViewChecked, OnInit {
         if (!this.isInitialized) {
             this.initialize();
             this._trackDisplayService.initialize(this.song);
-            this._trackDisplayService.drawTrackGraphic(this.trackNotesNumber);
+            //  this._trackDisplayService.drawTrackGraphic(this.trackNotesNumber);
             this.isInitialized = true;
         }
     }

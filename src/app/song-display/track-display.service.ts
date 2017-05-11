@@ -2,7 +2,6 @@ import { Injectable } from '@angular/core';
 import { Subscription } from 'rxjs/Subscription';
 
 import { SongJson } from '../midi/song-json/song-json';
-import { TrackNote } from '../midi/track-note';
 import { AudioControlsEventsService } from '../shared/audio-controls-events.service';
 import { AudioControlEvent } from '../shared/audio-control-event';
 import { AudioControlsEventTypes } from '../shared/audio-controls-event-types.enum';
@@ -37,12 +36,25 @@ export class TrackDisplayService {
     }
 
     public initialize(song: SongJson) {
-        this.song = song;
-        this.zoomIndex = 0;
-        this.scrollDisplacementX = 0;
-        this.scrollDisplacementY = 0;
-        this.songIsPlaying = false;
+        if (this.allSvgBoxesHaveBeenCreated(song.notesTracks.length)) {
+            this.song = song;
+            this.zoomIndex = 0;
+            this.scrollDisplacementX = 0;
+            this.scrollDisplacementY = 0;
+            this.songIsPlaying = false;
+            this.updateGraphics();
+        }
     }
+
+    private allSvgBoxesHaveBeenCreated(noTracks: number): boolean {
+        let svgBoxCollapsed = document.getElementById(this.svgBoxCollapsedId);
+        let lastSvgBoxTrack = document.getElementById(this.svgBoxIdPrefix + (noTracks - 1));
+        if (svgBoxCollapsed || lastSvgBoxTrack){
+            return true;
+        }
+        return false;
+    }
+
     private handleEvent(event: AudioControlEvent) {
         switch (event.type) {
             case AudioControlsEventTypes.playStartPositionCalculated:

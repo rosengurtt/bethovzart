@@ -8,6 +8,10 @@ export class SvgBoxService {
     svgns: string = 'http://www.w3.org/2000/svg';
     colorMusicBar: string = 'rgb(200,180,170)';
     colorProgressBar: string = 'rgb(200,0,0)';
+    colorList: string[] = ['rgb(255,0,0)', 'rgb(200,55,0)', 'rgb(150,155,0)', 'rgb(100,200,0)',
+        'rgb(50,200,0)', 'rgb(0,255,0)', 'rgb(0,200,55)', 'rgb(0,155,100)',
+        'rgb(0,100,155)', 'rgb(0,50,200)', 'rgb(0,0,255)', 'rgb(200,0,55)',
+        'rgb(150,0,100)', 'rgb(100,0,150', 'rgb(50,0,200)', 'rgb(100,200,55)'];
     noteDotRadio: number = 1;
 
     public createProgressBar(svgBoxId: string, progressBarId: string, zoom: number,
@@ -128,6 +132,7 @@ export class SvgBoxService {
         let verticalScale: number = svgBoxHeight / pitchSpaceLength;
         verticalScale = verticalScale * zoom;
         for (let i = 0; i < song.notesTracks.length; i++) {
+            let color = this.colorList[i];
             let thisTrack = song.notesTracks[i];
             let noteSeq: TrackNote[] = thisTrack.notesSequence;
 
@@ -142,7 +147,7 @@ export class SvgBoxService {
                     cy - scrollDisplacementY < svgBoxHeight &&
                     cy - scrollDisplacementY > 0) {
                     this.createDot(cx - scrollDisplacementX, cy - scrollDisplacementY,
-                        this.noteDotRadio, 'black', svgBoxId)
+                        this.noteDotRadio, color, svgBoxId)
                 }
             }
         }

@@ -11,18 +11,19 @@ export class SongJson {
     format: number;
     ticksPerBeat: number;
     tracks: Track[];
+    private _hash: string;  // This is an md5 hash calculated over the midi bytes of the original song
     private _durationInTicks: number = -1;
     private _notesTracks: NotesTrack[];
     private _durationInSeconds: number = -1;
     private _tempoEvents: MidiEvent[];
     private _timeSignature: TimeSignature;
-    private _trackVolumes: number[];
 
 
-    constructor(format?: number, ticksPerBeat?: number, tracks?: MidiEvent[][]) {
+    constructor(format?: number, ticksPerBeat?: number, tracks?: MidiEvent[][], hash?: string) {
         this.format = format;
         this.ticksPerBeat = ticksPerBeat;
         this.tracks = [];
+        this._hash = hash;
         if (tracks) {
             for (let i = 0; i < tracks.length; i++) {
                 this.tracks.push(new Track(tracks[i]));
@@ -30,6 +31,9 @@ export class SongJson {
         }
     }
 
+    get hash(): string {
+        return this._hash;
+    }
 
 
     get tracksCount(): number {
