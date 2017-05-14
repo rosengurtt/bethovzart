@@ -2,17 +2,56 @@ import { Injectable } from '@angular/core';
 
 import { SongJson } from '../midi/song-json/song-json';
 import { TrackNote } from '../midi/track-note';
+import { Instrument } from '../midi/midi-codes/instrument.enum';
 
 @Injectable()
 export class SvgBoxService {
     svgns: string = 'http://www.w3.org/2000/svg';
     colorMusicBar: string = 'rgb(200,180,170)';
     colorProgressBar: string = 'rgb(200,0,0)';
-    colorList: string[] = ['rgb(255,0,0)', 'rgb(200,55,0)', 'rgb(150,155,0)', 'rgb(100,200,0)',
-        'rgb(50,200,0)', 'rgb(0,255,0)', 'rgb(0,200,55)', 'rgb(0,155,100)',
-        'rgb(0,100,155)', 'rgb(0,50,200)', 'rgb(0,0,255)', 'rgb(200,0,55)',
-        'rgb(150,0,100)', 'rgb(100,0,150', 'rgb(50,0,200)', 'rgb(100,200,55)'];
+    // keyboards are blue
+    colorPiano: string = 'rgb(51,0,153)';
+    colorOrgan: string = 'rgb(71,0,214)';
+    colorSynthLead: string = 'rgb(0,102,153)';
+    colorSynthPad: string = 'rgb(99,20,255)';
+    colorSynthEffects: string = 'rgb(0,0,102)';
+    colorEnsemble: string = 'rgb(122,122,255)';
+    // bass is violet
+    colorBass: string = 'rgb(163,0,163)';
+    // string are red
+    colorGuitar: string = 'rgb(214,0,0)';
+    colorStrings: string = 'rgb(255,20,99)';
+    // viento are green
+    colorBrass: string = 'rgb(0,102,0)';
+    colorReed: string = 'rgb(102,102,0)';
+    colorPipe: string = 'rgb(0,224,0)';
+    // drums and percussion are black
+    colorDrums: string = 'rgb(0,0,0)';
+    colorPercussion: string = 'rgb(50,50,50)';
+    colorEthnic: string = 'rgb(100,100,100';
+    colorSoundEffects: string = 'rgb(140,140,140)';
+
     noteDotRadio: number = 1;
+
+    private getColor(instrument: Instrument, channel: number): string {
+        if (channel === 9) return this.colorDrums;
+        if (instrument < 8) return this.colorPiano;
+        if (instrument < 16) return this.colorPercussion;
+        if (instrument < 24) return this.colorOrgan;
+        if (instrument < 32) return this.colorGuitar;
+        if (instrument < 40) return this.colorBass;
+        if (instrument < 48) return this.colorStrings;
+        if (instrument < 56) return this.colorEnsemble;
+        if (instrument < 64) return this.colorBrass;
+        if (instrument < 72) return this.colorReed;
+        if (instrument < 80) return this.colorPipe;
+        if (instrument < 88) return this.colorSynthLead;
+        if (instrument < 96) return this.colorSynthPad;
+        if (instrument < 104) return this.colorSynthEffects;
+        if (instrument < 112) return this.colorEthnic;
+        if (instrument < 120) return this.colorPercussion;
+        return this.colorSoundEffects;
+    }
 
     public createProgressBar(svgBoxId: string, progressBarId: string, zoom: number,
         scrollDisplacementX: number, progress: number): any {
@@ -90,6 +129,9 @@ export class SvgBoxService {
         let verticalScale: number = svgBoxHeight / pitchSpaceLength;
         verticalScale = verticalScale * zoom;
         let noteSeq: TrackNote[] = thisTrack.notesSequence;
+        let instrument = song.notesTracks[trackNotesNumber].instrument;
+        let channel = song.notesTracks[trackNotesNumber].channel;
+        let color = this.getColor(instrument, channel);
 
         // Create a dot for each note in the track
         for (let m = 0; m < noteSeq.length; m++) {
@@ -102,7 +144,7 @@ export class SvgBoxService {
                 cy - scrollDisplacementY < svgBoxHeight &&
                 cy - scrollDisplacementY > 0) {
                 this.createDot(cx - scrollDisplacementX, cy - scrollDisplacementY,
-                    this.noteDotRadio, 'black', svgBoxId)
+                    this.noteDotRadio, color, svgBoxId)
             }
         }
         this.createStaffBars(horizontalScale, svgBoxId, song);
@@ -132,7 +174,9 @@ export class SvgBoxService {
         let verticalScale: number = svgBoxHeight / pitchSpaceLength;
         verticalScale = verticalScale * zoom;
         for (let i = 0; i < song.notesTracks.length; i++) {
-            let color = this.colorList[i];
+            let instrument = song.notesTracks[i].instrument;
+            let channel = song.notesTracks[i].channel;
+            let color = this.getColor(instrument, channel);
             let thisTrack = song.notesTracks[i];
             let noteSeq: TrackNote[] = thisTrack.notesSequence;
 

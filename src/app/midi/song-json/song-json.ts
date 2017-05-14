@@ -131,7 +131,8 @@ export class SongJson {
             if (TrackNotes.length > 0) {
                 let range: TrackRange = this.getTrackRange(TrackNotes);
                 let instrument = this.tracks[i].Instrument;
-                musicTracks.push(new NotesTrack(TrackNotes, range, instrument, i));
+                let channel =this.tracks[i].channel;
+                musicTracks.push(new NotesTrack(TrackNotes, range, instrument, channel, i));
             }
         }
         return musicTracks;

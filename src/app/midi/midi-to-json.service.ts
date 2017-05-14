@@ -69,10 +69,12 @@ export class Midi2JsonService {
     // each instrument has its own track.
     // If there are no patch change events, it would default to instrument 1 (piano). But we add a
     // patch change event so we make the assignment to the piano explicit
+    // We order the tracks on ascending order of instruments, except for the drums track 
+    // (that uses channel 10) that goes at the end
     private normalizeSongJson(song: SongJson): SongJson {
         let returnObject = new SongJson(song.format, song.ticksPerBeat, [], song.hash);
 
-        returnObject.tracks.push(this.getTrackWithChannelSpecificEvents(song));
+        returnObject.tracks.push(this.getTrackWithChannelIndependentEvents(song));
 
         for (let i = 0; i < 16; i++) {
             let tracks = this.getTracksWithEventsOfChannel(i, song);
@@ -80,7 +82,110 @@ export class Midi2JsonService {
                 returnObject.tracks.push(tracks[j]);
             }
         }
-        return returnObject;
+        song = this.mergeTracksWhenPlayingSameInstrumentInSameChannel(returnObject);
+        return this.sortTracks(returnObject);
+    }
+
+    private sortTracks(song: SongJson): SongJson {
+        let tracksNo = song.tracks.length;
+        // Find drums track and send it to the end
+        // Start with the second track, because the first has channel independent events
+        for (let i = 1; i < tracksNo; i++) {
+            if (song.tracks[i].channel === 9) {
+                let aux = song.tracks[i];
+                for (let j = 0; j < tracksNo - i - 1; j++) {
+                    song.tracks[i + j] = song.tracks[i + j + 1]
+                }
+                song.tracks[tracksNo - 1] = aux;
+                break;
+            }
+        }
+        // Since there are only a few, it is not worth to use a quickSort
+        for (let i = 1; i < tracksNo - 1; i++) {
+            for (let j = i + 1; j < tracksNo - 1; j++) {
+                if (song.tracks[i].Instrument > song.tracks[j].Instrument) {
+                    let aux = song.tracks[i];
+                    song.tracks[i] = song.tracks[j];
+                    song.tracks[j] = aux;
+                }
+            }
+        }
+        return song;
+    }
+
+    // To avoid having unnecessary tracks, if there are 2 tracks playing the same instrument
+    // in the same channel in different places of the song, they can be merged into one
+    private mergeTracksWhenPlayingSameInstrumentInSameChannel(song: SongJson): SongJson {
+        for (let i = 1; i < song.tracks.length; i++) {
+            for (let j = i + 1; j < song.tracks.length; j++) {
+                if (song.tracks[i].Instrument === song.tracks[j].Instrument &&
+                    song.tracks[i].channel === song.tracks[j].channel) {
+                    if (!this.tracksHaveNotesInSameBar(song.tracks[i], song.tracks[j], song.ticksPerBeat)) {
+                        // conditions for merging are met for tracks i and j
+                        song = this.mergeTracks(song, i, j);
+                    }
+                }
+            }
+        }
+        return song;
+    }
+
+    // merges 2 tracks that have the same channel and instrument into 1
+    private mergeTracks(song: SongJson, indexTrack1: number, indexTrack2: number): SongJson {
+        let track1 = song.tracks[indexTrack1];
+        let track2 = song.tracks[indexTrack2];
+        // if index numbers are wrong, don't do anything
+        if (indexTrack1 > song.tracks.length - 1 ||
+            indexTrack2 > song.tracks.length - 1) {
+            return song;
+        }
+        // insert events from track2 in track1
+        let i = 0;  // couneter for track1
+        let j = 0; // counter for track 2
+
+        while (j < track2.events.length) {
+            let event = track2.events[j];
+            while (track1.events[i].ticksSinceStart < event.ticksSinceStart &&
+                i < track1.events.length - 1) {
+                i++;
+            }
+            event.delta = event.ticksSinceStart - track1.events[i].ticksSinceStart;
+            i++; // Now i has the value where we want to insert the event
+            track1.events.splice(i, 0, event);
+            j++;
+        }
+        // remove track2
+        song.tracks.splice(indexTrack2, 1);
+        return song;
+    }
+
+    // Used to check if 2 tracks can be merged. We want to merge only them if they never play both
+    // in the same bar
+    private tracksHaveNotesInSameBar(track1: Track, track2: Track, ticksPerBar: number): boolean {
+        let lastEventTrack1 = track1.events[track1.events.length - 1];
+        let lastEventTrack2 = track2.events[track2.events.length - 1];
+        let tickOfLastEventToCheck = lastEventTrack1.ticksSinceStart > lastEventTrack2.ticksSinceStart ?
+            lastEventTrack2.ticksSinceStart : lastEventTrack1.ticksSinceStart;
+        // check in each bar
+        for (let i = 0; i <= tickOfLastEventToCheck / ticksPerBar; i++) {
+            if (this.trackHasNotesInBar(track1, i, ticksPerBar) &&
+                this.trackHasNotesInBar(track2, i, ticksPerBar)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private trackHasNotesInBar(track: Track, bar: number, ticksPerBar: number) {
+        for (let i = 0; i < track.events.length; i++) {
+            let event = track.events[i];
+            if (event.isNote() &&
+                event.ticksSinceStart >= ((bar - 1) * ticksPerBar) &&
+                event.ticksSinceStart <= ((bar) * ticksPerBar)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     // Returns an array of tracks that has all the events corresponding to a specific channel, from any of the original tracks
@@ -138,9 +243,22 @@ export class Midi2JsonService {
         }
         // Terminate the last track
         currentTrack.addEndOfTrackEvent();
-        return returnObject;
+        return this.removeTracksWithoutNotes(returnObject);
     }
-    private getTrackWithChannelSpecificEvents(song: SongJson): Track {
+    private removeTracksWithoutNotes(tracks: Track[]): Track[] {
+        let i = 0;
+        while (i < tracks.length) {
+            if (tracks[i].Notes.length === 0) {
+                tracks.splice(i, 1);
+            } else {
+                i++;
+            }
+        }
+        return tracks;
+    }
+
+
+    private getTrackWithChannelIndependentEvents(song: SongJson): Track {
         // First look for all events not channel specific and put them on a single track
         // Initially the events may be out of order, because they may come from different tracks
         let returnTrack = new Track([]);
@@ -175,15 +293,6 @@ export class Midi2JsonService {
             returnArray[i].delta = returnArray[i].ticksSinceStart - returnArray[i - 1].ticksSinceStart;
         }
 
-        // // Add End of track event
-        // let ticksSinceStartOfLastEvent = 0
-        // if (returnArray.length > 0) {
-        //     ticksSinceStartOfLastEvent = returnArray[returnArray.length - 1].ticksSinceStart;
-
-        // }
-        // returnArray.push(new MidiEvent({
-        //     delta: 0, type: 0xFF, subtype: 0x2F, ticksSinceStart: ticksSinceStartOfLastEvent
-        // }));
         return returnArray;
     }
 

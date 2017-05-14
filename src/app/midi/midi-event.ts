@@ -158,7 +158,7 @@ export class MidiEvent {
         return this.isOfType(MidiEventType.TrackName);
     }
     public isChannelIndependent(): boolean {
-        if (this.isTempo() || this.isTimeSignature() || this.isKeySignature() || this.isResetAllControllers()){
+        if (typeof this.channel === 'undefined') {
             return true;
         }
         return false;

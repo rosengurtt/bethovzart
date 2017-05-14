@@ -20,7 +20,11 @@ export class Track {
     get channel(): number {
         if (!this._channel) {
             if (this.events.length > 0) {
-                this._channel = this.events[0].channel;
+                let i = 0;
+                while (typeof this.events[i].channel === 'undefined' && i < this.events.length) {
+                    i++;
+                }
+                this._channel = this.events[i].channel;
             }
         }
         return this._channel;
