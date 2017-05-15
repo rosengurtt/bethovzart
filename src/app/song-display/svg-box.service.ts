@@ -99,7 +99,7 @@ export class SvgBoxService {
     }
 
     // returns a reference to the dot created
-    public createDot(x: number, y: number, r: number, color: string, svgBoxId: string): any {
+    private createDot(x: number, y: number, r: number, color: string, svgBoxId: string): any {
         let svgBox = document.getElementById(svgBoxId);
         let dot: any = document.createElementNS(this.svgns, 'circle');
         dot.setAttributeNS(null, 'cx', x);
@@ -108,6 +108,17 @@ export class SvgBoxService {
         dot.setAttributeNS(null, 'fill', color);
         svgBox.appendChild(dot);
         return dot;
+    }
+
+    private createText(text: string, x: number, y: number, fontSize: string, svgBox: any) {
+        let textElement: any = document.createElementNS(this.svgns, 'text');
+        let textNode = document.createTextNode(text);
+        textElement.appendChild(textNode);
+        textElement.setAttributeNS(null, 'x', x);
+        textElement.setAttributeNS(null, 'y', y);
+        textElement.setAttributeNS(null, 'font-size', fontSize);
+        svgBox.appendChild(textElement);
+        return textElement;
     }
 
     // Draws everything in the svg box, given the zoom value and x/y discplacements
@@ -147,7 +158,7 @@ export class SvgBoxService {
                     this.noteDotRadio, color, svgBoxId)
             }
         }
-        this.createStaffBars(horizontalScale, svgBoxId, song);
+        this.createStaffBars(horizontalScale, svgBoxId, song, scrollDisplacementX);
         if (createProgressBar) {
             return this.createProgressBar(svgBoxId, progressBarId, zoom, scrollDisplacementX, 0);
         } else {
@@ -195,23 +206,32 @@ export class SvgBoxService {
                 }
             }
         }
-        this.createStaffBars(horizontalScale, svgBoxId, song);
+        this.createStaffBars(horizontalScale, svgBoxId, song, scrollDisplacementX);
         if (createProgressBar) {
             return this.createProgressBar(svgBoxId, progressBarId, zoom, scrollDisplacementX, 0);
         } else {
             return null;
         }
     }
-    private createStaffBars(horizontalScale: number, svgBoxId: string, song: SongJson) {
+    private createStaffBars(horizontalScale: number, svgBoxId: string, song: SongJson, scrollDisplacement: number) {
         let svgBox = document.getElementById(svgBoxId);
         if (svgBox) {
             let svgBoxWidth = svgBox.clientWidth;
             let svgBoxHeight = svgBox.clientHeight;
+            let fontSize = 10;
             let barx = 0;
+            let barwidth = song.getTicksPerBar() * horizontalScale;
+            let barNo = 1 + Math.floor(scrollDisplacement / barwidth);
+            let xOfPreviousBarNumber = 0
             while (barx < svgBoxWidth) {
-                this.createLine(barx, barx, 0, svgBoxHeight, 1, this.colorMusicBar, '',
-                    svgBox)
-                barx += song.getTicksPerBar() * horizontalScale;
+                this.createLine(barx, barx, 0, svgBoxHeight, 1, this.colorMusicBar, '', svgBox)
+                let xOfText = ((barwidth < 15) || (barNo > 100)) ? barx + 1 : barx + barwidth / 3;
+                if (xOfText - xOfPreviousBarNumber > 20) {
+                    this.createText(barNo.toString(), xOfText, fontSize, fontSize.toString(), svgBox);
+                    xOfPreviousBarNumber = xOfText;
+                }
+                barx += barwidth;
+                barNo++;
             }
         }
     }
