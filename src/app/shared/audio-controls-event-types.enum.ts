@@ -23,5 +23,6 @@ export enum AudioControlsEventTypes {
     volumeChange,
     tempoChange,
     collapseDisplay,
-    expandDisplay
+    expandDisplay,
+    reset
 }

@@ -94,7 +94,10 @@ export class AudioControlsService {
             case AudioControlsEventTypes.restart:
                 this.restartSong();
                 break;
-
+            case AudioControlsEventTypes.reset:
+                this.initialize(this.song);
+                this.restartSong();
+                break;
         }
     }
 
@@ -117,7 +120,7 @@ export class AudioControlsService {
     }
 
     private restartSong() {
-        if (this.isPlaying === false) {
+        if (!this.isPlaying || this.isRestarting) {
             return;
         }
         this.isRestarting = true;

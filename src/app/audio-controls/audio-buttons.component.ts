@@ -113,19 +113,24 @@ export class AudioButtonsComponent implements OnChanges {
         }
         return { 'glyphicon': true, 'glyphicon-menu-up': false, 'glyphicon-menu-down': true };
     }
-    //  used for debugging. Allows to save buffer to disk
-    private downloadeame(filename, buffer) {
-        let base64encoded = Binary2base64.convert(buffer);
-        let element = document.createElement('a');
-        element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(base64encoded));
-        element.setAttribute('download', filename);
 
-        element.style.display = 'none';
-        document.body.appendChild(element);
-
-        element.click();
-
-        document.body.removeChild(element);
+    reset() {
+        this._audioControlsEventsService.raiseEvent(AudioControlsEventTypes.reset);
+        this.resetTempo();
     }
+    //  used for debugging. Allows to save buffer to disk
+    // private downloadeame(filename, buffer) {
+    //     let base64encoded = Binary2base64.convert(buffer);
+    //     let element = document.createElement('a');
+    //     element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(base64encoded));
+    //     element.setAttribute('download', filename);
+
+    //     element.style.display = 'none';
+    //     document.body.appendChild(element);
+
+    //     element.click();
+
+    //     document.body.removeChild(element);
+    // }
 }
 

@@ -1,4 +1,5 @@
 // represents a noteOn/noteOff event in a track
+// the duration is in ticks
 export class TrackNote {
     ticksFromStart: number;
     pitch: number;

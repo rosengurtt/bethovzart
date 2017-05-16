@@ -55,10 +55,11 @@ export class TrackDisplayComponent implements AfterViewChecked, OnInit {
                 break;
             case AudioControlsEventTypes.trackUnsolo:
                 if (event.data !== this.trackNumber) {
-                    this.muteButtonCurrentImage = this.imageSpeakerOn;
-                    this.trackIsMuted = false;
-                    this.soloUnsolo = 'Solo';
+                    this.resetTrack();
                 }
+                break;
+            case AudioControlsEventTypes.reset:
+                this.resetTrack();
                 break;
         }
     }
@@ -129,5 +130,10 @@ export class TrackDisplayComponent implements AfterViewChecked, OnInit {
     public volumeChange(vol) {
         let eventData: any = { trackNumber: this.trackNumber, volume: vol };
         this._audioControlsEventsService.raiseEvent(AudioControlsEventTypes.volumeChange, eventData);
+    }
+    public resetTrack() {
+        this.muteButtonCurrentImage = this.imageSpeakerOn;
+        this.trackIsMuted = false;
+        this.soloUnsolo = 'Solo';
     }
 }
