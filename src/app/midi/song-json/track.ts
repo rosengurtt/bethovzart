@@ -41,7 +41,7 @@ export class Track {
 
 
     get Notes(): MidiEvent[] {
-        return this.getEventsOfType(MidiEventType.Note);
+        return this.getEventsOfType(MidiEventType.Note, MidiEventType.PitchBend);
     }
 
     get Instrument(): Instrument {
@@ -167,11 +167,14 @@ export class Track {
         return returnArray;
     }
 
-    public getEventsOfType(type: MidiEventType, onlyFirst?: boolean): MidiEvent[] {
+    public getEventsOfType(type1: MidiEventType, type2?: MidiEventType): MidiEvent[] {
         let returnArray: MidiEvent[] = [];
         for (let j = 0; j < this.events.length; j++) {
             let event: MidiEvent = this.events[j];
-            if (event.isOfType(type)) {
+            if (event.isOfType(type1)) {
+                returnArray.push(event);
+            }
+            if (type2 && event.isOfType(type2)) {
                 returnArray.push(event);
             }
         }

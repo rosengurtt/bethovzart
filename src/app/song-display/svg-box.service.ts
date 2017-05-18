@@ -97,6 +97,18 @@ export class SvgBoxService {
         svgBox.appendChild(line);
         return line;
     }
+    private createNote(x: number, y: number, l: number, color: string, svgBoxId: string): any {
+        let svgBox = document.getElementById(svgBoxId);
+        let line: any = document.createElementNS(this.svgns, 'line');
+        line.setAttributeNS(null, 'width', 1);
+        line.setAttributeNS(null, 'x1', x);
+        line.setAttributeNS(null, 'x2', x + l);
+        line.setAttributeNS(null, 'y1', y);
+        line.setAttributeNS(null, 'y2', y);
+        line.setAttributeNS(null, 'style', 'stroke:' + color);
+        svgBox.appendChild(line);
+        return line;
+    }
 
     // returns a reference to the dot created
     private createDot(x: number, y: number, r: number, color: string, svgBoxId: string): any {
@@ -121,7 +133,6 @@ export class SvgBoxService {
         return textElement;
     }
 
-    // Draws everything in the svg box, given the zoom value and x/y discplacements
     public drawTrackGraphic(trackNotesNumber: number, svgBoxId: string, song: SongJson, zoom: number,
         scrollDisplacementX: number, scrollDisplacementY: number, createProgressBar: boolean,
         progressBarId?: string): string {
@@ -144,29 +155,17 @@ export class SvgBoxService {
         let channel = song.notesTracks[trackNotesNumber].channel;
         let color = this.getColor(instrument, channel);
 
-        // Create a dot for each note in the track
-        for (let m = 0; m < noteSeq.length; m++) {
-            let note: TrackNote = noteSeq[m];
-            let cx: number = note.ticksFromStart * horizontalScale;
-            let cy: number;
-            cy = svgBoxHeight - note.pitch * verticalScale + svgBoxHeight * (zoom - 1);
-            if (cx - scrollDisplacementX < svgBoxWidth &&
-                cx - scrollDisplacementX > 0 &&
-                cy - scrollDisplacementY < svgBoxHeight &&
-                cy - scrollDisplacementY > 0) {
-                this.createDot(cx - scrollDisplacementX, cy - scrollDisplacementY,
-                    this.noteDotRadio, color, svgBoxId)
-            }
-        }
+
+        this.paintNotesTrack(thisTrack.notesSequence, horizontalScale, verticalScale, svgBoxId,
+            scrollDisplacementX, scrollDisplacementY, color, zoom);
+
         this.createStaffBars(horizontalScale, svgBoxId, song, scrollDisplacementX);
         if (createProgressBar) {
-            return this.createProgressBar(svgBoxId, progressBarId, zoom, scrollDisplacementX, 0);
-        } else {
-            return null;
+            this.createProgressBar(svgBoxId, progressBarId, zoom, scrollDisplacementX, 0);
         }
     }
 
-
+    // Draws in one canvas all tracks mixed together
     public drawTracksCollapsedGraphic(svgBoxId: string, song: SongJson, zoom: number,
         scrollDisplacementX: number, scrollDisplacementY: number, createProgressBar: boolean,
         progressBarId?: string): string {
@@ -189,28 +188,33 @@ export class SvgBoxService {
             let channel = song.notesTracks[i].channel;
             let color = this.getColor(instrument, channel);
             let thisTrack = song.notesTracks[i];
-            let noteSeq: TrackNote[] = thisTrack.notesSequence;
 
-            // Create a dot for each note in the track
-            for (let m = 0; m < noteSeq.length; m++) {
-                let note: TrackNote = noteSeq[m];
-                let cx: number = note.ticksFromStart * horizontalScale;
-                let cy: number;
-                cy = svgBoxHeight - note.pitch * verticalScale + svgBoxHeight * (zoom - 1);
-                if (cx - scrollDisplacementX < svgBoxWidth &&
-                    cx - scrollDisplacementX > 0 &&
-                    cy - scrollDisplacementY < svgBoxHeight &&
-                    cy - scrollDisplacementY > 0) {
-                    this.createDot(cx - scrollDisplacementX, cy - scrollDisplacementY,
-                        this.noteDotRadio, color, svgBoxId)
-                }
-            }
+            this.paintNotesTrack(thisTrack.notesSequence, horizontalScale, verticalScale, svgBoxId,
+                scrollDisplacementX, scrollDisplacementY, color, zoom);
+
         }
         this.createStaffBars(horizontalScale, svgBoxId, song, scrollDisplacementX);
         if (createProgressBar) {
-            return this.createProgressBar(svgBoxId, progressBarId, zoom, scrollDisplacementX, 0);
-        } else {
-            return null;
+            this.createProgressBar(svgBoxId, progressBarId, zoom, scrollDisplacementX, 0);
+        }
+    }
+    private paintNotesTrack(noteSeq: TrackNote[], horizontalScale: number, verticalScale: number,
+        svgBoxId: string, scrollDisplacementX: number, scrollDisplacementY: number, color: string,
+        zoom: number) {
+        let svgBox = document.getElementById(svgBoxId);
+        let svgBoxWidth = svgBox.clientWidth;
+        let svgBoxHeight = svgBox.clientHeight;
+        for (let m = 0; m < noteSeq.length; m++) {
+            let note: TrackNote = noteSeq[m];
+            let cx: number = note.ticksFromStart * horizontalScale;
+            let cy: number = svgBoxHeight - note.pitch * verticalScale + svgBoxHeight * (zoom - 1);
+            if (cx - scrollDisplacementX < svgBoxWidth &&
+                cx - scrollDisplacementX > 0 &&
+                cy - scrollDisplacementY < svgBoxHeight &&
+                cy - scrollDisplacementY > 0) {
+                this.createNote(cx - scrollDisplacementX, cy - scrollDisplacementY,
+                    note.duration * horizontalScale, color, svgBoxId);
+            }
         }
     }
     private createStaffBars(horizontalScale: number, svgBoxId: string, song: SongJson, scrollDisplacement: number) {
@@ -224,7 +228,7 @@ export class SvgBoxService {
             let barNo = 1 + Math.floor(scrollDisplacement / barwidth);
             let xOfPreviousBarNumber = 0
             while (barx < svgBoxWidth) {
-                this.createLine(barx, barx, 0, svgBoxHeight, 1, this.colorMusicBar, '', svgBox)
+                this.createLine(barx, barx, 0, svgBoxHeight, 1, this.colorMusicBar, '', svgBox);
                 let xOfText = ((barwidth < 15) || (barNo > 100)) ? barx + 1 : barx + barwidth / 3;
                 if (xOfText - xOfPreviousBarNumber > 20) {
                     this.createText(barNo.toString(), xOfText, fontSize, fontSize.toString(), svgBox);

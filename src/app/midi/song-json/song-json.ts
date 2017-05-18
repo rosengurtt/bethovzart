@@ -131,7 +131,7 @@ export class SongJson {
             if (TrackNotes.length > 0) {
                 let range: TrackRange = this.getTrackRange(TrackNotes);
                 let instrument = this.tracks[i].Instrument;
-                let channel =this.tracks[i].channel;
+                let channel = this.tracks[i].channel;
                 musicTracks.push(new NotesTrack(TrackNotes, range, instrument, channel, i));
             }
         }
@@ -141,30 +141,63 @@ export class SongJson {
     // Used to get the events in a midi track that correspond to notes on and notes off
     private getNotes(midiTrack: Track): TrackNote[] {
         let returnArray: TrackNote[] = [];
-        let timeSinceStart = 0;
+        let timeSinceSongStart = 0;
 
         let noteEvents: MidiEvent[] = midiTrack.Notes;
+        let bendEvents = midiTrack.getEventsOfType(MidiEventType.PitchBend);
+
 
         // Need to calculate the duration of each note. Must match noteOn with NoteOff events
         for (let i = 0; i < noteEvents.length; i++) {
             let midiEvent = noteEvents[i];
-            timeSinceStart = midiEvent.ticksSinceStart;
-            if (midiEvent.isNoteOn) {
+            timeSinceSongStart = midiEvent.ticksSinceStart;
+            if (midiEvent.isNoteOn()) {
                 // Find corresponding note off
-                let pitch = midiEvent.param1;
+                let originalPitch = midiEvent.param1;
+                let currentPitch = originalPitch;
+                let originalStart = midiEvent.ticksSinceStart;
+                let currentStart = originalStart;
+                let previousBend = 0;
+                let isBent = false;
                 let j = 1;
-                while (noteEvents[i + j] && ((!noteEvents[i + j].isNoteOff) || (noteEvents[i + j].param1 !== pitch))) {
+                while (noteEvents[i + j]) {
+                    if ((noteEvents[i + j].isNoteOff() && noteEvents[i + j].param1 === originalPitch) ||
+                        (noteEvents[i + j].param1 === originalPitch) && (noteEvents[i + j].param2 === 0)) {
+                        break;
+                    }
+                    if (noteEvents[i + j].isPitchBend()) {
+                        let currentBend = noteEvents[i + j].param2 - 0x40;
+                        // If the maximum of 0x40 is reached, the displacement is 4 semitones
+                        let displacementInSemitonesFromOriginalPitch = Math.round((currentBend) / 0x40 * 4);
+                        let displacementInSemitonesFromPreviousPitch =
+                            displacementInSemitonesFromOriginalPitch - Math.round((previousBend) / 0x40 * 4);
+                        // If the acumulated bending reaches a semitone, end the current note and insert another
+                        if (Math.abs(displacementInSemitonesFromPreviousPitch) > 0) {
+                            let timeNoteEnd = noteEvents[i + j].ticksSinceStart;
+                            returnArray = this.insertNote(currentStart, currentPitch, timeNoteEnd, returnArray, isBent);
+                            currentPitch = originalPitch + displacementInSemitonesFromOriginalPitch;
+                            currentStart = timeNoteEnd;
+                            previousBend = currentBend;
+                            isBent = true;
+                        }
+                    }
                     j++;
                 }
                 if (noteEvents[i + j]) {
                     let noteOffEvent = noteEvents[i + j];
-                    let duration = noteOffEvent.ticksSinceStart - midiEvent.ticksSinceStart;
-                    let note = new TrackNote(timeSinceStart, pitch, duration);
-                    returnArray.push(note);
+                    let timeNoteEnd = noteOffEvent.ticksSinceStart;
+                    returnArray = this.insertNote(currentStart, currentPitch, timeNoteEnd, returnArray, isBent);
                 }
             }
         }
         return returnArray;
+    }
+    private insertNote(timeSinceStart: number, pitch: number, timeEnd: number,
+        noteArray: TrackNote[], isBent: boolean): TrackNote[] {
+        let duration = timeEnd - timeSinceStart;
+        let note = new TrackNote(timeSinceStart, pitch, duration, isBent);
+        noteArray.push(note);
+        return noteArray;
     }
 
     // Returns a new song that is a slice of the current song, starting from a specific tick
