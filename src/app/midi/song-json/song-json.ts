@@ -96,7 +96,7 @@ export class SongJson {
         return duration;
     }
     private getSongDurationInSeconds(): number {
-        let duration: number = 0;
+        let duration = 0;
         let tempoEvents = this.getTempoEvents();
         for (let i = 0; i < tempoEvents.length; i++) {
             let tempo: number = tempoEvents[i].tempoBPM;

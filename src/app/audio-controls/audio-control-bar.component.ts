@@ -74,6 +74,7 @@ export class AudioControlBarComponent implements OnChanges {
     }
 
     private musicProgress(elapsedTimeInSeconds: number) {
+        console.log("elapsed time="+elapsedTimeInSeconds)
         // the following check is needed because after clicking play, the first musicProgress event
         // arrives before than the play event.
         if (elapsedTimeInSeconds === 0) {
