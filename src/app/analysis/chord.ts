@@ -8,12 +8,16 @@ export class Chord {
     private _pitches: number[];
     private _intervals: number[]; // A place to save them, so they don't have to be recalculated
     private _notes: TrackNote[];
+    private _startTime: number;
+    private _duration: number;
 
-    constructor(notes: TrackNote[]) {
+    constructor(notes: TrackNote[], start = 0, dur = 0) {
         if (notes.length < 1) {
             throw ('Invalid chord data.');
         }
         this._notes = notes.sort((n1: TrackNote, n2: TrackNote) => n1.pitch - n2.pitch);
+        this._startTime = start;
+        this._duration = dur;
     }
     get notes() {
         return this._notes;
@@ -51,9 +55,9 @@ export class Chord {
 
     // For example Major, Minor, Major 7
     public getType(): ChordType {
-
+        let intervals = this.getIntervalsFromRoot();
         // Basic Triads
-        if (this.intervals.length === 3) {
+        if (intervals.length === 3) {
             if (this.hasPerfectFifth()) {
                 if (this.isMajor()) {
                     return ChordType.Major;
@@ -70,7 +74,7 @@ export class Chord {
         }
         // Basic 7ths
         if (this.hasThird() && this.hasSeventh()) {
-            if (this.intervals.length === 4) {
+            if (intervals.length === 4) {
                 if (this.hasPerfectFifth()) {
                     if (this.isMajor() && this.hasMajorSeventh()) {
                         return ChordType.Major7;
@@ -78,11 +82,15 @@ export class Chord {
                         return ChordType.Minor7;
                     } else if (this.isMinor() && this.hasMajorSeventh()) {
                         return ChordType.Minor7Major;
+                    } else if (this.isMajor() && this.hasMinorSeventh()) {
+                        return ChordType.Dominant7;
                     }
                 } else if (this.hasDiminishedFifth() && this.isMinor() && this.hasMinorSeventh()) {
                     return ChordType.HalfDiminished;
+                } else if (this.hasDiminishedFifth() && this.isMinor() && this.hasMajorSixth()) {
+                    return ChordType.Diminished;
                 }
-            } else if (this.intervals.length === 3) {
+            } else if (intervals.length === 3) {
                 if (this.isMajor() && this.hasMajorSeventh()) {
                     return ChordType.Major7;
                 } else if (this.isMinor() && this.hasMinorSeventh()) {
@@ -90,10 +98,25 @@ export class Chord {
                 } else if (this.isMinor() && this.hasMajorSeventh()) {
                     return ChordType.Minor7Major;
                 }
+            } else if (this.hasNinth()) {
+                if (this.isMajor() && this.hasMajorSeventh()) {
+                    return ChordType.Major9;
+                }
+                if (this.isMinor() && this.hasMinorSeventh()) {
+                    return ChordType.Minor9;
+                }
             }
         }
-       
-        return ChordType.Unknown;
+        // Ninth without seventh
+        if (this.hasNinth() && this.hasPerfectFifth()) {
+            if (this.isMajor()) {
+                return ChordType.Major9;
+            }
+            if (this.isMinor()) {
+                return ChordType.Minor9;
+            }
+            return ChordType.Unknown;
+        }
     }
 
     // Returns the intervals corresponding to thirds (3 semitones for minor, 4 for major)
@@ -149,6 +172,16 @@ export class Chord {
         return false;
     }
 
+    private hasMajorSixth() {
+        let intervals = this.getIntervalsFromRoot();
+        for (let i = 0; i < intervals.length; i++) {
+            if (intervals[i] === 9) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     private hasMajorSeventh() {
         let intervals = this.getIntervalsFromRoot();
         for (let i = 0; i < intervals.length; i++) {
@@ -169,6 +202,15 @@ export class Chord {
         return false;
     }
 
+    private hasNinth() {
+        let intervals = this.getIntervalsFromRoot();
+        for (let i = 0; i < intervals.length; i++) {
+            if (intervals[i] === 2) {
+                return true;
+            }
+        }
+        return false;
+    }
     private hasThird() {
         return (this.isMajor() || this.isMinor());
     }
