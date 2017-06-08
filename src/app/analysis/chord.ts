@@ -12,12 +12,28 @@ export class Chord {
     private _duration: number;
 
     constructor(notes: TrackNote[], start = 0, dur = 0) {
-        if (notes.length < 1) {
-            throw ('Invalid chord data.');
-        }
         this._notes = notes.sort((n1: TrackNote, n2: TrackNote) => n1.pitch - n2.pitch);
         this._startTime = start;
         this._duration = dur;
+    }
+
+    public add(note: TrackNote) {
+        // If we already have a note with this pitch, don't add it
+        for (let i = 0; i < this._notes.length; i++) {
+            if (this._notes[i].pitch === note.pitch) { return; }
+        }
+        this._pitches = null;
+        this._intervals = null;
+        this._notes.push(note);
+        this._notes = this._notes.sort((n1: TrackNote, n2: TrackNote) => n1.pitch - n2.pitch);
+    }
+
+    public removeAt(i: number) {
+        if (i < 0 || i >= this._notes.length) { return; }
+        this._pitches = null;
+        this._intervals = null;
+        this._notes = this._notes.splice(i, 1);
+        this._notes = this._notes.sort((n1: TrackNote, n2: TrackNote) => n1.pitch - n2.pitch);
     }
     get notes() {
         return this._notes;
