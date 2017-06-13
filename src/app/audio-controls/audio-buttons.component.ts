@@ -79,12 +79,12 @@ export class AudioButtonsComponent implements OnChanges {
         this._audioControlsEventsService.raiseEvent(AudioControlsEventTypes.goToEnd);
         this._audioControlsEventsService.raiseEvent(AudioControlsEventTypes.restart);
     }
-    zoomIn() {
-        this._audioControlsEventsService.raiseEvent(AudioControlsEventTypes.zoomIn);
+    zoomxIn() {
+        this._audioControlsEventsService.raiseEvent(AudioControlsEventTypes.zoomxIn);
     }
 
-    zoomOut() {
-        this._audioControlsEventsService.raiseEvent(AudioControlsEventTypes.zoomOut);
+    zoomxOut() {
+        this._audioControlsEventsService.raiseEvent(AudioControlsEventTypes.zoomxOut);
     }
     moveLeft() {
         this._audioControlsEventsService.raiseEvent(AudioControlsEventTypes.moveLeft);

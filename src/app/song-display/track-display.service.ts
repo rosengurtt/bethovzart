@@ -13,7 +13,7 @@ export class TrackDisplayService {
     song: SongJson;
     subscriptionAudioEvents: Subscription;
     songIsPlaying: boolean;
-    zoomIndex: number;  // is the index inside the zoomSteps array
+    zoomxIndex: number;  // is the index inside the zoomSteps array
     zoomSteps: number[] = [1, 1.5, 2, 3, 4, 6, 8, 12, 16, 20];
     scrollDisplacementX: number; // when the user has zoomed in, and only part of the image is
     // shown, scrollDisplacement is the length from the left border
@@ -38,7 +38,7 @@ export class TrackDisplayService {
     public initialize(song: SongJson) {
         if (this.allSvgBoxesHaveBeenCreated(song.notesTracks.length)) {
             this.song = song;
-            this.zoomIndex = 0;
+            this.zoomxIndex = 0;
             this.scrollDisplacementX = 0;
             this.scrollDisplacementY = 0;
             this.songIsPlaying = false;
@@ -63,33 +63,31 @@ export class TrackDisplayService {
         }
     }
 
-    private zoom() {
-        return this.zoomSteps[this.zoomIndex];
+    private zoomX() {
+        return this.zoomSteps[this.zoomxIndex];
     }
     // ------------------------------------------------------------------------------
     // Responses to events
     // ------------------------------------------------------------------------------
     // stepSign is +1 for zoom in and -1 for zoom out
-    public changeZoom(stepSign: number) {
+    public changeZoomX(stepSign: number) {
         // if invalid parameter do nothing
         if (stepSign !== 1 && stepSign !== -1) {
             return;
         }
-        this.zoomIndex += stepSign;
-        if (this.zoomIndex < 0) {
-            this.zoomIndex = 0;
-        } else if (this.zoomIndex >= this.zoomSteps.length) {
-            this.zoomIndex = this.zoomSteps.length - 1;
+        this.zoomxIndex += stepSign;
+        if (this.zoomxIndex < 0) {
+            this.zoomxIndex = 0;
+        } else if (this.zoomxIndex >= this.zoomSteps.length) {
+            this.zoomxIndex = this.zoomSteps.length - 1;
         }
-        this.scrollDisplacementX *= (this.zoom() - 1);
-        this.scrollDisplacementY *= (this.zoom() - 1);
+        this.scrollDisplacementX *= (this.zoomX() - 1);
         this.scrollDisplacementX = 0;
-        this.scrollDisplacementY = 0;
         this.updateGraphics();
     }
     public moveWindow(directionX: number, directionY: number) {
         // when we haven't zoomed in, there is no need to move anything
-        if (this.zoom() <= 1) {
+        if (this.zoomX() <= 1) {
             return;
         }
         // Get the first one, just to take the size
@@ -106,7 +104,7 @@ export class TrackDisplayService {
         let initialScrollDisplacementX = this.scrollDisplacementX;
         let initialScrollDisplacementY = this.scrollDisplacementY;
         if (directionX !== 0) {
-            let fullWidth: number = this.zoom() * svgBoxWidth;
+            let fullWidth: number = this.zoomX() * svgBoxWidth;
             let distanceToMove = svgBoxWidth * this.moveStep * directionX;
             if (this.scrollDisplacementX + distanceToMove < 0) {
                 this.scrollDisplacementX = 0;
@@ -117,7 +115,7 @@ export class TrackDisplayService {
             }
         }
         if (directionY !== 0) {
-            let fullHeight: number = this.zoom() * svgBoxHeight;
+            let fullHeight: number = this.zoomX() * svgBoxHeight;
             let distanceToMove = svgBoxHeight * this.moveStep * directionY;
             if (this.scrollDisplacementY + distanceToMove < 0) {
                 this.scrollDisplacementY = 0;
@@ -141,11 +139,11 @@ export class TrackDisplayService {
     public drawTrackGraphic(trackNumber: number) {
         let svgBoxId = this.svgBoxIdPrefix + trackNumber;
         let progressBarId = this.progressBarIdPrefix + trackNumber;
-        this._svgBoxService.drawTrackGraphic(trackNumber, svgBoxId, this.song, this.zoom(),
+        this._svgBoxService.drawTrackGraphic(trackNumber, svgBoxId, this.song, this.zoomX(),
             this.scrollDisplacementX, this.scrollDisplacementY, this.songIsPlaying, progressBarId);
     }
     public drawTracksCollapsedGraphic() {
-        this._svgBoxService.drawTracksCollapsedGraphic(this.svgBoxCollapsedId, this.song, this.zoom(),
+        this._svgBoxService.drawTracksCollapsedGraphic(this.svgBoxCollapsedId, this.song, this.zoomX(),
             this.scrollDisplacementX, this.scrollDisplacementY, this.songIsPlaying, this.progressBarCollapsedId);
     }
 
@@ -153,11 +151,11 @@ export class TrackDisplayService {
         for (let i = 0; i < this.song.notesTracks.length; i++) {
             let progressBarId = this.progressBarIdPrefix + i;
             let svgBoxId = this.svgBoxIdPrefix + i;
-            this._svgBoxService.createProgressBar(svgBoxId, progressBarId, this.zoom(),
+            this._svgBoxService.createProgressBar(svgBoxId, progressBarId, this.zoomX(),
                 this.scrollDisplacementX, progress);
         }
         this._svgBoxService.createProgressBar(this.svgBoxCollapsedId, this.progressBarCollapsedId,
-            this.zoom(), this.scrollDisplacementX, progress);
+            this.zoomX(), this.scrollDisplacementX, progress);
     }
     public songStarted(startPositionInTicks: number) {
         this.songIsPlaying = true;

@@ -3,6 +3,9 @@ import { Injectable } from '@angular/core';
 import { SongJson } from '../midi/song-json/song-json';
 import { TrackNote } from '../midi/track-note';
 import { Instrument } from '../midi/midi-codes/instrument.enum';
+import { SongChords } from '../analysis/song-chords';
+import { AlterationType } from '../analysis/alteration-type.enum';
+
 
 @Injectable()
 export class SvgBoxService {
@@ -53,17 +56,17 @@ export class SvgBoxService {
         return this.colorSoundEffects;
     }
 
-    public createProgressBar(svgBoxId: string, progressBarId: string, zoom: number,
+    public createProgressBar(svgBoxId: string, progressBarId: string, zoomx: number,
         scrollDisplacementX: number, progress: number): any {
         let progressBar = document.getElementById(progressBarId);
         let svgBox = document.getElementById(svgBoxId);
         if (svgBox) {
             let svgBoxWidth = svgBox.clientWidth;
             let x = progress * svgBoxWidth;
-            let actualx: number = x * zoom - scrollDisplacementX;
+            let actualx: number = x * zoomx - scrollDisplacementX;
             this.deleteProgressBar(svgBoxId, progressBarId);
             if (actualx > 0 && actualx < svgBoxWidth) {
-                progressBar = this.createLine(x, x, 0, svgBox.clientHeight, 2,
+                progressBar = this.createLine(actualx, actualx, 0, svgBox.clientHeight, 2,
                     this.colorProgressBar, progressBarId, svgBox);
             }
         }
@@ -133,7 +136,7 @@ export class SvgBoxService {
         return textElement;
     }
 
-    public drawTrackGraphic(trackNotesNumber: number, svgBoxId: string, song: SongJson, zoom: number,
+    public drawTrackGraphic(trackNotesNumber: number, svgBoxId: string, song: SongJson, zoomx: number,
         scrollDisplacementX: number, scrollDisplacementY: number, createProgressBar: boolean,
         progressBarId?: string): string {
         let svgBox = document.getElementById(svgBoxId);
@@ -144,29 +147,28 @@ export class SvgBoxService {
         let svgBoxHeight = svgBox.clientHeight;
         this.cleanSvg(svgBoxId);
         let horizontalScale: number = svgBoxWidth / song.durationInTicks;
-        horizontalScale = horizontalScale * zoom;
+        horizontalScale = horizontalScale * zoomx;
 
         let thisTrack = song.notesTracks[trackNotesNumber];
         let pitchSpaceLength = 128;
         let verticalScale: number = svgBoxHeight / pitchSpaceLength;
-        verticalScale = verticalScale * zoom;
-        let noteSeq: TrackNote[] = thisTrack.notesSequence;
         let instrument = song.notesTracks[trackNotesNumber].instrument;
         let channel = song.notesTracks[trackNotesNumber].channel;
         let color = this.getColor(instrument, channel);
 
 
         this.paintNotesTrack(thisTrack.notesSequence, horizontalScale, verticalScale, svgBoxId,
-            scrollDisplacementX, scrollDisplacementY, color, zoom);
+            scrollDisplacementX, scrollDisplacementY, color);
+        this.showChords(horizontalScale, svgBoxId, song, scrollDisplacementX);
 
         this.createStaffBars(horizontalScale, svgBoxId, song, scrollDisplacementX);
         if (createProgressBar) {
-            this.createProgressBar(svgBoxId, progressBarId, zoom, scrollDisplacementX, 0);
+            this.createProgressBar(svgBoxId, progressBarId, zoomx, scrollDisplacementX, 0);
         }
     }
 
     // Draws in one canvas all tracks mixed together
-    public drawTracksCollapsedGraphic(svgBoxId: string, song: SongJson, zoom: number,
+    public drawTracksCollapsedGraphic(svgBoxId: string, song: SongJson, zoomx: number,
         scrollDisplacementX: number, scrollDisplacementY: number, createProgressBar: boolean,
         progressBarId?: string): string {
 
@@ -178,11 +180,10 @@ export class SvgBoxService {
         let svgBoxHeight = svgBox.clientHeight;
         this.cleanSvg(svgBoxId);
         let horizontalScale: number = svgBoxWidth / song.durationInTicks;
-        horizontalScale = horizontalScale * zoom;
+        horizontalScale = horizontalScale * zoomx;
 
         let pitchSpaceLength = 128;
         let verticalScale: number = svgBoxHeight / pitchSpaceLength;
-        verticalScale = verticalScale * zoom;
         for (let i = 0; i < song.notesTracks.length; i++) {
             let instrument = song.notesTracks[i].instrument;
             let channel = song.notesTracks[i].channel;
@@ -190,24 +191,24 @@ export class SvgBoxService {
             let thisTrack = song.notesTracks[i];
 
             this.paintNotesTrack(thisTrack.notesSequence, horizontalScale, verticalScale, svgBoxId,
-                scrollDisplacementX, scrollDisplacementY, color, zoom);
+                scrollDisplacementX, scrollDisplacementY, color);
+            this.showChords(horizontalScale, svgBoxId, song, scrollDisplacementX);
 
         }
         this.createStaffBars(horizontalScale, svgBoxId, song, scrollDisplacementX);
         if (createProgressBar) {
-            this.createProgressBar(svgBoxId, progressBarId, zoom, scrollDisplacementX, 0);
+            this.createProgressBar(svgBoxId, progressBarId, zoomx, scrollDisplacementX, 0);
         }
     }
     private paintNotesTrack(noteSeq: TrackNote[], horizontalScale: number, verticalScale: number,
-        svgBoxId: string, scrollDisplacementX: number, scrollDisplacementY: number, color: string,
-        zoom: number) {
+        svgBoxId: string, scrollDisplacementX: number, scrollDisplacementY: number, color: string) {
         let svgBox = document.getElementById(svgBoxId);
         let svgBoxWidth = svgBox.clientWidth;
         let svgBoxHeight = svgBox.clientHeight;
         for (let m = 0; m < noteSeq.length; m++) {
             let note: TrackNote = noteSeq[m];
             let cx: number = note.ticksFromStart * horizontalScale;
-            let cy: number = svgBoxHeight - note.pitch * verticalScale + svgBoxHeight * (zoom - 1);
+            let cy: number = svgBoxHeight - note.pitch * verticalScale;
             if (cx - scrollDisplacementX < svgBoxWidth &&
                 cx - scrollDisplacementX > 0 &&
                 cy - scrollDisplacementY < svgBoxHeight &&
@@ -230,12 +231,41 @@ export class SvgBoxService {
             while (barx < svgBoxWidth) {
                 this.createLine(barx, barx, 0, svgBoxHeight, 1, this.colorMusicBar, '', svgBox);
                 let xOfText = ((barwidth < 15) || (barNo > 100)) ? barx + 1 : barx + barwidth / 3;
+                // Show the bar number if there is enough space between bars
                 if (xOfText - xOfPreviousBarNumber > 20) {
                     this.createText(barNo.toString(), xOfText, fontSize, fontSize.toString(), svgBox);
                     xOfPreviousBarNumber = xOfText;
                 }
                 barx += barwidth;
                 barNo++;
+            }
+        }
+    }
+
+    private showChords(horizontalScale: number, svgBoxId: string, song: SongJson, scrollDisplacement: number) {
+        let svgBox = document.getElementById(svgBoxId);
+        if (svgBox) {
+            let svgBoxWidth = svgBox.clientWidth;
+            let svgBoxHeight = svgBox.clientHeight;
+            let fontSize = 10;
+            let beatx = 0;
+            let beatwidth = song.ticksPerBeat * horizontalScale;
+            let beatNo = 1 + Math.floor(scrollDisplacement / beatwidth);
+            let xOfPreviousBeatNumber = 0
+            let chordsSequence = new SongChords(song);
+            while (beatx < svgBoxWidth) {
+                let chord = chordsSequence.getChordAtBeat(beatNo);
+                if (chord) {
+                    let xOfText = ((beatwidth < 20) || (beatNo > 100)) ? beatx + 1 : beatx + beatwidth / 4;
+                    // Show the bar number if there is enough space between bars
+                    if (xOfText - xOfPreviousBeatNumber > 20) {
+                        this.createText(chord.getRepresentation(AlterationType.none), xOfText, svgBoxHeight - fontSize,
+                            fontSize.toString(), svgBox);
+                        xOfPreviousBeatNumber = xOfText;
+                    }
+                }
+                beatx += beatwidth;
+                beatNo++;
             }
         }
     }

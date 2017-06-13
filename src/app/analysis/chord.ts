@@ -3,18 +3,26 @@
 // if it is a major or minor chord, if it has a 7th, etc.
 import { TrackNote } from '../midi/track-note';
 import { ChordType } from './chord-type.enum';
+import { AlterationType } from './alteration-type.enum';
 
 export class Chord {
     private _pitches: number[];
     private _intervals: number[]; // A place to save them, so they don't have to be recalculated
     private _notes: TrackNote[];
-    private _startTime: number;
-    private _duration: number;
+    private _chordType: ChordType;
+    private _root: number;
+    public startTime: number;
+    public duration: number;
+    public sacamela: ChordType=ChordType.Unknown;
 
-    constructor(notes: TrackNote[], start = 0, dur = 0) {
-        this._notes = notes.sort((n1: TrackNote, n2: TrackNote) => n1.pitch - n2.pitch);
-        this._startTime = start;
-        this._duration = dur;
+    constructor(notes: TrackNote[] = [], start = 0, dur = 0) {
+        if (notes) {
+            this._notes = notes.sort((n1: TrackNote, n2: TrackNote) => n1.pitch - n2.pitch);
+        } else {
+            this._notes = [];
+        }
+        this.startTime = start;
+        this.duration = dur;
     }
 
     public add(note: TrackNote) {
@@ -22,18 +30,20 @@ export class Chord {
         for (let i = 0; i < this._notes.length; i++) {
             if (this._notes[i].pitch === note.pitch) { return; }
         }
-        this._pitches = null;
-        this._intervals = null;
         this._notes.push(note);
         this._notes = this._notes.sort((n1: TrackNote, n2: TrackNote) => n1.pitch - n2.pitch);
     }
 
     public removeAt(i: number) {
         if (i < 0 || i >= this._notes.length) { return; }
-        this._pitches = null;
-        this._intervals = null;
+        this.resetCalculatedValues();
         this._notes = this._notes.splice(i, 1);
         this._notes = this._notes.sort((n1: TrackNote, n2: TrackNote) => n1.pitch - n2.pitch);
+    }
+    private resetCalculatedValues() {
+        this._pitches = null;
+        this._intervals = null;
+        this._chordType = null;
     }
     get notes() {
         return this._notes;
@@ -69,69 +79,142 @@ export class Chord {
         return false;
     }
 
+    get chordType() {
+        if (!this._chordType) {
+            this._chordType = this.getType();
+        }
+        this.sacamela = this._chordType;
+        return this._chordType;
+    }
     // For example Major, Minor, Major 7
     public getType(): ChordType {
+        // If there are less than 2 notes, we don't have a chord
+        if (!this._notes || this._notes.length <= 1) {
+            return ChordType.NotAchord;
+        }
+        if (this._notes.length === 2) {
+            if (this.intervals[0] === 7) {
+                return ChordType.Power;
+            }
+        }
         let intervals = this.getIntervalsFromRoot();
+
         // Basic Triads
-        if (intervals.length === 3) {
-            if (this.hasPerfectFifth()) {
-                if (this.isMajor()) {
-                    return ChordType.Major;
-                } else if (this.isMinor()) {
-                    return ChordType.Minor;
-                } else if (this.hasPerfectFourth) {
-                    return ChordType.Sus;
-                }
-            } else if (this.hasAugmentedFifth() && this.isMajor()) {
-                return ChordType.Augmented;
-            } else if (this.hasDiminishedFifth() && this.isMinor()) {
-                return ChordType.Diminished;
-            }
+        if (this.equal(intervals, [4, 7]) || this.equal(intervals, [0, 4, 7])) {
+            return ChordType.Major;
         }
-        // Basic 7ths
-        if (this.hasThird() && this.hasSeventh()) {
-            if (intervals.length === 4) {
-                if (this.hasPerfectFifth()) {
-                    if (this.isMajor() && this.hasMajorSeventh()) {
-                        return ChordType.Major7;
-                    } else if (this.isMinor() && this.hasMinorSeventh()) {
-                        return ChordType.Minor7;
-                    } else if (this.isMinor() && this.hasMajorSeventh()) {
-                        return ChordType.Minor7Major;
-                    } else if (this.isMajor() && this.hasMinorSeventh()) {
-                        return ChordType.Dominant7;
-                    }
-                } else if (this.hasDiminishedFifth() && this.isMinor() && this.hasMinorSeventh()) {
-                    return ChordType.HalfDiminished;
-                } else if (this.hasDiminishedFifth() && this.isMinor() && this.hasMajorSixth()) {
-                    return ChordType.Diminished;
-                }
-            } else if (intervals.length === 3) {
-                if (this.isMajor() && this.hasMajorSeventh()) {
-                    return ChordType.Major7;
-                } else if (this.isMinor() && this.hasMinorSeventh()) {
-                    return ChordType.Minor7;
-                } else if (this.isMinor() && this.hasMajorSeventh()) {
-                    return ChordType.Minor7Major;
-                }
-            } else if (this.hasNinth()) {
-                if (this.isMajor() && this.hasMajorSeventh()) {
-                    return ChordType.Major9;
-                }
-                if (this.isMinor() && this.hasMinorSeventh()) {
-                    return ChordType.Minor9;
-                }
-            }
+        if (this.equal(intervals, [3, 7]) || this.equal(intervals, [0, 3, 7])) {
+            return ChordType.Minor;
         }
-        // Ninth without seventh
-        if (this.hasNinth() && this.hasPerfectFifth()) {
-            if (this.isMajor()) {
-                return ChordType.Major9;
-            }
-            if (this.isMinor()) {
-                return ChordType.Minor9;
-            }
-            return ChordType.Unknown;
+        if (this.equal(intervals, [5, 7]) || this.equal(intervals, [0, 5, 7])) {
+            return ChordType.Sus;
+        }
+        if (this.equal(intervals, [7]) || this.equal(intervals, [0, 7])) {
+            return ChordType.Power;
+        }
+        if (this.equal(intervals, [4, 8]) || this.equal(intervals, [0, 4, 8])) {
+            return ChordType.Augmented;
+        }
+        if (this.equal(intervals, [3, 6]) || this.equal(intervals, [0, 3, 6]) ||
+            this.equal(intervals, [3, 6, 9]) || this.equal(intervals, [0, 3, 6, 9])) {
+            return ChordType.Diminished;
+        }
+
+        // 7ths
+        if (this.equal(intervals, [4, 7, 11]) || this.equal(intervals, [0, 4, 7, 11])) {
+            return ChordType.Major7;
+        }
+        if (this.equal(intervals, [3, 7, 10]) || this.equal(intervals, [0, 3, 7, 10])) {
+            return ChordType.Minor7;
+        }
+        if (this.equal(intervals, [3, 7, 11]) || this.equal(intervals, [0, 3, 7, 11])) {
+            return ChordType.Minor7Major;
+        }
+        if (this.equal(intervals, [3, 6, 10]) || this.equal(intervals, [0, 3, 6, 10])) {
+            return ChordType.HalfDiminished;
+        }
+        if (this.equal(intervals, [4, 7, 10]) || this.equal(intervals, [0, 4, 7, 10])) {
+            return ChordType.Dominant7;
+        }
+
+        // 9ths
+        if (this.equal(intervals, [2, 4, 7, 11]) || this.equal(intervals, [0, 2, 4, 7, 11]) ||
+            this.equal(intervals, [2, 4, 11]) || this.equal(intervals, [0, 2, 4, 11]) ||
+            this.equal(intervals, [2, 4, 7]) || this.equal(intervals, [0, 2, 4, 7])) {
+            return ChordType.Major9;
+        }
+        if (this.equal(intervals, [2, 3, 7, 10]) || this.equal(intervals, [0, 2, 3, 7, 10]) ||
+            this.equal(intervals, [2, 3, 10]) || this.equal(intervals, [0, 2, 3, 10]) ||
+            this.equal(intervals, [2, 3, 7]) || this.equal(intervals, [0, 2, 3, 7])) {
+            return ChordType.Minor9;
+        }
+        return ChordType.Unknown;
+    }
+
+    private equal(a: number[], b: number[]): boolean {
+        if (a.length !== b.length) { return false; }
+        for (let i = 0; i < a.length; i++) {
+            if (a[i] !== b[i]) { return false; }
+        }
+        return true;
+    }
+
+    // representation is the chord written in standard notation, like Am7 or C#m9
+    // the parameter sharpOrFlat is used when the root can be represented for ex. by
+    // C# or Db
+    public getRepresentation(sharpOrFlat: AlterationType): string {
+        if (this.chordType !== ChordType.Unknown && this.chordType !== ChordType.NotAchord) {
+            return this.getRootRepresentation(sharpOrFlat) + this.getTypeRepresentation();
+        }
+        return '';
+    }
+
+    private getRootRepresentation(sharpOrFlat: AlterationType): string {
+        switch (this.root % 12) {
+            case 0: return 'C';
+            case 1:
+                if (sharpOrFlat === AlterationType.sharp) {
+                    return 'C#';
+                } else { return 'Db'; }
+            case 2: return 'D';
+            case 3:
+                if (sharpOrFlat === AlterationType.sharp) {
+                    return 'D#';
+                } else { return 'Eb'; }
+            case 4: return 'E';
+            case 5: return 'F';
+            case 6:
+                if (sharpOrFlat === AlterationType.sharp) {
+                    return 'F#';
+                } else { return 'Gb'; }
+            case 7: return 'G';
+            case 8:
+                if (sharpOrFlat === AlterationType.sharp) {
+                    return 'G#';
+                } else { return 'Ab'; }
+            case 9: return 'A';
+            case 10:
+                if (sharpOrFlat === AlterationType.sharp) {
+                    return 'A#';
+                } else { return 'Bb'; }
+            case 11: return 'B';
+        }
+    }
+    private getTypeRepresentation(): string {
+        switch (this.chordType) {
+            case ChordType.Major: return '';
+            case ChordType.Minor: return 'm';
+            case ChordType.Sus: return 'sus';
+            case ChordType.Augmented: return 'aug';
+            case ChordType.Diminished: return 'dim';
+            case ChordType.Major7: return 'M7';
+            case ChordType.Minor7: return 'm7';
+            case ChordType.Major9: return '9';
+            case ChordType.Minor9: return 'm9';
+            case ChordType.Dominant7: return '7';
+            case ChordType.Minor7Major: return 'mM7';
+            case ChordType.HalfDiminished: return 'm7b5';
+            case ChordType.Power: return '';
         }
     }
 
@@ -148,96 +231,20 @@ export class Chord {
         return thirds;
     }
 
-    private hasPerfectFourth(): boolean {
-        let intervals = this.getIntervalsFromRoot();
-        for (let i = 0; i < intervals.length; i++) {
-            if (intervals[i] === 5) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    private hasPerfectFifth(): boolean {
-        let intervals = this.getIntervalsFromRoot();
-        for (let i = 0; i < intervals.length; i++) {
-            if (intervals[i] === 7) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    private hasDiminishedFifth() {
-        let intervals = this.getIntervalsFromRoot();
-        for (let i = 0; i < intervals.length; i++) {
-            if (intervals[i] === 6) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    private hasAugmentedFifth() {
-        let intervals = this.getIntervalsFromRoot();
-        for (let i = 0; i < intervals.length; i++) {
-            if (intervals[i] === 8) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    private hasMajorSixth() {
-        let intervals = this.getIntervalsFromRoot();
-        for (let i = 0; i < intervals.length; i++) {
-            if (intervals[i] === 9) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    private hasMajorSeventh() {
-        let intervals = this.getIntervalsFromRoot();
-        for (let i = 0; i < intervals.length; i++) {
-            if (intervals[i] === 11) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    private hasMinorSeventh() {
-        let intervals = this.getIntervalsFromRoot();
-        for (let i = 0; i < intervals.length; i++) {
-            if (intervals[i] === 10) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    private hasNinth() {
-        let intervals = this.getIntervalsFromRoot();
-        for (let i = 0; i < intervals.length; i++) {
-            if (intervals[i] === 2) {
-                return true;
-            }
-        }
-        return false;
-    }
-    private hasThird() {
-        return (this.isMajor() || this.isMinor());
-    }
-    private hasSeventh() {
-        return (this.hasMinorSeventh() || this.hasMajorSeventh());
-    }
     private getIntervalsFromRoot(): number[] {
         let rootIndex = this.getRootIndex();
         return this.intervalsFromNote(rootIndex);
     }
+    get root() {
+        if (!this._root) {
+            this._root = this.getRoot();
+        }
+        return this._root;
+    }
     public getRoot(): number {
+        if (!this._notes || this._notes.length === 0) {
+            return null;
+        }
         return this.notes[this.getRootIndex()].pitch;
     }
 
@@ -309,6 +316,7 @@ export class Chord {
         }
         // Remove duplicates
         returnArray = Array.from(new Set(returnArray));
+        returnArray = returnArray.sort((n1: number, n2: number) => n1 - n2);
         return returnArray;
     }
     get intervals(): number[] {

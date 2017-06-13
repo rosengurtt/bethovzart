@@ -51,11 +51,11 @@ export class SongDisplayComponent implements OnChanges, OnInit {
             case AudioControlsEventTypes.pause:
                 this._trackDisplayService.songPausedOrStopped();
                 break;
-            case AudioControlsEventTypes.zoomIn:
-                this._trackDisplayService.changeZoom(1);
+            case AudioControlsEventTypes.zoomxIn:
+                this._trackDisplayService.changeZoomX(1);
                 break;
-            case AudioControlsEventTypes.zoomOut:
-                this._trackDisplayService.changeZoom(-1);
+            case AudioControlsEventTypes.zoomxOut:
+                this._trackDisplayService.changeZoomX(-1);
                 break;
             case AudioControlsEventTypes.moveUp:
                 this._trackDisplayService.moveWindow(0, -1);
