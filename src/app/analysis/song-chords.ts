@@ -3,16 +3,22 @@ import { ChordType } from './chord-type.enum';
 import { SongJson } from '../midi/song-json/song-json';
 import { TrackNote } from '../midi/track-note';
 import { NotesTrack } from '../midi/notes-track';
+import { AlterationType } from './alteration-type.enum';
 
 export class SongChords {
     private _chords: Chord[];
+    public soreton: string;
 
     constructor(private _song: SongJson) {
     }
 
     get chords(): Chord[] {
         if (!this._chords) {
+            this.soreton = '';
             this._chords = this.getChords();
+            for (let i = 0; i < this._chords.length; i++) {
+                this.soreton += this._chords[i].getRepresentation(AlterationType.none);
+            }
         }
         return this._chords;
     }
@@ -79,10 +85,14 @@ export class SongChords {
         let i = 0;
         while (i < firstTry.length) {
             try {
+                if (firstTry[i].chordType === ChordType.Unknown || firstTry[i].chordType === ChordType.NotAchord) {
+                    i++;
+                    continue;
+                }
                 let chord = new Chord(firstTry[i].notes, i * this._song.ticksPerBeat);
                 let j = 1;
                 while (i + j < firstTry.length &&
-                    firstTry[i].getRoot() === firstTry[i + j].getRoot() &&
+                    firstTry[i].root === firstTry[i + j].root &&
                     firstTry[i].chordType === firstTry[j].chordType) {
                     try {
                         for (let k = 0; i < firstTry[j].notes.length; k++) {

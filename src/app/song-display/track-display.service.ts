@@ -14,7 +14,7 @@ export class TrackDisplayService {
     subscriptionAudioEvents: Subscription;
     songIsPlaying: boolean;
     zoomxIndex: number;  // is the index inside the zoomSteps array
-    zoomSteps: number[] = [1, 1.5, 2, 3, 4, 6, 8, 12, 16, 20];
+    zoomSteps: number[] = [1, 1.5, 2, 3, 4, 6, 8, 12, 16, 20, 30, 45, 60];
     scrollDisplacementX: number; // when the user has zoomed in, and only part of the image is
     // shown, scrollDisplacement is the length from the left border
     // to the beginning of the song (outside the image)

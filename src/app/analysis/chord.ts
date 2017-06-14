@@ -13,7 +13,6 @@ export class Chord {
     private _root: number;
     public startTime: number;
     public duration: number;
-    public sacamela: ChordType=ChordType.Unknown;
 
     constructor(notes: TrackNote[] = [], start = 0, dur = 0) {
         if (notes) {
@@ -83,7 +82,6 @@ export class Chord {
         if (!this._chordType) {
             this._chordType = this.getType();
         }
-        this.sacamela = this._chordType;
         return this._chordType;
     }
     // For example Major, Minor, Major 7

@@ -5,6 +5,7 @@ import { TrackNote } from '../midi/track-note';
 import { Instrument } from '../midi/midi-codes/instrument.enum';
 import { SongChords } from '../analysis/song-chords';
 import { AlterationType } from '../analysis/alteration-type.enum';
+import { ChordType } from '../analysis/chord-type.enum';
 
 
 @Injectable()
@@ -247,22 +248,18 @@ export class SvgBoxService {
         if (svgBox) {
             let svgBoxWidth = svgBox.clientWidth;
             let svgBoxHeight = svgBox.clientHeight;
-            let fontSize = 10;
+            let fontSize = 9;
             let beatx = 0;
             let beatwidth = song.ticksPerBeat * horizontalScale;
+            if (beatwidth < 25) { return; }
             let beatNo = 1 + Math.floor(scrollDisplacement / beatwidth);
-            let xOfPreviousBeatNumber = 0
             let chordsSequence = new SongChords(song);
             while (beatx < svgBoxWidth) {
                 let chord = chordsSequence.getChordAtBeat(beatNo);
-                if (chord) {
-                    let xOfText = ((beatwidth < 20) || (beatNo > 100)) ? beatx + 1 : beatx + beatwidth / 4;
-                    // Show the bar number if there is enough space between bars
-                    if (xOfText - xOfPreviousBeatNumber > 20) {
-                        this.createText(chord.getRepresentation(AlterationType.none), xOfText, svgBoxHeight - fontSize,
-                            fontSize.toString(), svgBox);
-                        xOfPreviousBeatNumber = xOfText;
-                    }
+                if (chord && chord.chordType !== ChordType.NotAchord && chord.chordType !== ChordType.Unknown) {
+                    let xOfText = beatx + 1;
+                    this.createText(chord.getRepresentation(AlterationType.none), xOfText, svgBoxHeight - fontSize,
+                        fontSize.toString(), svgBox);
                 }
                 beatx += beatwidth;
                 beatNo++;

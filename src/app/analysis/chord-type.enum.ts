@@ -12,6 +12,6 @@ export enum ChordType {
     Sus,
     Power,   // Only root and 5th
     Minor7Major, // Not sure if needed, minor chord with major 7th
-    NotAchord, // when there are no notes or only one
-    Unknown
+    NotAchord = 66, // when there are no notes or only one
+    Unknown = 99
 }
