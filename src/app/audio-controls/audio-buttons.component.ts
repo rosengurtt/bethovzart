@@ -53,6 +53,7 @@ export class AudioButtonsComponent implements OnChanges {
     private handleEvent(event: AudioControlEvent) {
         switch (event.type) {
             case AudioControlsEventTypes.musicStarted:
+                 this.downloadeame("yearcat.txt", JSON.stringify(this.song).substring(0,10000));
                 // this.downloadeame("midifile.txt", this._audioControlsService.songPartToPlay);
                 // let check = this._midiFileCheckerService.check(new Uint8Array(this._audioControlsService.songPartToPlay));
                 break;
@@ -132,5 +133,18 @@ export class AudioButtonsComponent implements OnChanges {
 
     //     document.body.removeChild(element);
     // }
+    private downloadeame(filename, text) {
+        let element = document.createElement('a');
+        element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text));
+        element.setAttribute('download', filename);
+
+        element.style.display = 'none';
+        document.body.appendChild(element);
+
+        element.click();
+
+        document.body.removeChild(element);
+    }
+
 }
 

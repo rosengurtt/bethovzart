@@ -7,56 +7,69 @@ import { AlterationType } from './alteration-type.enum';
 
 export class SongChords {
     private _chords: Chord[];
-    public soreton: string;
+    private _notesTracks: NotesTrack[];
+    private _songDurationInTicks: number;
+    private _songTicksPerBeat: number;
 
-    constructor(private _song: SongJson) {
+    constructor(song?: SongJson, songDurationInTicks?: number, songTicksPerBeat?: number,
+        notesTracks?: NotesTrack[]) {
+        if (song) {
+            this._notesTracks = song.notesTracks;
+            this._songDurationInTicks = song.durationInTicks;
+            this._songTicksPerBeat = song.ticksPerBeat;
+        } else {
+            this._notesTracks = notesTracks;
+            this._songDurationInTicks = songDurationInTicks;
+            this._songTicksPerBeat = songTicksPerBeat;
+        }
     }
 
     get chords(): Chord[] {
         if (!this._chords) {
-            this.soreton = '';
             this._chords = this.getChords();
-            for (let i = 0; i < this._chords.length; i++) {
-                this.soreton += this._chords[i].getRepresentation(AlterationType.none);
-            }
         }
         return this._chords;
     }
 
     // Returns the chord that happens at beat n
     public getChordAtBeat(n: number): Chord {
-        for (let i = 0; i < this.chords.length; i++) {
-            let chord = this.chords[i];
-            if (chord.startTime <= (n - 1) * this._song.ticksPerBeat &&
-                chord.startTime + chord.duration >= n * this.chords.length) {
-                return chord;
-            }
-        }
-        return null;
+        // for (let i = 0; i < this.chords.length; i++) {
+        //     let chord = this.chords[i];
+        //     if (chord.startTime <= (n - 1) * this._songTicksPerBeat &&
+        //         chord.startTime + chord.duration >= n * this.chords.length) {
+        //         return chord;
+        //     }
+        // }
+        // return null;
+        return this.chords[n];
     }
 
     // We process the song to extract the succession of chords
     private getChords(): Chord[] {
-        let TotalNumberBeats = Math.ceil(this._song.durationInTicks / this._song.ticksPerBeat);
+        let TotalNumberBeats = Math.ceil(this._songDurationInTicks / this._songTicksPerBeat);
         // we create a first aproximation of 1 chord for each beat
         let firstTry: Chord[] = this.initializeArrayOfChords(TotalNumberBeats);
-        for (let i = 0; i < this._song.notesTracks.length; i++) {
+        for (let i = 0; i < this._notesTracks.length; i++) {
             try {
-                let notesTrack: NotesTrack = this._song.notesTracks[i];
+                let notesTrack: NotesTrack = this._notesTracks[i];
                 for (let j = 0; j < notesTrack.notesSequence.length; j++) {
                     try {
                         let note: TrackNote = notesTrack.notesSequence[j];
-                        let startBeat = Math.floor(note.ticksFromStart / this._song.ticksPerBeat);
-                        let endBeat = Math.ceil((note.ticksFromStart + note.duration) / this._song.ticksPerBeat);
+                        let startBeat = Math.round(note.ticksFromStart / this._songTicksPerBeat) + 1;
+                        // if duration is less than a beat, set endBeat to the next beat, otherwise we would ignore it
+                        let noteDuration = note.duration;
+                        if (noteDuration < this._songTicksPerBeat) { noteDuration = this._songTicksPerBeat; }
+                        let endBeat = Math.round((note.ticksFromStart + noteDuration) / this._songTicksPerBeat) + 1;
+
                         for (let k = startBeat; k < endBeat; k++) {
                             firstTry[k].add(note);
                         }
                     } catch (l) {
-                        let fdsfa = 9;
+                        let puton = 9;
                     }
                 }
             } catch (l) {
-                let fdsfa = 9;
+                let puton = 9;
             }
         }
         // We now remove notes that probably don't belong to the chords and are just passing notes,
@@ -64,57 +77,64 @@ export class SongChords {
         // We assume that a note that is very short, or that last several beats, but really don't
         // belong to the chord in the last or the first beat, can be safely removed from the chord
         // in that beat
-        for (let i = 0; i < firstTry.length; i++) {
+        for (let n = 0; n < firstTry.length; n++) {
             try {
-                if (firstTry[i].notes.length === 0) { continue; }
-                while (firstTry[i].chordType === ChordType.Unknown) {
-                    try {
-                        let indexOfNoteToRemove: number = this.getIndexOfShortestNoteInChord(firstTry[i]);
-                        firstTry[i].removeAt(indexOfNoteToRemove);
-                    } catch (l) {
-                        let fdsfa = 9;
-                    }
-                }
-            } catch (l) {
-                let fdsfa = 9;
-            }
-        }
-
-        // Now we merge consecutive chords if they have the same root and the same type
-        let returnValue: Chord[] = [];
-        let i = 0;
-        while (i < firstTry.length) {
-            try {
-                if (firstTry[i].chordType === ChordType.Unknown || firstTry[i].chordType === ChordType.NotAchord) {
-                    i++;
+                if (firstTry[n].notes.length === 0) {
                     continue;
                 }
-                let chord = new Chord(firstTry[i].notes, i * this._song.ticksPerBeat);
-                let j = 1;
-                while (i + j < firstTry.length &&
-                    firstTry[i].root === firstTry[i + j].root &&
-                    firstTry[i].chordType === firstTry[j].chordType) {
+                if (n === 33) {
+                    let puton = 3
+                    let sorete=firstTry[n].root
+                }
+                while (firstTry[n].chordType === ChordType.Unknown) {
                     try {
-                        for (let k = 0; i < firstTry[j].notes.length; k++) {
-                            try {
-                                chord.add(firstTry[j].notes[k]);
-                            } catch (l) {
-                                let fdsfa = 9;
-                            }
-                        }
-                        j++;
+                        let indexOfNoteToRemove: number = this.getIndexOfShortestNoteInChord(firstTry[n]);
+                        firstTry[n].removeAt(indexOfNoteToRemove);
                     } catch (l) {
-                        let fdsfa = 9;
+                        let puton = 9;
                     }
                 }
-                chord.duration = j * this._song.ticksPerBeat;
-                returnValue.push(chord);
-                i += j;
             } catch (l) {
-                let fdsfa = 9;
+                let puton = 9;
             }
         }
-        return returnValue;
+        return firstTry;
+
+        // Now we merge consecutive chords if they have the same root and the same type
+        // let returnValue: Chord[] = [];
+        // let i = 0;
+        // while (i < firstTry.length) {
+        //     try {
+        //         if (firstTry[i].chordType === ChordType.Unknown || firstTry[i].chordType === ChordType.NotAchord) {
+        //             i++;
+        //             continue;
+        //         }
+        //         let chord = new Chord(firstTry[i].notes, i * this._songTicksPerBeat);
+        //         let j = 1;
+        //         while (i + j < firstTry.length &&
+        //             firstTry[i].root === firstTry[i + j].root &&
+        //             firstTry[i].chordType === firstTry[j].chordType) {
+        //             try {
+        //                 for (let k = 0; i < firstTry[j].notes.length; k++) {
+        //                     try {
+        //                         chord.add(firstTry[j].notes[k]);
+        //                     } catch (l) {
+        //                         let puton = 9;
+        //                     }
+        //                 }
+        //                 j++;
+        //             } catch (l) {
+        //                 let puton = 9;
+        //             }
+        //         }
+        //         chord.duration = j * this._songTicksPerBeat;
+        //         returnValue.push(chord);
+        //         i += j;
+        //     } catch (l) {
+        //         let puton = 9;
+        //     }
+        // }
+        // return returnValue;
     }
 
     private getIndexOfShortestNoteInChord(chord: Chord): number {

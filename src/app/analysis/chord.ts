@@ -10,6 +10,7 @@ export class Chord {
     private _intervals: number[]; // A place to save them, so they don't have to be recalculated
     private _notes: TrackNote[];
     private _chordType: ChordType;
+    private _passingNotes: TrackNote[]; // These are notes that are not actually part of the chord
     private _root: number;
     public startTime: number;
     public duration: number;
@@ -36,7 +37,7 @@ export class Chord {
     public removeAt(i: number) {
         if (i < 0 || i >= this._notes.length) { return; }
         this.resetCalculatedValues();
-        this._notes = this._notes.splice(i, 1);
+        this._notes.splice(i, 1);
         this._notes = this._notes.sort((n1: TrackNote, n2: TrackNote) => n1.pitch - n2.pitch);
     }
     private resetCalculatedValues() {
@@ -64,15 +65,15 @@ export class Chord {
         return this.pitches[this.pitches.length - 1];
     }
     public isMajor(): boolean {
-        let thirds = this.getThirds();
-        if (thirds.length === 1 && thirds[0] === 4) {
+        if (this.chordType === ChordType.Major || this.chordType === ChordType.Major7 ||
+            this.chordType === ChordType.Major9) {
             return true;
         }
         return false;
     }
     public isMinor(): boolean {
-        let thirds = this.getThirds();
-        if (thirds.length === 1 && thirds[0] === 3) {
+        if (this.chordType === ChordType.Minor || this.chordType === ChordType.Minor7 ||
+            this.chordType === ChordType.Minor7Major || this.chordType === ChordType.Minor9) {
             return true;
         }
         return false;
@@ -80,22 +81,12 @@ export class Chord {
 
     get chordType() {
         if (!this._chordType) {
-            this._chordType = this.getType();
+            this.analizeChord()
         }
         return this._chordType;
     }
     // For example Major, Minor, Major 7
-    public getType(): ChordType {
-        // If there are less than 2 notes, we don't have a chord
-        if (!this._notes || this._notes.length <= 1) {
-            return ChordType.NotAchord;
-        }
-        if (this._notes.length === 2) {
-            if (this.intervals[0] === 7) {
-                return ChordType.Power;
-            }
-        }
-        let intervals = this.getIntervalsFromRoot();
+    public getType(intervals): ChordType {
 
         // Basic Triads
         if (this.equal(intervals, [4, 7]) || this.equal(intervals, [0, 4, 7])) {
@@ -138,12 +129,14 @@ export class Chord {
         // 9ths
         if (this.equal(intervals, [2, 4, 7, 11]) || this.equal(intervals, [0, 2, 4, 7, 11]) ||
             this.equal(intervals, [2, 4, 11]) || this.equal(intervals, [0, 2, 4, 11]) ||
-            this.equal(intervals, [2, 4, 7]) || this.equal(intervals, [0, 2, 4, 7])) {
+            this.equal(intervals, [2, 4, 7]) || this.equal(intervals, [0, 2, 4, 7]) ||
+            this.equal(intervals, [2, 7, 11]) || this.equal(intervals, [0, 2, 7, 11])) {
             return ChordType.Major9;
         }
         if (this.equal(intervals, [2, 3, 7, 10]) || this.equal(intervals, [0, 2, 3, 7, 10]) ||
             this.equal(intervals, [2, 3, 10]) || this.equal(intervals, [0, 2, 3, 10]) ||
-            this.equal(intervals, [2, 3, 7]) || this.equal(intervals, [0, 2, 3, 7])) {
+            this.equal(intervals, [2, 3, 7]) || this.equal(intervals, [0, 2, 3, 7]) ||
+            this.equal(intervals, [2, 7, 10]) || this.equal(intervals, [0, 2, 7, 10])) {
             return ChordType.Minor9;
         }
         return ChordType.Unknown;
@@ -205,9 +198,9 @@ export class Chord {
             case ChordType.Sus: return 'sus';
             case ChordType.Augmented: return 'aug';
             case ChordType.Diminished: return 'dim';
-            case ChordType.Major7: return 'M7';
+            case ChordType.Major7: return 'maj7';
             case ChordType.Minor7: return 'm7';
-            case ChordType.Major9: return '9';
+            case ChordType.Major9: return 'maj9';
             case ChordType.Minor9: return 'm9';
             case ChordType.Dominant7: return '7';
             case ChordType.Minor7Major: return 'mM7';
@@ -216,83 +209,19 @@ export class Chord {
         }
     }
 
-    // Returns the intervals corresponding to thirds (3 semitones for minor, 4 for major)
-    // A normal chord has 1 third, but it can have none, or theoretically could have 2
-    private getThirds(): number[] {
-        let intervals = this.getIntervalsFromRoot();
-        let thirds: number[] = [];
-        for (let i = 0; i < intervals.length; i++) {
-            if (intervals[i] === 3 || intervals[i] === 4) {
-                thirds.push(intervals[i]);
-            }
-        }
-        return thirds;
-    }
 
-    private getIntervalsFromRoot(): number[] {
-        let rootIndex = this.getRootIndex();
-        return this.intervalsFromNote(rootIndex);
-    }
+
+    // private getIntervalsFromRoot(): number[] {
+    //     let rootIndex = this.getRootIndex();
+    //     return this.intervalsFromNote(rootIndex);
+    // }
     get root() {
         if (!this._root) {
-            this._root = this.getRoot();
+            this.analizeChord();
         }
         return this._root;
     }
-    public getRoot(): number {
-        if (!this._notes || this._notes.length === 0) {
-            return null;
-        }
-        return this.notes[this.getRootIndex()].pitch;
-    }
 
-    // To get the root we assign a probability to each note, and the we select the one with the highest
-    // The probability is calculated based in the intervals formed from the note
-    // Intervals of 5ths and 3rds give hight probability, intervals of tritones lower the probability
-    public getRootIndex() {
-        let probabilitiesOfBeingRoot: number[] = []
-        for (let i = 0; i < this.notes.length; i++) {
-            let intervals = this.intervalsFromNote(i);
-            let probabilitySoFar = 0;
-            for (let j = 0; j < intervals.length; j++) {
-                probabilitySoFar += this.probabilityContributionToBeARoot(intervals[j]);
-            }
-            probabilitiesOfBeingRoot.push(probabilitySoFar);
-        }
-        return this.getIndexOfElementWithHighestProbability(probabilitiesOfBeingRoot);
-    }
-
-    private probabilityContributionToBeARoot(interval: number): number {
-        switch (interval) {
-            case 0:         // Intervals of octaves and 5ths give high values
-            case 7:
-                return 10;
-            case 3:         // Intervals of 3ds give intermediate values
-            case 4:
-                return 5;
-            case 10:       // Intervals of 7ths give mid-low values 
-            case 11:
-                return 4;
-            case 5:         // Intervals of 4ths, 6ths and 7ths give mid-low values
-                return 3;
-            case 1:         // Intervals of 2nds and 6ths  give low values
-            case 2:
-            case 8:
-            case 9:
-                return 2;
-            case 6:
-                return -10;     // Tritones give a negative value
-        }
-    }
-
-    private getIndexOfElementWithHighestProbability(probabilitiesArray: number[]): number {
-        let maxProbability = Math.max(...probabilitiesArray);
-        for (let i = 0; i < probabilitiesArray.length; i++) {
-            if (probabilitiesArray[i] === maxProbability) {
-                return i;
-            }
-        }
-    }
 
     // Gilven the index of the note in the notes array, returns the intervals from this note to the
     // other notes in the chord.
@@ -334,4 +263,82 @@ export class Chord {
         return this._intervals;
     }
 
+    // We want to find the root and the type of the chord
+    private analizeChord() {
+        if (this.notes.length < 2) {
+            this._chordType = ChordType.NotAchord;
+            if (this.notes.length === 1) {
+                this._root = this.notes[0].pitch;
+            } else {
+                this._root = null;
+            }
+            return;
+        }
+        // We iterate considering each note to be the root, until we identify a known chord type
+        // If we can't find a known type, we remove a note and try again until we find a known type
+        let probabilityOfNotBeingApassingNote: number[] = new Array(this.notes.length);
+        let testChord = new Chord(this.notes);
+        while (true) {
+            for (let i = 0; i < testChord.notes.length; i++) {
+                let intervals = testChord.intervalsFromNote(i);
+                probabilityOfNotBeingApassingNote[i] = this.calculateProbabilityOfNotBeingPassingNote(intervals);
+                let chordType = this.getType(intervals);
+                if (chordType !== ChordType.Unknown) {
+                    this._root = testChord.notes[i].pitch;
+                    this._chordType = chordType;
+                    return;
+                }
+            }
+            // if we reach this point, it means we couldn't match the chord to a known type
+            // we start removing notes and try again
+            let passingNoteIndex = this.getIndexOfNoteMoreLikelyToBeApassingNote(probabilityOfNotBeingApassingNote);
+            this._passingNotes.push(this.notes[passingNoteIndex]);
+            testChord.notes.splice(passingNoteIndex, 1)
+        }
+
+    }
+
+    private calculateProbabilityOfNotBeingPassingNote(intervals: number[]): number {
+        let returnValue = 0;
+        for (let i = 0; i < intervals.length; i++) {
+            switch (intervals[i]) {
+                case 0:
+                    returnValue += 10;
+                    break;
+                case 7:
+                    returnValue += 8;
+                    break;
+                case 3:
+                case 4:
+                    returnValue += 4;
+                    break;
+                case 10:
+                case 11:
+                    returnValue += 3;
+                    break;
+                case 5:
+                case 1:
+                case 2:
+                    returnValue += 2;
+                    break;
+                case 8:
+                case 9:
+                    returnValue += 1;
+                    break;
+                case 6:
+                    returnValue -= 7;
+                    break;
+            }
+        }
+        return returnValue;
+    }
+
+    private getIndexOfNoteMoreLikelyToBeApassingNote(probabilities: number[]): number {
+        let min = Math.min(...probabilities);
+        for (let i = 0; i < probabilities.length; i++) {
+            if (min === probabilities[i]) {
+                return i;
+            }
+        }
+    }
 }

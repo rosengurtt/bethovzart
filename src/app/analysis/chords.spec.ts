@@ -22,7 +22,7 @@ describe('Test of chord: ', () => {
     it('A chord with no notes returns the root null and NotAchord type', () => {
         notes = [];
         myChord = new Chord(notes);
-        expect(myChord.getRoot()).toBe(null);
+        expect(myChord.root).toBe(null);
         expect(myChord.chordType).toBe(ChordType.NotAchord);
     });
 
@@ -30,7 +30,7 @@ describe('Test of chord: ', () => {
         notes = [];
         notes.push(new TrackNote(0, 0, 15, false));
         myChord = new Chord(notes);
-        expect(myChord.getRoot()).toBe(0);
+        expect(myChord.root).toBe(0);
         expect(myChord.chordType).toBe(ChordType.NotAchord);
     });
 
@@ -40,7 +40,7 @@ describe('Test of chord: ', () => {
         notes.push(new TrackNote(0, 4, 18, false));
         notes.push(new TrackNote(0, 7, 20, false));
         myChord = new Chord(notes);
-        expect(myChord.getRoot()).toBe(0);
+        expect(myChord.root).toBe(0);
         expect(myChord.chordType).toBe(ChordType.Major);
         expect(myChord.getRepresentation(AlterationType.none)).toBe('C');
     });
@@ -51,7 +51,7 @@ describe('Test of chord: ', () => {
         notes.push(new TrackNote(0, 4, 18, false));
         notes.push(new TrackNote(0, 7, 20, false));
         myChord = new Chord(notes);
-        expect(myChord.getRoot()).toBe(12);
+        expect(myChord.root).toBe(12);
         expect(myChord.chordType).toBe(ChordType.Major);
         expect(myChord.getRepresentation(AlterationType.none)).toBe('C');
     });
@@ -62,7 +62,7 @@ describe('Test of chord: ', () => {
         notes.push(new TrackNote(0, 16, 18, false));
         notes.push(new TrackNote(0, 7, 20, false));
         myChord = new Chord(notes);
-        expect(myChord.getRoot()).toBe(12);
+        expect(myChord.root).toBe(12);
         expect(myChord.chordType).toBe(ChordType.Major);
         expect(myChord.getRepresentation(AlterationType.none)).toBe('C');
     });
@@ -74,7 +74,7 @@ describe('Test of chord: ', () => {
         notes.push(new TrackNote(0, 17, 20, false));
         notes.push(new TrackNote(0, 22, 20, false));
         myChord = new Chord(notes);
-        expect(myChord.getRoot()).toBe(10);
+        expect(myChord.root).toBe(10);
         expect(myChord.chordType).toBe(ChordType.Minor);
         expect(myChord.getRepresentation(AlterationType.none)).toBe('Bbm');
     });
@@ -86,7 +86,7 @@ describe('Test of chord: ', () => {
         notes.push(new TrackNote(0, 17, 20, false));
         notes.push(new TrackNote(0, 21, 20, false));
         myChord = new Chord(notes);
-        expect(myChord.getRoot()).toBe(10);
+        expect(myChord.root).toBe(10);
         expect(myChord.chordType).toBe(ChordType.Minor7Major);
         expect(myChord.getRepresentation(AlterationType.none)).toBe('BbmM7');
     });
@@ -98,9 +98,9 @@ describe('Test of chord: ', () => {
         notes.push(new TrackNote(0, 17, 20, false));
         notes.push(new TrackNote(0, 21, 20, false));
         myChord = new Chord(notes);
-        expect(myChord.getRoot()).toBe(22);
+        expect(myChord.root).toBe(22);
         expect(myChord.chordType).toBe(ChordType.Major7);
-        expect(myChord.getRepresentation(AlterationType.none)).toBe('BbM7');
+        expect(myChord.getRepresentation(AlterationType.none)).toBe('Bbmaj7');
     });
 
     it('Root and type are calculated correctly. Dominant 7th chord second inversion', () => {
@@ -111,7 +111,7 @@ describe('Test of chord: ', () => {
         notes.push(new TrackNote(0, 17, 20, false));
         notes.push(new TrackNote(0, 20, 20, false));
         myChord = new Chord(notes);
-        expect(myChord.getRoot()).toBe(22);
+        expect(myChord.root).toBe(22);
         expect(myChord.chordType).toBe(ChordType.Dominant7);
         expect(myChord.getRepresentation(AlterationType.none)).toBe('Bb7');
     });
@@ -121,7 +121,7 @@ describe('Test of chord: ', () => {
         notes.push(new TrackNote(0, 15, 18, false));
         notes.push(new TrackNote(0, 17, 20, false));
         myChord = new Chord(notes);
-        expect(myChord.getRoot()).toBe(10);
+        expect(myChord.root).toBe(10);
         expect(myChord.chordType).toBe(ChordType.Sus);
         expect(myChord.getRepresentation(AlterationType.none)).toBe('Bbsus');
     });
@@ -131,7 +131,7 @@ describe('Test of chord: ', () => {
         notes.push(new TrackNote(0, 15, 18, false));
         notes.push(new TrackNote(0, 17, 20, false));
         myChord = new Chord(notes);
-        expect(myChord.getRoot()).toBe(22);
+        expect(myChord.root).toBe(22);
         expect(myChord.chordType).toBe(ChordType.Sus);
         expect(myChord.getRepresentation(AlterationType.none)).toBe('Bbsus');
     });
@@ -144,9 +144,9 @@ describe('Test of chord: ', () => {
         notes.push(new TrackNote(0, 21, 20, false));
         notes.push(new TrackNote(0, 24, 20, false));
         myChord = new Chord(notes);
-        expect(myChord.getRoot()).toBe(22);
+        expect(myChord.root).toBe(22);
         expect(myChord.chordType).toBe(ChordType.Major9);
-        expect(myChord.getRepresentation(AlterationType.none)).toBe('Bb9');
+        expect(myChord.getRepresentation(AlterationType.none)).toBe('Bbmaj9');
     });
 
 
@@ -158,9 +158,9 @@ describe('Test of chord: ', () => {
         notes.push(new TrackNote(0, 17, 20, false));
         notes.push(new TrackNote(0, 24, 20, false));
         myChord = new Chord(notes);
-        expect(myChord.getRoot()).toBe(22);
+        expect(myChord.root).toBe(22);
         expect(myChord.chordType).toBe(ChordType.Major9);
-        expect(myChord.getRepresentation(AlterationType.none)).toBe('Bb9');
+        expect(myChord.getRepresentation(AlterationType.none)).toBe('Bbmaj9');
     });
     it('For major chords isMajor returns true and isMinor false', () => {
         notes = [];
@@ -171,7 +171,7 @@ describe('Test of chord: ', () => {
         expect(myChord.isMajor()).toBe(true);
         expect(myChord.isMinor()).toBe(false);
     });
-    it('For minor chords isMajor returns true and isMinor false', () => {
+    it('For minor chords isMajor returns false and isMinor true', () => {
         notes = [];
         notes.push(new TrackNote(0, 24, 15, false));
         notes.push(new TrackNote(0, 3, 18, false));
