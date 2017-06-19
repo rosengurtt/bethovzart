@@ -10,8 +10,9 @@ export class Chord {
     private _intervals: number[]; // A place to save them, so they don't have to be recalculated
     private _notes: TrackNote[];
     private _chordType: ChordType;
-    private _passingNotes: TrackNote[]; // These are notes that are not actually part of the chord
+    private _passingNotes: TrackNote[] = []; // These are notes that are not actually part of the chord
     private _root: number;
+    private _totalPower: number; // This is the sum of volume*duration of all notes
     public startTime: number;
     public duration: number;
 
@@ -44,6 +45,7 @@ export class Chord {
         this._pitches = null;
         this._intervals = null;
         this._chordType = null;
+        this._totalPower = null;
     }
     get notes() {
         return this._notes;
@@ -56,6 +58,13 @@ export class Chord {
             }
         }
         return this._pitches;
+    }
+
+    get totalPower() {
+        if (!this._totalPower) {
+            this._totalPower = this.calculateTotalPower();
+        }
+        return this._totalPower;
     }
 
     public getLower(): number {
@@ -274,6 +283,7 @@ export class Chord {
             }
             return;
         }
+
         // We iterate considering each note to be the root, until we identify a known chord type
         // If we can't find a known type, we remove a note and try again until we find a known type
         let probabilityOfNotBeingApassingNote: number[] = new Array(this.notes.length);
@@ -281,9 +291,14 @@ export class Chord {
         while (true) {
             for (let i = 0; i < testChord.notes.length; i++) {
                 let intervals = testChord.intervalsFromNote(i);
-                probabilityOfNotBeingApassingNote[i] = this.calculateProbabilityOfNotBeingPassingNote(intervals);
+                probabilityOfNotBeingApassingNote[i] = this.calculateProbabilityOfNotBeingPassingNote(i);
                 let chordType = this.getType(intervals);
                 if (chordType !== ChordType.Unknown) {
+                    // Check that the root would not be too short compared with the other notes
+                    // let powerThisNote = this.calculateNotePower(i);
+                    // if ((powerThisNote / this.totalPower) < (1 / this.notes.length) * 0.9) {
+                    //     continue;
+                    // }
                     this._root = testChord.notes[i].pitch;
                     this._chordType = chordType;
                     return;
@@ -298,39 +313,44 @@ export class Chord {
 
     }
 
-    private calculateProbabilityOfNotBeingPassingNote(intervals: number[]): number {
-        let returnValue = 0;
+    private calculateProbabilityOfNotBeingPassingNote(index: number): number {
+        let probability = 0;
+        let intervals = this.intervalsFromNote(index);
+        // Calculate probability based in the pitch (comparing with the other pitches)
         for (let i = 0; i < intervals.length; i++) {
             switch (intervals[i]) {
                 case 0:
-                    returnValue += 10;
+                    probability += 10;
                     break;
                 case 7:
-                    returnValue += 8;
+                    probability += 8;
                     break;
                 case 3:
                 case 4:
-                    returnValue += 4;
+                    probability += 4;
                     break;
                 case 10:
                 case 11:
-                    returnValue += 3;
+                    probability += 3;
                     break;
                 case 5:
                 case 1:
                 case 2:
-                    returnValue += 2;
+                    probability += 2;
                     break;
                 case 8:
                 case 9:
-                    returnValue += 1;
+                    probability += 1;
                     break;
                 case 6:
-                    returnValue -= 7;
+                    probability -= 7;
                     break;
             }
         }
-        return returnValue;
+        // Calculate probability based in the duration and volume
+        // Passing notes are often short
+        let powerThisPitch = this.calculateNotePower(index);
+        return probability * (powerThisPitch / this.totalPower);
     }
 
     private getIndexOfNoteMoreLikelyToBeApassingNote(probabilities: number[]): number {
@@ -340,5 +360,24 @@ export class Chord {
                 return i;
             }
         }
+    }
+    // Calculates the sum of duration * volume of all notes in the chord
+    private calculateTotalPower() {
+        let totalPower = 0; // This is the sum of duration*volume
+        for (let i = 0; i < this.notes.length; i++) {
+            totalPower += (this.notes[i].duration * this.notes[i].volume);
+        }
+        return totalPower;
+    }
+
+    // Calculate the sum of duration * volume for all nothes with a specific pitch (for ex. all C notes)
+    private calculateNotePower(index: number) {
+        let notePower = 0;
+        for (let i = 0; i < this.notes.length; i++) {
+            if (this.notes[i].pitch % 12 === this.notes[index].pitch % 12) {
+                notePower += (this.notes[i].duration * this.notes[i].volume);
+            }
+        }
+        return notePower;
     }
 }

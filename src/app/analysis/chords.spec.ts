@@ -13,7 +13,7 @@ describe('Test of chord: ', () => {
     beforeEach(() => {
 
     });
-    it('Notes are saved in pitch order', () => {
+     it('Notes are saved in pitch order', () => {
         expect(myChord.pitches[0] < myChord.pitches[1]).toBe(true);
         expect(myChord.pitches[1] < myChord.pitches[2]).toBe(true);
         expect(myChord.pitches[2] < myChord.pitches[3]).toBe(true);

@@ -31,7 +31,9 @@ export class Midi2JsonService {
             // since the beginning of the song
             returnObject.tracks[i] = this.addTimeSinceBeginningField(midiFile.getTrackEvents(i));
         }
-        return this.normalizeSongJson(returnObject);
+        returnObject = this.normalizeSongJson(returnObject);
+        // console.log(returnObject);
+        return returnObject;
     };
 
     private addTimeSinceBeginningField(track: any): Track {

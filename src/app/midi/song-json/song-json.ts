@@ -154,6 +154,7 @@ export class SongJson {
             if (midiEvent.isNoteOn()) {
                 // Find corresponding note off
                 let originalPitch = midiEvent.param1;
+                let originalVolume = midiEvent.param2;
                 let currentPitch = originalPitch;
                 let originalStart = midiEvent.ticksSinceStart;
                 let currentStart = originalStart;
@@ -174,7 +175,7 @@ export class SongJson {
                         // If the acumulated bending reaches a semitone, end the current note and insert another
                         if (Math.abs(displacementInSemitonesFromPreviousPitch) > 0) {
                             let timeNoteEnd = noteEvents[i + j].ticksSinceStart;
-                            returnArray = this.insertNote(currentStart, currentPitch, timeNoteEnd, returnArray, isBent);
+                            returnArray = this.insertNote(currentStart, currentPitch, timeNoteEnd, returnArray, isBent, originalVolume);
                             currentPitch = originalPitch + displacementInSemitonesFromOriginalPitch;
                             currentStart = timeNoteEnd;
                             previousBend = currentBend;
@@ -186,16 +187,16 @@ export class SongJson {
                 if (noteEvents[i + j]) {
                     let noteOffEvent = noteEvents[i + j];
                     let timeNoteEnd = noteOffEvent.ticksSinceStart;
-                    returnArray = this.insertNote(currentStart, currentPitch, timeNoteEnd, returnArray, isBent);
+                    returnArray = this.insertNote(currentStart, currentPitch, timeNoteEnd, returnArray, isBent, originalVolume);
                 }
             }
         }
         return returnArray;
     }
     private insertNote(timeSinceStart: number, pitch: number, timeEnd: number,
-        noteArray: TrackNote[], isBent: boolean): TrackNote[] {
+        noteArray: TrackNote[], isBent: boolean, volume = 127): TrackNote[] {
         let duration = timeEnd - timeSinceStart;
-        let note = new TrackNote(timeSinceStart, pitch, duration, isBent);
+        let note = new TrackNote(timeSinceStart, pitch, duration, isBent, volume);
         noteArray.push(note);
         return noteArray;
     }

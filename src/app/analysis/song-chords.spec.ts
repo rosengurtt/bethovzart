@@ -12,8 +12,8 @@ describe('Test of song-chord: ', () => {
     let notesTrack: NotesTrack[] = (<any>data);
     let yearOfTheCat = new SongChords(null, durationInTicks, ticksPerBeat, notesTrack)
     let chord1 = yearOfTheCat.getChordAtBeat(9);
-    let chord2=yearOfTheCat.getChordAtBeat(33);
-    let chord3=yearOfTheCat.getChordAtBeat(404);
+    let chord2 = yearOfTheCat.getChordAtBeat(33);
+    let chord3 = yearOfTheCat.getChordAtBeat(273);
     beforeEach(() => {
 
     });
@@ -25,8 +25,8 @@ describe('Test of song-chord: ', () => {
         expect(chord2.chordType).toBe(ChordType.Minor9);
         expect(chord2.root % 12).toBe(9);
     });
-    it('First chord of song at bar 404 is Am9', () => {
-        expect(chord2.chordType).toBe(ChordType.Minor9);
-        expect(chord2.root % 12).toBe(9);
+    it('First chord of song at bar 404 is Bmaj', () => {
+        expect(chord3.chordType).toBe(ChordType.Major);
+        expect(chord3.root % 12).toBe(11);
     });
 });
