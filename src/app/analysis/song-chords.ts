@@ -1,5 +1,4 @@
 import { Chord } from './chord';
-import { ChordType } from './chord-type.enum';
 import { SongJson } from '../midi/song-json/song-json';
 import { TrackNote } from '../midi/track-note';
 import { NotesTrack } from '../midi/notes-track';
@@ -53,8 +52,12 @@ export class SongChords {
                 let noteDuration = note.duration;
                 if (noteDuration < this._songTicksPerBeat) { noteDuration = this._songTicksPerBeat; }
                 let endBeat = Math.round((note.ticksFromStart + noteDuration) / this._songTicksPerBeat) + 1;
-                for (let k = startBeat; k < endBeat; k++) {
-                    firstTry[k].add(note);
+                try {
+                    for (let k = startBeat; k < endBeat; k++) {
+                        firstTry[k].add(note);
+                    }
+                } catch (dd) {
+                    let lolo = 9
                 }
             }
         }
@@ -63,7 +66,7 @@ export class SongChords {
 
     private initializeArrayOfChords(dimension: number): Chord[] {
         let returnArray: Chord[] = new Array(dimension);
-        for (let i = 0; i < dimension; i++) {
+        for (let i = 0; i < dimension + 1; i++) {
             returnArray[i] = new Chord();
         }
         return returnArray;

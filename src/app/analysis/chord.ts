@@ -286,9 +286,9 @@ export class Chord {
 
         // We iterate considering each note to be the root, until we identify a known chord type
         // If we can't find a known type, we remove a note and try again until we find a known type
-        let probabilityOfNotBeingApassingNote: number[] = new Array(this.notes.length);
         let testChord = new Chord(this.notes);
-        while (true) {
+        while (testChord.notes.length > 1) {
+            let probabilityOfNotBeingApassingNote: number[] = new Array(testChord.notes.length);
             for (let i = 0; i < testChord.notes.length; i++) {
                 let intervals = testChord.intervalsFromNote(i);
                 probabilityOfNotBeingApassingNote[i] = this.calculateProbabilityOfNotBeingPassingNote(i);
@@ -307,7 +307,7 @@ export class Chord {
             // if we reach this point, it means we couldn't match the chord to a known type
             // we start removing notes and try again
             let passingNoteIndex = this.getIndexOfNoteMoreLikelyToBeApassingNote(probabilityOfNotBeingApassingNote);
-            this._passingNotes.push(this.notes[passingNoteIndex]);
+            this._passingNotes.push(testChord.notes[passingNoteIndex]);
             testChord.notes.splice(passingNoteIndex, 1)
         }
 

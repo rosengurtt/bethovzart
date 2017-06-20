@@ -256,7 +256,8 @@ export class SvgBoxService {
             let chordsSequence = new SongChords(song);
             while (beatx < svgBoxWidth) {
                 let chord = chordsSequence.getChordAtBeat(beatNo);
-                if (chord && chord.chordType !== ChordType.NotAchord && chord.chordType !== ChordType.Unknown) {
+                let conchadetumadre=chord.chordType
+                if (chord && (chord.chordType !== ChordType.NotAchord) && (chord.chordType !== ChordType.Unknown)) {
                     let xOfText = beatx + 1;
                     this.createText(chord.getRepresentation(AlterationType.none), xOfText, svgBoxHeight - fontSize,
                         fontSize.toString(), svgBox);
