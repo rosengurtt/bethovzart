@@ -214,7 +214,7 @@ export class Chord {
             case ChordType.Dominant7: return '7';
             case ChordType.Minor7Major: return 'mM7';
             case ChordType.HalfDiminished: return 'm7b5';
-            case ChordType.Power: return '';
+            case ChordType.Power: return '5';
         }
     }
 
@@ -295,10 +295,10 @@ export class Chord {
                 let chordType = this.getType(intervals);
                 if (chordType !== ChordType.Unknown) {
                     // Check that the root would not be too short compared with the other notes
-                    // let powerThisNote = this.calculateNotePower(i);
-                    // if ((powerThisNote / this.totalPower) < (1 / this.notes.length) * 0.9) {
-                    //     continue;
-                    // }
+                    let powerThisNote = this.calculateNotePower(i);
+                    if ((powerThisNote / this.totalPower) < (1 / this.notes.length) * 0.9) {
+                        continue;
+                    }
                     this._root = testChord.notes[i].pitch;
                     this._chordType = chordType;
                     return;
