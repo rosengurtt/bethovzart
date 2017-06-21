@@ -1,3 +1,6 @@
+// Represent the chords playing in each beat of a song
+// There is one chord object per beat in the song
+
 import { Chord } from './chord';
 import { SongJson } from '../midi/song-json/song-json';
 import { TrackNote } from '../midi/track-note';

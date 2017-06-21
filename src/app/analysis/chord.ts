@@ -1,6 +1,7 @@
 // The chord class is defined by the notes playing in the chord
-// Several methods provide characteristics of the chord, for example which intervals it has,
-// if it is a major or minor chord, if it has a 7th, etc.
+// Tipically the notes are the ones playing during a beat, they may
+// actually play for more than a beat (and in that case the same notes belong
+// to other chords, or only for part of the beat)
 import { TrackNote } from '../midi/track-note';
 import { ChordType } from './chord-type.enum';
 import { AlterationType } from './alteration-type.enum';
