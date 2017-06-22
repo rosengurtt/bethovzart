@@ -1,0 +1,104 @@
+[
+    {
+        "notesSequence": [
+            {
+                "ticksFromStart": 0,
+                "pitch": 0,
+                "duration": 384,
+                "bended": false,
+                "volume": 93
+            },
+            {
+                "ticksFromStart": 384,
+                "pitch": 2,
+                "duration": 384,
+                "bended": false,
+                "volume": 87
+            },
+            {
+                "ticksFromStart": 768,
+                "pitch": 4,
+                "duration": 384,
+                "bended": false,
+                "volume": 108
+            },
+            {
+                "ticksFromStart": 1152,
+                "pitch": 5,
+                "duration": 384,
+                "bended": false,
+                "volume": 99
+            },
+            {
+                "ticksFromStart": 1536,
+                "pitch": 7,
+                "duration": 384,
+                "bended": false,
+                "volume": 99
+            },
+            {
+                "ticksFromStart": 1920,
+                "pitch": 9,
+                "duration": 384,
+                "bended": false,
+                "volume": 103
+            },
+            {
+                "ticksFromStart": 2304,
+                "pitch": 11,
+                "duration": 384,
+                "bended": false,
+                "volume": 101
+            },
+            {
+                "ticksFromStart": 2688,
+                "pitch": 12,
+                "duration": 384,
+                "bended": false,
+                "volume": 96
+            },
+            {
+                "ticksFromStart": 3072,
+                "pitch": 14,
+                "duration": 384,
+                "bended": false,
+                "volume": 87
+            },
+            {
+                "ticksFromStart": 3456,
+                "pitch": 16,
+                "duration": 384,
+                "bended": false,
+                "volume": 95
+            },
+            {
+                "ticksFromStart": 3840,
+                "pitch": 17,
+                "duration": 384,
+                "bended": false,
+                "volume": 104
+            },
+            {
+                "ticksFromStart": 4224,
+                "pitch": 19,
+                "duration": 384,
+                "bended": false,
+                "volume": 104
+            },
+            {
+                "ticksFromStart": 4608,
+                "pitch": 21,
+                "duration": 384,
+                "bended": false,
+                "volume": 107
+            },
+            {
+                "ticksFromStart": 4992,
+                "pitch": 23,
+                "duration": 384,
+                "bended": false,
+                "volume": 108
+            }
+        ]
+    }
+]

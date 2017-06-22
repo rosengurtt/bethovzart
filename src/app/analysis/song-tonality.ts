@@ -26,7 +26,7 @@ export class SongTonality {
             this._songDurationInTicks = songDurationInTicks;
             this._songTicksPerBeat = songTicksPerBeat;
         }
-        this._numberOfBeats = this._songDurationInTicks / this._songTicksPerBeat;
+        this._numberOfBeats = Math.round(this._songDurationInTicks / this._songTicksPerBeat);
     }
 
     get tonic() {
@@ -37,22 +37,21 @@ export class SongTonality {
     }
 
     private analizeSong() {
+        this._tonic = [];
         this._probabilities = this.initializeProbabilitiesArray();
-        let firstTry: number[] = [];
         for (let i = 0; i < this._notesTracks.length; i++) {
             // The drums channel data is not included in the chords
             if (this._notesTracks[i].channel === 9) {
                 continue;
             }
-            let notesTrack: NotesTrack = this._notesTracks[i];
-            for (let j = 0; j < notesTrack.notesSequence.length; j++) {
-                this.calculateProbabilitiesContributionOfNote(notesTrack.notesSequence[j]);
+            let notesOfTrack: TrackNote[] = this._notesTracks[i].notesSequence;
+            for (let j = 0; j < notesOfTrack.length; j++) {
+                this.calculateProbabilitiesContributionOfNote(notesOfTrack[j]);
             }
         }
         for (let beat = 1; beat <= this._numberOfBeats; beat++) {
-            this.tonic[beat] = this.getTonicAtBeat(beat);
+            this._tonic[beat] = this.getTonicAtBeat(beat);
         }
-        return firstTry;
     }
 
     // This array has 24 rows, rows 0 to 11 correspond to tonalities C maj to B maj
@@ -81,9 +80,9 @@ export class SongTonality {
         for (let i = 0; i < possibleTonics.length; i++) {
             let noteStartBeat = Math.round(note.ticksFromStart / this._songTicksPerBeat) + 1;
             let noteEndBeat = Math.round((note.ticksFromStart + note.duration) / this._songTicksPerBeat) + 1;
-            for (let j = noteStartBeat - 4; j < noteEndBeat + 4; j++) {
+            for (let j = noteStartBeat - beatsWindow; j < noteEndBeat + beatsWindow; j++) {
                 if (j < 1 || j > this._numberOfBeats) { continue; }
-                this._probabilities[i][j] += (note.duration * note.volume) / 100;
+                this._probabilities[possibleTonics[i]][j] += (note.duration * note.volume) / 100;
             }
         }
     }
@@ -93,26 +92,28 @@ export class SongTonality {
     private getPossibleTonicsForNote(pitch: number): number[] {
         let returnArray = [];
         // Major scales
-        returnArray.push((pitch + 7) % 12);
         returnArray.push(pitch % 12);
+        returnArray.push((pitch + 7) % 12);
         returnArray.push((pitch + 5) % 12);
         returnArray.push((pitch + 10) % 12);
         returnArray.push((pitch + 15) % 12);
         returnArray.push((pitch + 20) % 12);
+        returnArray.push((pitch + 1) % 12);
         // Minor scales
-        returnArray.push((pitch + 4) % 12 + 12);
-        returnArray.push((pitch + 9) % 12 + 12);
-        returnArray.push((pitch + 2) % 12 + 12);
-        returnArray.push((pitch + 7) % 12 + 12);
         returnArray.push((pitch % 12) + 12);
+        returnArray.push((pitch + 1) % 12 + 12);
+        returnArray.push((pitch + 4) % 12 + 12);
         returnArray.push((pitch + 5) % 12 + 12);
+        returnArray.push((pitch + 7) % 12 + 12);
+        returnArray.push((pitch + 9) % 12 + 12);
+        returnArray.push((pitch + 10) % 12 + 12);
 
         return returnArray;
     }
 
     private getTonicAtBeat(beat: number): Tonic {
         let maxProb = 0;
-        let tonic: Tonic = null;
+        let tonic: Tonic = new Tonic();
         for (let i = 0; i < 24; i++) {
             if (this._probabilities[i][beat] > maxProb) {
                 maxProb = this._probabilities[i][beat];

@@ -297,7 +297,7 @@ export class Chord {
                 if (chordType !== ChordType.Unknown) {
                     // Check that the root would not be too short compared with the other notes
                     let powerThisNote = this.calculateNotePower(i);
-                    if ((powerThisNote / this.totalPower) < (1 / this.notes.length) * 0.9) {
+                    if ((powerThisNote / this.totalPower) < (1 / this.notes.length) * 0.5) {
                         continue;
                     }
                     this._root = testChord.notes[i].pitch;

@@ -53,7 +53,7 @@ export class AudioButtonsComponent implements OnChanges {
     private handleEvent(event: AudioControlEvent) {
         switch (event.type) {
             case AudioControlsEventTypes.musicStarted:
-                 this.downloadeame("yearcat.txt", JSON.stringify(this.song).substring(0,10000));
+                // this.downloadeame("yearcat.txt", JSON.stringify(this.song.notesTracks));
                 // this.downloadeame("midifile.txt", this._audioControlsService.songPartToPlay);
                 // let check = this._midiFileCheckerService.check(new Uint8Array(this._audioControlsService.songPartToPlay));
                 break;
