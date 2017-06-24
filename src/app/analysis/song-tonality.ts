@@ -158,7 +158,7 @@ export class SongTonality {
     // Because the notes in a major scale are mostly the same as in the corresponding minor
     // we do this extra step to differentiate them
     private correctMinorMajorProblem() {
-        for (let beat = 1; beat < this._numberOfBeats; beat++) {
+        for (let beat = 1; beat < this._numberOfBeats - 1; beat++) {
             // We only may have to make a correction when it was calculated as major
             if (this._tonic[beat].mode === ScaleMode.Major) {
                 let pitchMajor = this._tonic[beat].pitch;
@@ -166,7 +166,8 @@ export class SongTonality {
                 let j = 1;
                 // find the next n consecutive beats with the same tonic
                 while (this._tonic[beat + j].pitch === this._tonic[beat].pitch &&
-                    this._tonic[beat + j].mode === this._tonic[beat].mode) {
+                    this._tonic[beat + j].mode === this._tonic[beat].mode &&
+                    beat + j < this._numberOfBeats) {
                     j++;
                 }
                 // calculate the total power of the tonic of the major scale and the power of

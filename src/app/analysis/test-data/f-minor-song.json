@@ -6,98 +6,98 @@
                 "pitch": 5,
                 "duration": 384,
                 "bended": false,
-                "volume": 93
+                "volume": 100
             },
             {
                 "ticksFromStart": 384,
                 "pitch": 7,
                 "duration": 384,
                 "bended": false,
-                "volume": 87
+                "volume": 100
             },
             {
                 "ticksFromStart": 768,
                 "pitch": 8,
                 "duration": 384,
                 "bended": false,
-                "volume": 108
+                "volume": 100
             },
             {
                 "ticksFromStart": 1152,
                 "pitch": 10,
                 "duration": 384,
                 "bended": false,
-                "volume": 99
+                "volume": 100
             },
             {
                 "ticksFromStart": 1536,
                 "pitch": 12,
                 "duration": 384,
                 "bended": false,
-                "volume": 99
+                "volume": 100
             },
             {
                 "ticksFromStart": 1920,
                 "pitch": 13,
                 "duration": 384,
                 "bended": false,
-                "volume": 103
+                "volume": 100
             },
             {
                 "ticksFromStart": 2304,
                 "pitch": 16,
                 "duration": 384,
                 "bended": false,
-                "volume": 101
+                "volume": 100
             },
             {
                 "ticksFromStart": 2688,
                 "pitch": 17,
                 "duration": 384,
                 "bended": false,
-                "volume": 96
+                "volume": 100
             },
             {
                 "ticksFromStart": 3072,
                 "pitch": 19,
                 "duration": 384,
                 "bended": false,
-                "volume": 87
+                "volume": 100
             },
             {
                 "ticksFromStart": 3456,
                 "pitch": 20,
                 "duration": 384,
                 "bended": false,
-                "volume": 95
+                "volume": 100
             },
             {
                 "ticksFromStart": 3840,
                 "pitch": 22,
                 "duration": 384,
                 "bended": false,
-                "volume": 104
+                "volume": 100
             },
             {
                 "ticksFromStart": 4224,
                 "pitch": 24,
                 "duration": 384,
                 "bended": false,
-                "volume": 104
+                "volume": 100
             },
             {
                 "ticksFromStart": 4608,
                 "pitch": 25,
                 "duration": 384,
                 "bended": false,
-                "volume": 107
+                "volume": 100
             },
             {
                 "ticksFromStart": 4992,
                 "pitch": 28,
                 "duration": 384,
                 "bended": false,
-                "volume": 108
+                "volume": 100
             }
         ]
     }
