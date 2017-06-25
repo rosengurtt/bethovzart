@@ -2,7 +2,7 @@
 // Tipically the notes are the ones playing during a beat, they may
 // actually play for more than a beat (and in that case the same notes belong
 // to other chords, or only for part of the beat)
-import { TrackNote } from '../midi/track-note';
+import { TrackNote } from '../../midi/track-note';
 import { ChordType } from './chord-type.enum';
 import { AlterationType } from './alteration-type.enum';
 

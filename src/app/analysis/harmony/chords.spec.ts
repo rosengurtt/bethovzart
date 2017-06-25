@@ -1,5 +1,5 @@
 import { Chord } from './chord';
-import { TrackNote } from '../midi/track-note';
+import { TrackNote } from '../../midi/track-note';
 import { ChordType } from './chord-type.enum';
 import { AlterationType } from './alteration-type.enum';
 

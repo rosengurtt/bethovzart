@@ -1,13 +1,13 @@
 // Finds what is the tonic in each bit of the song
 
-import { SongJson } from '../midi/song-json/song-json';
-import { TrackNote } from '../midi/track-note';
-import { NotesTrack } from '../midi/notes-track';
+import { SongJson } from '../../midi/song-json/song-json';
+import { TrackNote } from '../../midi/track-note';
+import { NotesTrack } from '../../midi/notes-track';
 import { Tonic } from './tonic';
 import { ScaleMode } from './scale-mode.enum';
 
 export class SongTonality {
-    private _tonic: Tonic[];
+    private _tonics: Tonic[];
     private _notesTracks: NotesTrack[];
     private _songDurationInTicks: number;
     private _songTicksPerBeat: number;
@@ -35,15 +35,69 @@ export class SongTonality {
         this._numberOfBeats = Math.round(this._songDurationInTicks / this._songTicksPerBeat);
     }
 
-    get tonic() {
-        if (!this._tonic) {
+    get tonics() {
+        if (!this._tonics) {
             this.analizeSong();
         }
-        return this._tonic;
+        return this._tonics;
+    }
+    public getRepresentation(beat: number) {
+        let returnValue: string;
+        let tonic = this.tonics[beat];
+        switch (tonic.pitch) {
+            case 0:
+                returnValue = 'C';
+                break;
+            case 1:
+                if (tonic.mode === ScaleMode.Major) {
+                    returnValue = 'Db';
+                } else {
+                    returnValue = 'C#';
+                }
+                break;
+            case 2:
+                returnValue = 'D';
+                break;
+            case 3:
+                returnValue = 'Eb';
+                break;
+            case 4:
+                returnValue = 'E';
+                break;
+            case 5:
+                returnValue = 'F';
+                break;
+            case 6:
+                returnValue = 'F#';
+                break;
+            case 7:
+                returnValue = 'G';
+                break;
+            case 8:
+                if (tonic.mode === ScaleMode.Major) {
+                    returnValue = 'Ab';
+                } else {
+                    returnValue = 'G#';
+                }
+                break;
+            case 9:
+                returnValue = 'A';
+                break;
+            case 10:
+                returnValue = 'Bb';
+                break;
+            case 11:
+                returnValue = 'B';
+                break;
+        }
+        if (tonic.mode === ScaleMode.Minor) {
+            returnValue += ' min';
+        }
+        return returnValue;
     }
 
     private analizeSong() {
-        this._tonic = [];
+        this._tonics = [];
         this._probabilities = this.initializeProbabilitiesArray(24);
         this._notePower = this.initializeProbabilitiesArray(12);
         for (let i = 0; i < this._notesTracks.length; i++) {
@@ -59,7 +113,7 @@ export class SongTonality {
         }
 
         for (let beat = 1; beat <= this._numberOfBeats; beat++) {
-            this._tonic[beat] = this.getTonicAtBeatFirstTry(beat);
+            this._tonics[beat] = this.getTonicAtBeatFirstTry(beat);
         }
         this.correctMinorMajorProblem();
     }
@@ -160,13 +214,13 @@ export class SongTonality {
     private correctMinorMajorProblem() {
         for (let beat = 1; beat < this._numberOfBeats - 1; beat++) {
             // We only may have to make a correction when it was calculated as major
-            if (this._tonic[beat].mode === ScaleMode.Major) {
-                let pitchMajor = this._tonic[beat].pitch;
+            if (this._tonics[beat].mode === ScaleMode.Major) {
+                let pitchMajor = this._tonics[beat].pitch;
                 let pitchMinor = (pitchMajor + 9) % 12;
                 let j = 1;
                 // find the next n consecutive beats with the same tonic
-                while (this._tonic[beat + j].pitch === this._tonic[beat].pitch &&
-                    this._tonic[beat + j].mode === this._tonic[beat].mode &&
+                while (this._tonics[beat + j].pitch === this._tonics[beat].pitch &&
+                    this._tonics[beat + j].mode === this._tonics[beat].mode &&
                     beat + j < this._numberOfBeats) {
                     j++;
                 }
@@ -182,8 +236,8 @@ export class SongTonality {
                 // we now compare the 2 powers to decide which one is correct
                 if (powerOfMin > powerOfMaj) {
                     for (let i = beat; i < beat + j - 1; i++) {
-                        this._tonic[i].pitch = pitchMinor;
-                        this._tonic[i].mode = ScaleMode.Minor;
+                        this._tonics[i].pitch = pitchMinor;
+                        this._tonics[i].mode = ScaleMode.Minor;
                     }
                 }
             }

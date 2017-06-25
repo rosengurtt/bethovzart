@@ -1,9 +1,6 @@
-import { Chord } from './chord';
-import { TrackNote } from '../midi/track-note';
 import { ChordType } from './chord-type.enum';
-import { AlterationType } from './alteration-type.enum';
 import { SongChords } from './song-chords';
-import { NotesTrack } from '../midi/notes-track';
+import { NotesTrack } from '../../midi/notes-track';
 import * as data from './test-data/year-cat.json';
 
 describe('Test of song-chord: ', () => {

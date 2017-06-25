@@ -3,9 +3,10 @@ import { Injectable } from '@angular/core';
 import { SongJson } from '../midi/song-json/song-json';
 import { TrackNote } from '../midi/track-note';
 import { Instrument } from '../midi/midi-codes/instrument.enum';
-import { SongChords } from '../analysis/song-chords';
-import { AlterationType } from '../analysis/alteration-type.enum';
-import { ChordType } from '../analysis/chord-type.enum';
+import { SongChords } from '../analysis/harmony/song-chords';
+import { AlterationType } from '../analysis/harmony/alteration-type.enum';
+import { ChordType } from '../analysis/harmony/chord-type.enum';
+import { SongTonality } from '../analysis/harmony/song-tonality';
 
 
 @Injectable()
@@ -160,7 +161,10 @@ export class SvgBoxService {
 
         this.paintNotesTrack(thisTrack.notesSequence, horizontalScale, verticalScale, svgBoxId,
             scrollDisplacementX, scrollDisplacementY, color);
+
         this.showChords(horizontalScale, svgBoxId, song, scrollDisplacementX);
+
+        this.ShowTonic(horizontalScale, svgBoxId, song, scrollDisplacementX);
 
         this.createStaffBars(horizontalScale, svgBoxId, song, scrollDisplacementX);
         if (createProgressBar) {
@@ -194,6 +198,7 @@ export class SvgBoxService {
             this.paintNotesTrack(thisTrack.notesSequence, horizontalScale, verticalScale, svgBoxId,
                 scrollDisplacementX, scrollDisplacementY, color);
             this.showChords(horizontalScale, svgBoxId, song, scrollDisplacementX);
+            this.ShowTonic(horizontalScale, svgBoxId, song, scrollDisplacementX);
 
         }
         this.createStaffBars(horizontalScale, svgBoxId, song, scrollDisplacementX);
@@ -258,9 +263,40 @@ export class SvgBoxService {
                 let chord = chordsSequence.getChordAtBeat(beatNo);
                 if (chord && (chord.chordType !== ChordType.NotAchord) && (chord.chordType !== ChordType.Unknown)) {
                     let xOfText = beatx + 1;
-                    this.createText(chord.getRepresentation(AlterationType.none), xOfText, svgBoxHeight - fontSize,
+                    this.createText(chord.getRepresentation(AlterationType.none), xOfText, svgBoxHeight - (2 * fontSize),
                         fontSize.toString(), svgBox);
                 }
+                beatx += beatwidth;
+                beatNo++;
+            }
+        }
+    }
+
+    private ShowTonic(horizontalScale: number, svgBoxId: string, song: SongJson, scrollDisplacement: number) {
+        let svgBox = document.getElementById(svgBoxId);
+        if (svgBox) {
+            let svgBoxWidth = svgBox.clientWidth;
+            let svgBoxHeight = svgBox.clientHeight;
+            let fontSize = 9;
+            let beatx = 0;
+            let beatwidth = song.ticksPerBeat * horizontalScale;
+            let beatNo = 1 + Math.floor(scrollDisplacement / beatwidth);
+            let tonics = new SongTonality(song);
+            let previousTonic = null;
+            while (beatx < svgBoxWidth) {
+                let tonic = tonics.tonics[beatNo];
+                // If tonic hasn't changed, don't do anything
+                if (previousTonic && tonic && tonic.pitch === previousTonic.pitch && tonic.mode === previousTonic.mode) {
+                    beatNo++;
+                    beatx += beatwidth;
+                    continue;
+                }
+                if (tonic) {
+                    let xOfText = beatx + 1;
+                    this.createText(tonic.getRepresentation(), xOfText, svgBoxHeight - fontSize,
+                        fontSize.toString(), svgBox);
+                }
+                previousTonic = tonic;
                 beatx += beatwidth;
                 beatNo++;
             }

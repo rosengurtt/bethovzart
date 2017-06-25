@@ -2,15 +2,19 @@
 // There is one chord object per beat in the song
 
 import { Chord } from './chord';
-import { SongJson } from '../midi/song-json/song-json';
-import { TrackNote } from '../midi/track-note';
-import { NotesTrack } from '../midi/notes-track';
+import { SongJson } from '../../midi/song-json/song-json';
+import { TrackNote } from '../../midi/track-note';
+import { NotesTrack } from '../../midi/notes-track';
+import { Tonic } from './tonic';
+import { SongTonality } from './song-tonality';
+import { ScaleMode } from './scale-mode.enum';
 
 export class SongChords {
     private _chords: Chord[];
     private _notesTracks: NotesTrack[];
     private _songDurationInTicks: number;
     private _songTicksPerBeat: number;
+    private _tonics: Tonic[];
 
     constructor(song?: SongJson, songDurationInTicks?: number, songTicksPerBeat?: number,
         notesTracks?: NotesTrack[]) {
@@ -36,6 +40,48 @@ export class SongChords {
     public getChordAtBeat(n: number): Chord {
         return this.chords[n];
     }
+    // I call roman number the position of the root of the chord in the scale
+    // This is traditionally written in roman numbers
+    public getRomanNumberAtBeat(beat: number): number {
+        if (!this._tonics) {
+            let tonality = new SongTonality(null, this._songDurationInTicks, this._songTicksPerBeat, this._notesTracks);
+            this._tonics = tonality.tonics;
+        }
+        let semitonesFromScaleTonic = (this._chords[beat].root - this._tonics[beat].pitch) % 12;
+        switch (semitonesFromScaleTonic) {
+            case 0:
+                return 1;
+            case 2:
+                return 2;
+            case 3:
+                if (this._tonics[beat].mode === ScaleMode.Minor) {
+                    return 3;
+                }
+            case 4:
+                if (this._tonics[beat].mode === ScaleMode.Major) {
+                    return 3;
+                }
+            case 5:
+                return 4;
+            case 7:
+                return 5;
+            case 8:
+                if (this._tonics[beat].mode === ScaleMode.Minor) {
+                    return 6;
+                }
+            case 9:
+                return 6;
+            case 10:
+                if (this._tonics[beat].mode === ScaleMode.Minor) {
+                    return 7;
+                }
+            case 11:
+                return 7;
+            default:
+                return null;
+        }
+    }
+
 
     // We process the song to extract the succession of chords
     private getChords(): Chord[] {
